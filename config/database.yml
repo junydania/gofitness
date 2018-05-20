@@ -82,7 +82,10 @@ production:
   <<: *default
   database: gofitness_production
   username: gofitness
-  password: <%= ENV['GOFITNESS_DATABASE_PASSWORD'] %>
+  # password: <%= ENV['GOFITNESS_DATABASE_PASSWORD'] %>
+  password: g0@f1tness
+  host: localhost
+  port: 5432
 
 cucumber:
   <<: *test
