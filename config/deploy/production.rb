@@ -11,10 +11,11 @@ server '167.99.92.177', user: 'deployer', roles: %w{web}
 # See the example commented out section in the file
 # for more options.
 set :ssh_options, {
-    forward_agent: false,
-    auth_methods: %w(password),
-    password: 'deployer',
-    user: 'deployer',
+    forward_agent: true,
+    auth_methods: %w[publickey],
+    keys: %w(~/.ssh/staging-deployer),
+    # password: 'deployer',
+    user: 'deployer'
 }
 
 # server-based syntax
