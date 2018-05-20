@@ -1,5 +1,9 @@
 # Define roles, user and IP address of deployment server
 # role :name, %{[user]@[IP adde.]}
+set :stage, :production
+set :rails_env, :production
+set :branch, "develop"
+
 role :app, %w{deployer@167.99.92.177}
 role :web, %w{deployer@167.99.92.177}
 role :db,  %w{deployer@167.99.92.177}
