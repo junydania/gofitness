@@ -3,7 +3,6 @@ lock "~> 3.10.2"
 
 set :application, "gofitness"
 
-set :scm, :git
 set :repo_url, 'https://github.com/junydania/gofitness.git'
 
 set :deploy_to, "/home/deployer/apps/gofitness"
@@ -11,7 +10,6 @@ set :deploy_to, "/home/deployer/apps/gofitness"
 set :pty, true
 
 set :format, :pretty
-
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
