@@ -23,6 +23,10 @@ require 'capistrano/rails'
 require 'capistrano/bundler'
 require 'capistrano/rvm'
 require 'capistrano/puma'
+install_plugin Capistrano::Puma
+install_plugin Capistrano::Puma, load_hooks: true  # Default puma tasks without hooks
+install_plugin Capistrano::Puma::Monit, load_hooks: false  # Monit tasks without hooks
+install_plugin Capistrano::Puma::Nginx  # if you want to upload a nginx site template
 
 
 # Load custom tasks from `lib/capistrano/tasks` if you have any defined

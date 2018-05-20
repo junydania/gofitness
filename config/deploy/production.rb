@@ -2,7 +2,7 @@
 # role :name, %{[user]@[IP adde.]}
 
 set :pty,             true
-set :use_sudo,        false
+set :use_sudo,        true
 set :stage,           :production
 set :rails_env, :production
 set :branch, "develop"
@@ -35,8 +35,6 @@ server '206.189.27.129', user: 'railsdeploy', roles: %w{web}
 # See the example commented out section in the file
 # for more options.
 
-
-
 namespace :puma do
     desc 'Create Directories for Puma Pids and Socket'
     task :make_dirs do
@@ -45,8 +43,8 @@ namespace :puma do
         execute "mkdir #{shared_path}/tmp/pids -p"
       end
     end
-  
-    before :start, :make_dirs
+
+    before :start,     :make_dirs
 end
   
 namespace :deploy do
