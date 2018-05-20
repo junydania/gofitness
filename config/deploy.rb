@@ -5,6 +5,8 @@ set :application, "gofitness"
 
 set :repo_url, 'https://github.com/junydania/gofitness.git'
 
+set :use_sudo, true
+
 set :deploy_to, "/home/deployer/apps/gofitness"
 
 set :pty, true
