@@ -13,6 +13,8 @@ set :pty, true
 
 set :format, :pretty
 
+set :branch, "develop"
+
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
