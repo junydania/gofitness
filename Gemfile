@@ -25,10 +25,8 @@ gem 'coffee-rails', '~> 4.2'
 gem 'turbolinks', '~> 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
-# Use Redis adapter to run Action Cable in production
-# gem 'redis', '~> 4.0'
-# Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
+gem 'less-rails', '~> 3.0.0'
+gem 'therubyracer' 
 
 
 # Use Capistrano for deployment
@@ -36,13 +34,21 @@ gem 'jbuilder', '~> 2.5'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem 'figaro'
+  gem 'pry-byebug'
+  gem 'pry-rails'
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-  # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '~> 2.13'
   gem 'selenium-webdriver'
-   gem 'cucumber-rails', require: false
-  # database_cleaner is not required, but highly recommended
+  gem 'cucumber-rails', require: false
   gem 'database_cleaner'
+  gem 'launchy'
+  gem 'foreman'
+  gem 'faker', :git => 'git://github.com/stympy/faker.git', :branch => 'master'
+  gem 'rspec-rails'
+  gem 'shoulda-matchers'
+  gem "factory_bot_rails", "~> 4.0"
+  gem 'coveralls', require: false
 end
 
 group :development do
