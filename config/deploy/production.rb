@@ -28,6 +28,11 @@ role :app, %w{deployer@206.189.27.129}
 role :web, %w{deployer@206.189.27.129}
 role :db,  %w{deployer@206.189.27.129}
 
+set :migration_role, :app
+
+# Defaults to the primary :db server
+set :migration_servers, -> { primary(fetch(:migration_role)) }
+
 # Define server(s)
 server '206.189.27.129', user: 'railsdeploy', roles: %w{web}
 

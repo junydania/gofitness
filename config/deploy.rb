@@ -12,3 +12,4 @@ set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public
 set :pty, true
 
 set :format, :pretty
+
