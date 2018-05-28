@@ -27,6 +27,9 @@ gem 'turbolinks', '~> 5'
 gem 'jbuilder', '~> 2.5'
 gem 'less-rails', '~> 3.0.0'
 gem 'therubyracer' 
+gem 'bootstrap'
+gem 'jquery-rails'
+
 
 
 # Use Capistrano for deployment

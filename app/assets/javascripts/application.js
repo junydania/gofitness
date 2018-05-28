@@ -10,6 +10,19 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require rails-ujs
+//= require jquery3
+//= require popper
+//= require bootstrap
+//= require jquery.slimscroll
+//= require waves
+//= require sidebarmenu
+//= require sticky-kit-master/dist/sticky-kit
+//= require custom
+//= require sparkline/jquery.sparkline.min
+//= require raphael/raphael-min
+//= require morrisjs/morris.min
+//= require dashboard1
+//= require styleswitcher/jQuery.style.switcher
 //= require turbolinks
-//= require_tree .
+
+
