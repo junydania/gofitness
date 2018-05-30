@@ -80,7 +80,6 @@ namespace :deploy do
       end
     end
 
-    desc "reload the database with seed data"
     desc 'Runs rake db:seed'
     task :seed => [:set_rails_env] do
       on primary fetch(:migration_role) do
@@ -91,12 +90,10 @@ namespace :deploy do
         end
       end
     end
-
   
     before :starting,     :check_revision
     after  :finishing,    :compile_assets
     after  :finishing,    :cleanup
-    after  :finishing,    :seed
     after  :finishing,    :restart 
 end
   
