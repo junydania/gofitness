@@ -30,6 +30,7 @@ gem 'therubyracer'
 gem 'bootstrap'
 gem 'jquery-rails'
 gem 'material_design_icons'
+gem 'devise'
 
 
 
