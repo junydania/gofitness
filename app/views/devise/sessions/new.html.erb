@@ -28,9 +28,20 @@
                     
                     <div class="form-group text-center m-t-20">
                         <div class="col-xs-12">
-                            <%= f.submit "Log In", :class => "btn btn-info btn-lg btn-block text-uppercase waves-effect waves-light" %>
+                            <%= f.submit "Log In", :class => "btn btn-info btn-lg btn-block" %>
                         </div>
                     </div>
+
+                    <div>
+                      <% if flash[:notice] %>
+                        <p class="alert"><%= flash[:notice] %></p>
+                      <% end %>
+
+                      <% if flash[:alert] %>
+                                <p class="alert"><%= flash[:alert] %></p>
+                      <% end %>
+                    </div>
+
                 <% end %>
 
                 <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, id:"recoverform", class:"form-horizontal" }) do |f| %>

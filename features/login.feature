@@ -15,3 +15,10 @@ Feature: As Gym administrator
     And I click on "Log In"
     And I should see "Signed in successfully."
 
+  Scenario: When I use wrong credentials
+    Given I visit the "sign_in" landing page
+    And I fill in field "login_user_email" with "o.d@aol.com"
+    And I fill in field "user_password" with "123458"
+    And I click on "Log In"
+    Then I should see "Invalid Email or password."
+
