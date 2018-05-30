@@ -7,14 +7,14 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 user = User.create!(
     [{
-         email: 'dominic@gofitness.com',
+         email: 'odania@gofitness.com',
          password: '12345678',
          password_confirmation: '12345678',
-         first_name: 'Dominic',
-         last_name: 'Mudabai',
+         first_name: 'Ose',
+         last_name: 'Dan',
          role: 0
      }, {
-         email: 'o.dania@aol.com',
+         email: 'o.dania@icloud.com',
          password: '12345678',
          password_confirmation: '12345678',
          first_name: 'Osegbemoh',
