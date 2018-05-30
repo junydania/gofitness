@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
+    <%= csrf_meta_tags %>
     <!-- Favicon icon -->
     <%= favicon_link_tag asset_path('favicon.ico'), :rel => 'icon', :type => "image/x-icon", :sizes=>"16x16"  %>
 
@@ -333,7 +334,9 @@
                         <h5>Markarn Doe</h5>
                         <a href="#" class="dropdown-toggle u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true"><i class="mdi mdi-settings"></i></a>
                         <a href="app-email.html" class="" data-toggle="tooltip" title="Email"><i class="mdi mdi-gmail"></i></a>
-                        <a href="pages-login.html" class="" data-toggle="tooltip" title="Logout"><i class="mdi mdi-power"></i></a>
+                        <% if user_signed_in? %>
+                            <%= link_to   "<i class='mdi mdi-power'></i>" .html_safe, destroy_user_session_path, method: :delete, :'data-toggle' => 'tooltip', title:"Logout" %>
+                        <% end %>
                         <div class="dropdown-menu animated flipInY">
                             <!-- text-->
                             <a href="#" class="dropdown-item"><i class="ti-user"></i> My Profile</a>
