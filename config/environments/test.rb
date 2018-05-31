@@ -43,13 +43,13 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
-  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.delivery_method = :test
 
   config.action_mailer.smtp_settings = {
     address: ENV['GMAIL_SMTP'],
     port: ENV['PORT'],
     domain: ENV['MAILJET_DOMAIN'],
-    authentication: "yes",
+    authentication: "plain",
     enable_starttls_auto: true,
     user_name: ENV["GMAIL_USERNAME"],
     password: ENV["GMAIL_PASSWORD"]
