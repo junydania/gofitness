@@ -23,3 +23,32 @@ end
 Then(/^show page$/) do
     save_and_open_page
 end
+
+
+def check_email(email, negate, subject, body = nil)
+    unless negate
+      expect(ActionMailer::Base.deliveries.size).to eq 1
+      expect(ActionMailer::Base.deliveries[0].subject).to include(subject)
+      expect(ActionMailer::Base.deliveries[0].body).to include(body) unless body.nil?
+      expect(ActionMailer::Base.deliveries[0].to).to include(email) unless email.nil?
+    else
+      expect(ActionMailer::Base.deliveries.size).to eq 0
+    end
+end
+
+Given("I should receive a {string} email") do |subject|
+    expect(ActionMailer::Base.deliveries.size).to eq 1
+    expect(ActionMailer::Base.deliveries[0].subject).to include(subject)
+end
+  
+When("I click on the retrieve password link in the last email") do
+    password_reset_link = ActionMailer::Base.deliveries.last.body.match(
+        /<a href=\"(.+)\">Change my password<\/a>/
+    )[1]
+    visit password_reset_link
+end
+  
+Then("I fill in {string} with {string}") do |new_password, password|
+    fill_in new_password, with: password
+end
+
