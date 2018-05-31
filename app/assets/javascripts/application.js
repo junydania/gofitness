@@ -21,8 +21,8 @@
 //= require custom
 //= require sparkline/jquery.sparkline.min
 //= require footable/js/footable.all.min
-//= require bootstrap-select/bootstrap-select.min
 //= require footable-init.js
+//= require bootstrap-select/bootstrap-select.min
 //= require raphael/raphael-min
 //= require morrisjs/morris.min
 //= require dashboard1
