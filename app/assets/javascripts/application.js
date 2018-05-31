@@ -23,6 +23,7 @@
 //= require raphael/raphael-min
 //= require morrisjs/morris.min
 //= require dashboard1
+//= require jasny-bootstrap
 //= require styleswitcher/jQuery.style.switcher
 //= require turbolinks
 
