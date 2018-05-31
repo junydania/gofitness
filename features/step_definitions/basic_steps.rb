@@ -4,7 +4,7 @@ Given("the following user account exist") do |table|
     end
 end
   
-Given("I visit the {string} landing page") do |sign_in|
+Given("I visit the {string} page") do |sign_in|
     visit("/users/#{sign_in}")
 end
 
@@ -52,3 +52,6 @@ Then("I fill in {string} with {string}") do |new_password, password|
     fill_in new_password, with: password
 end
 
+Given("I select {string} from {string}") do |choice, options|
+    select(choice, from: options)
+end

@@ -9,7 +9,7 @@ Feature: As a user or administrator
       | o.dania@icloud.com   | Osegbemoh   | Dania     | 12345678 | 12345678              | manager        |
 
   Scenario: Change password for existing user
-    Given I visit the "sign_in" landing page
+    Given I visit the "sign_in" page
     And I click on "Forgot pwd?"
     And I fill in field "Email" with "o.dania@icloud.com"
     And I click on "Reset"
