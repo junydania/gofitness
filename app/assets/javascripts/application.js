@@ -20,6 +20,9 @@
 //= require sticky-kit-master/dist/sticky-kit
 //= require custom
 //= require sparkline/jquery.sparkline.min
+//= require footable/js/footable.all.min
+//= require bootstrap-select/bootstrap-select.min
+//= require footable-init.js
 //= require raphael/raphael-min
 //= require morrisjs/morris.min
 //= require dashboard1

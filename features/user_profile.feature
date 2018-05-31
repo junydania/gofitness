@@ -28,4 +28,7 @@ Feature: As an administrator
     And I select "Supervisor" from "Role"
     And I click on "Create"
     Then I should see "User successfully created"
-    
+    And I click on "Staff"
+    And I click on "View Staffs"
+    Then I should see "Toby Dania"
+

@@ -1,8 +1,11 @@
 class Admin::UsersController < Devise::RegistrationsController
-
     # load_and_authorize_resource param_method: :sign_up_params, find_by: :slug
     prepend_before_action :require_no_authentication, :only => [ :cancel]
 
+
+    def index
+        @users = User.all
+    end
 
     def new 
      super
@@ -18,7 +21,6 @@ class Admin::UsersController < Devise::RegistrationsController
           respond_with resource
         end
     end
-
 
 
     private
