@@ -45,8 +45,6 @@ $(window).on('load', function() {
 	});
 
 
-	
-
 	// Search input
 	$('#demo-input-search2').on('input', function (e) {
 		e.preventDefault();

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -15,7 +16,6 @@
     <title> GOFitness Enterprise Resource Application </title>
 
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
@@ -48,16 +48,15 @@
                         <!-- Logo icon --><b>
                             <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
                             <!-- Dark Logo icon -->
-                            <%= image_tag("logo-icon.png", :alt => "homepage", :class => "dark-logo") %>
+                            <%= image_tag("gofitness_dashboard.png", :alt => "homepage", :class => "dark-logo") %>
                             <!-- Light Logo icon -->
-                            <%= image_tag( "logo-light-icon.png", alt: "homepage", class: "light-logo") %>
                         </b>
                         <!--End Logo icon -->
-                        <!-- Logo text --><span>
+                        <!-- Logo text -->
+                        <span>
                          <!-- dark Logo text -->
-                        <%= image_tag( "logo-text.png", alt: "homepage", class: "dark-logo") %>
-                         <!-- Light Logo text --> 
-                        <%= image_tag( "logo-light-text.png", alt: "homepage", class: "light-logo") %></span> </a>
+                        </span>
+                    </a>
                 </div>
                 <!-- ============================================================== -->
                 <!-- End Logo -->
@@ -277,35 +276,27 @@
                                 <input type="text" class="form-control" placeholder="Search & enter"> <a class="srh-btn"><i class="ti-close"></i></a> </form>
                         </li>
                         <!-- ============================================================== -->
-                        <!-- Language -->
-                        <!-- ============================================================== -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="flag-icon flag-icon-us"></i></a>
-                            <div class="dropdown-menu dropdown-menu-right scale-up"> <a class="dropdown-item" href="#"><i class="flag-icon flag-icon-in"></i> India</a> <a class="dropdown-item" href="#"><i class="flag-icon flag-icon-fr"></i> French</a> <a class="dropdown-item" href="#"><i class="flag-icon flag-icon-cn"></i> China</a> <a class="dropdown-item" href="#"><i class="flag-icon flag-icon-de"></i> Dutch</a> </div>
-                        </li>
-                        <!-- ============================================================== -->
                         <!-- Profile -->
                         <!-- ============================================================== -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%= image_tag( "users/1.jpg", alt: "user", class:"profile-pic" ) %> </a>
+                            <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%= image_tag( "users/usericon.png", alt: "user", class:"profile-pic" ) %> </a>
                             <div class="dropdown-menu dropdown-menu-right scale-up">
                                 <ul class="dropdown-user">
                                     <li>
                                         <div class="dw-user-box">
-                                            <div class="u-img"><%= image_tag( "users/1.jpg", alt: "user") %> </div>
-                                            <div class="u-text">
-                                                <h4>Steave Jobs</h4>
-                                                <p class="text-muted">varun@gmail.com</p><a href="pages-profile.html" class="btn btn-rounded btn-danger btn-sm">View Profile</a></div>
+                                            <div class="u-img"><%= image_tag( "users/usericon.png", alt: "user") %> </div>
+                                            <% if user_signed_in? && current_user %>
+                                                <div class="u-text">
+                                                    <h4><%= current_user.fullname %></h4>
+                                                    <p class="text-muted"><%= current_user.email %></p><%= link_to "View Profile", user_profile_path(current_user), class: "btn btn-rounded btn-danger btn-sm" %>
+                                                </div>
+                                            <% end %>
                                         </div>
                                     </li>
                                     <li role="separator" class="divider"></li>
-                                    <li><a href="#"><i class="ti-user"></i> My Profile</a></li>
-                                    <li><a href="#"><i class="ti-wallet"></i> My Balance</a></li>
-                                    <li><a href="#"><i class="ti-email"></i> Inbox</a></li>
+                                    <li><%= link_to "Edit Profile", edit_user_registration_path(current_user) %> 
                                     <li role="separator" class="divider"></li>
-                                    <li><a href="#"><i class="ti-settings"></i> Account Setting</a></li>
-                                    <li role="separator" class="divider"></li>
-                                    <li><a href="#"><i class="fa fa-power-off"></i> Logout</a></li>
+                                    <li><%= link_to "Log Out", destroy_user_session_path, method: :delete %></li>
                                 </ul>
                             </div>
                         </li>
@@ -325,15 +316,16 @@
                 <!-- User profile -->
                 <div class="user-profile">
                     <!-- User profile image -->
-                    <div class="profile-img"><%= image_tag( "users/profile.png", alt: "user") %>
+                    <div class="profile-img"><%= image_tag( "users/usericon.png", alt: "user") %>
                         <!-- this is blinking heartbit-->
                         <div class="notify setpos"> <span class="heartbit"></span> <span class="point"></span> </div>
                     </div>
                     <!-- User profile text-->
                     <div class="profile-text">
-                        <h5>Markarn Doe</h5>
+                        <% if user_signed_in? && current_user %>
+                            <h5><%= current_user.fullname %></h5>
+                        <% end %>
                         <a href="#" class="dropdown-toggle u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true"><i class="mdi mdi-settings"></i></a>
-                        <a href="app-email.html" class="" data-toggle="tooltip" title="Email"><i class="mdi mdi-gmail"></i></a>
                         <% if user_signed_in? %>
                             <%= link_to   "<i class='mdi mdi-power'></i>" .html_safe, destroy_user_session_path, method: :delete, :'data-toggle' => 'tooltip', title:"Logout" %>
                         <% end %>
@@ -361,7 +353,6 @@
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
                         <li class="nav-devider"></li>
-                        <li class="nav-small-cap">PERSONAL</li>
                         <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-gauge"></i><span class="hide-menu">Dashboard <span class="label label-rouded label-themecolor pull-right">4</span></span></a>
                             <ul aria-expanded="false" class="collapse">
                                 <li><a href="index.html">Minimal </a></li>
@@ -370,27 +361,10 @@
                                 <li><a href="index4.html">Modern</a></li>
                             </ul>
                         </li>
-                        <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-bullseye"></i><span class="hide-menu">Apps</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li><a href="app-calendar.html">Calendar</a></li>
-                                <li><a href="app-chat.html">Chat app</a></li>
-                                <li><a href="app-ticket.html">Support Ticket</a></li>
-                                <li><a href="app-contact.html">Contact / Employee</a></li>
-                                <li><a href="app-contact2.html">Contact Grid</a></li>
-                                <li><a href="app-contact-detail.html">Contact Detail</a></li>
-                            </ul>
-                        </li>
-                        <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-email"></i><span class="hide-menu">Inbox</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li><a href="app-email.html">Mailbox</a></li>
-                                <li><a href="app-email-detail.html">Mailbox Detail</a></li>
-                                <li><a href="app-compose.html">Compose Mail</a></li>
-                            </ul>
-                        </li>
                         <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-account-plus"></i><span class="hide-menu">Staff</span></a>
                             <ul aria-expanded="false" class="collapse">
                                 <li><%= link_to "Create Staff", new_user_registration_path %></li>
-                                <li><a href="app-email-detail.html">View Staffs</a></li>
+                                <li><%= link_to "View Staffs", users_path %></li>
                             </ul>
                         </li>
                         <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-chart-bubble"></i><span class="hide-menu">Ui Elements <span class="label label-rouded label-danger pull-right">25</span></span></a>
@@ -568,4 +542,9 @@
         <!-- End Left Sidebar - style you can find in sidebar.scss  -->
         <!-- ============================================================== -->
         <%= yield %>
+        
+        <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
 
+</body>
+
+</html>

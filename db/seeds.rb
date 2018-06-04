@@ -19,7 +19,7 @@ user = User.create!(
          password_confirmation: '12345678',
          first_name: 'Osegbemoh',
          last_name: 'Dania',
-         role: 0
+         role: 1
      }]
 )
 
