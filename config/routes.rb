@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
   devise_scope :user do
     get 'users' => 'admin/users#index', as: :users
+    get 'user/:id' => 'admin/users#show', as: :user_profile
   end
 
   root 'welcome#index'
