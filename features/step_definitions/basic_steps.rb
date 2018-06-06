@@ -4,6 +4,13 @@ Given("the following user account exist") do |table|
     end
 end
   
+Given("the following features exist") do |table|
+    table.hashes.each do |hash|
+        FactoryBot.create(:feature, hash)
+    end
+end
+
+
 Given("I visit the {string} page") do |sign_in|
     visit("/users/#{sign_in}")
 end

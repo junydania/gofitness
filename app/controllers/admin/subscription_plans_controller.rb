@@ -2,6 +2,7 @@ class Admin::SubscriptionPlansController < ApplicationController
 
     def new
         @subscription_plan = SubscriptionPlan.new
+        @feature = Feature.new
     end
 
     def create

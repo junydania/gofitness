@@ -30,16 +30,16 @@
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title">Create Subscription Plan</h4>
-                                <%= form_for([:admin, @subscription_plan], html: {class: 'form-material m-t-40' }) do |f| %>
+                                <%= form_for([:admin, @subscription_plan], html: {class: 'form-group m-t-40' }) do |f| %>
                                     <% if @subscription_plan.errors.any? %>
                                         <% @subscription_plan.errors.full_messages.each do |message| %>
-                                            <div class='alert alert-danger'>
+                                            <div class='alert alert-danger flash-message'>
                                                 <%= message %>
                                             </div>
                                         <% end %>
                                     <% end %>
                                     <div class='alert alert-success' id='flash-box'>
-                                        <div id='flash-message'> <%= flash[:notice] %> </div>
+                                        <div class='flash-message'> <%= flash[:notice] %> </div>
                                     </div>
                                     <div class="form-group">
                                         <%= f.label :plan_name, 'Plan Name' %>
@@ -65,12 +65,48 @@
                                         <%= f.label :no_of_group_members, 'No of Group members' %>
                                         <%= f.select(:no_of_group_members, options_for_select((1..20)), {include_blank: true}, { :class =>  "form-control" } ) %>
                                     </div>
+                                    <div class="form-group">
+                                        <%= f.label :feature_ids, 'Features' %>
+                                        <%= f.select(:feature_ids, Feature.all.pluck(:name,:id), {}, { multiple: true, class: "selectize" }) %>
+                                    </div>
+
+                                    <br/>
                                     <div>
                                         <%= f.submit 'Create', class: 'btn btn-danger m-r-10' %>
                                     </div>
                                 <% end %>
                             </div>
                         </div>
+                    </div>
+
+                    <div id="add-contact" class="modal fade in feature-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                    <h4 class="modal-title" id="myModalLabel">Add Plan Feature</h4> </div>
+                                <div class="modal-body">
+                                    <%= form_for([:admin, Feature.new], html: {class: 'form-material m-t-40', id:"new_feature_form" }) do |f| %>
+                                        <div class="form-group">
+                                            <div class="col-md-12 m-b-20">
+                                                <%= f.label :name, 'Name' %>
+                                                <%= f.text_field :name, class: 'form-control' %>
+                                            </div>
+                                            <div class="col-md-12 m-b-20">
+                                                <%= f.label :description, 'Description' %>
+                                                <%= f.text_area :description, class: 'form-control' %>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                             <%= f.submit 'Save', class: 'btn btn-info' %>
+                                            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cancel</button>
+                                        </div>
+                                    <% end %>
+                                </div> 
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
                     </div>
                 </div>
             </div>
