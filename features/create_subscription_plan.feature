@@ -8,6 +8,12 @@ Feature: As an administrator
       | email                  | first_name  | last_name | password | password_confirmation | role           |
       | o.dania@aol.com        | Osegbemoh   | Dania     | 12345678 | 12345678              | manager        |
 
+   
+   Given the following features exist
+      | name             | description              | 
+      | Diet Plan        |Free weight loss plan     |
+      | Coach            |Coach Led                 |
+    
 
   Scenario:
     Given I visit the "sign_in" page
@@ -18,11 +24,10 @@ Feature: As an administrator
     And I click on "Create Plan"
     And I fill in field "Plan Name" with "Basic"
     And I fill in field "Cost" with "15000"
-    And I fill in field "Description" with "Gofitness Basic monthly package"
+    And I fill in field "subscription_plan_description" with "Gofitness Basic monthly package"
     And I select "Monthly" from "Duration"
     And I select "No" from "group_plan_select"
+    And I select "Diet Plan" from "subscription_plan_feature_ids"
     And I click on "Create"
     Then I should see "New Plan Successfully Created"
 
-    
-      

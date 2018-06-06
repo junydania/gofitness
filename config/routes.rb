@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resources :subscription_plans
+    resources :features
   end
 
   root 'welcome#index'
