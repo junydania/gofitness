@@ -20,7 +20,6 @@ Feature: As an administrator
     And I should see "GoFitness Dashboard"
     And I click on "Staff"
     And I click on "Create Staff"
-    Then show page
     And I fill in field "user_email" with "juniordania@hotmail.com"
     And I fill in field "user_password" with "12345678"
     And I fill in field "user_password_confirmation" with "12345678"

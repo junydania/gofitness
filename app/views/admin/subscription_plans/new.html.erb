@@ -26,21 +26,28 @@
                 <div
                 <div class="row">
                     <div class="col-12">
-                        <div class="card">
-                            <%= flash[:notice] %>
-                        </div>
                         </br>
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title">Create Subscription Plan</h4>
                                 <%= form_for([:admin, @subscription_plan], html: {class: 'form-material m-t-40' }) do |f| %>
+                                    <% if @subscription_plan.errors.any? %>
+                                        <% @subscription_plan.errors.full_messages.each do |message| %>
+                                            <div class='alert alert-danger'>
+                                                <%= message %>
+                                            </div>
+                                        <% end %>
+                                    <% end %>
+                                    <div class='alert alert-success' id='flash-box'>
+                                        <div id='flash-message'> <%= flash[:notice] %> </div>
+                                    </div>
                                     <div class="form-group">
                                         <%= f.label :plan_name, 'Plan Name' %>
                                         <%= f.text_field :plan_name, class: 'form-control form-control-line' %>
                                     </div>
                                      <div class="form-group">
-                                        <%= f.label :cost, 'Cost' %>
-                                        <%= f.text_field :cost, class: 'form-control form-control-line' %>
+                                        <%= f.label :cost, 'Cost(₦)' %>
+                                        <%= f.number_field :cost, class: 'form-control form-control-line' %>
                                     </div>
                                     <div class="form-group">
                                         <%= f.label :description, 'Description' %>
@@ -52,7 +59,11 @@
                                     </div>
                                      <div class="form-group">
                                         <%= f.label :group_plan, 'Group Plan' %>
-                                        <%= f.select(:group_plan, options_for_select([['Yes', true], ['No', false]]), {include_blank: true}, { :class =>  "form-control" } ) %>
+                                        <%= f.select(:group_plan, options_for_select([['Yes', :true], ['No', :false]]), {include_blank: "Choose Yes or No"}, { :class =>  'form-control', id: 'group_plan_select' } ) %>
+                                    </div>
+                                    <div class="form-group group_member_hide" >
+                                        <%= f.label :no_of_group_members, 'No of Group members' %>
+                                        <%= f.select(:no_of_group_members, options_for_select((1..20)), {include_blank: true}, { :class =>  "form-control" } ) %>
                                     </div>
                                     <div>
                                         <%= f.submit 'Create', class: 'btn btn-danger m-r-10' %>

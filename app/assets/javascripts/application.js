@@ -29,5 +29,7 @@
 //= require jasny-bootstrap
 //= require styleswitcher/jQuery.style.switcher
 //= require turbolinks
+//= require admin/subscription_plans
+//= require admin/general
 
 
