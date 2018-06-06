@@ -5,7 +5,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
   
   enum role: [:manager, :supervisor, :officer, :guest]
-  validates_presence_of  :encrypted_password, :email
+  validates_presence_of  :first_name, :last_name, :encrypted_password, :email
 
   
   def fullname
