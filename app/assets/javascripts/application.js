@@ -23,7 +23,7 @@
 //= require sparkline/jquery.sparkline.min
 //= require footable/js/footable.all.min
 //= require footable-init.js
-//= require bootstrap-select/bootstrap-select.min
+//= require bootstrap-select/bootstrap-select.min.js
 //= require raphael/raphael-min
 //= require morrisjs/morris.min
 //= require dashboard1

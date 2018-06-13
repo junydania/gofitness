@@ -1,6 +1,6 @@
 Feature: As an administrator
-  In order to know all users in the system
-  I should see a table with all users name
+  In order to have available subscription plans in the system
+  I should be able to create new subscription plan
 
 
   Background:

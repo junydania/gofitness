@@ -1,0 +1,13 @@
+<%= form_for([:admin, fitness_goal], remote: true, html: {class: 'form-group m-t-40', "data-type" => :json }) do |f| %>
+    <div class='alert alert-success' id='flash-box'>
+        <div class='flash-message'> <%= flash[:notice] %> </div>
+    </div>
+     <h4>Edit Goal </h4>
+    <div class="form-group">
+        <%= f.label :goal_name, 'Goal Name' %>
+        <%= f.text_field :goal_name, class: 'form-control form-control-line' %>
+    </div>
+    <div>
+        <%= f.submit 'Update', class: 'btn btn-danger m-r-10' %>
+    </div>
+<% end %>
