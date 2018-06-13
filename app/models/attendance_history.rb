@@ -1,0 +1,2 @@
+class AttendanceHistory < ApplicationRecord
+end
