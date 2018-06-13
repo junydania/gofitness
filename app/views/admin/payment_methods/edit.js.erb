@@ -1,0 +1,6 @@
+$('#payment-modal').html("<%= escape_javascript(render partial: 'edit', locals: { payment_method: @payment_method } ) %>"); 
+$('#payment-modal').modal("show");
+
+
+
+
