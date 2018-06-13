@@ -1,0 +1,92 @@
+        <div class="page-wrapper">
+            <!-- ============================================================== -->
+            <!-- Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <div class="row page-titles">
+                <div class="col-md-5 align-self-center">
+                    <h3 class="text-themecolor">Fitness Goal</h3>
+                </div>
+                <div class="col-md-7 align-self-center">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                        <li class="breadcrumb-item">Fitness Goal</li>
+                        <li class="breadcrumb-item active">View Fitness Goal</li>
+                    </ol>
+                </div>
+                <div>
+                    <button class="right-side-toggle waves-effect waves-light btn-inverse btn btn-circle btn-sm pull-right m-l-10"><i class="ti-settings text-white"></i></button>
+                </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- Container fluid  -->
+            <!-- ============================================================== -->
+            <div class="container-fluid">
+                <!-- ============================================================== -->
+                <!-- Start Page Content -->
+                <!-- ============================================================== -->
+                
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Fitness Goals</h4>
+                                <div class="table-responsive">
+                                    <table class="table full-color-table full-dark-table hover-table">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Goal Name</th>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <%= render 'index' %>                                    
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Create New Goal</h4>
+                                <div class="table-responsive">
+                                    <%= form_for([:admin, @fitness_goal], html: {class: 'form-group m-t-40' }) do |f| %>
+                                        <% if @fitness_goal.errors.any? %>
+                                            <% @fitness_goal.errors.full_messages.each do |message| %>
+                                                <div class='alert alert-danger flash-message'>
+                                                    <%= message %>
+                                                </div>
+                                            <% end %>
+                                        <% end %>
+                                        <div class='alert alert-success' id='flash-box'>
+                                            <div class='flash-message'> <%= flash[:notice] %> </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <%= f.label :goal_name, 'Goal Name' %>
+                                            <%= f.text_field :goal_name, class: 'form-control form-control-line' %>
+                                        </div>
+                                        <div>
+                                            <%= f.submit 'Create', class: 'btn btn-danger m-r-10' %>
+                                        </div>
+                                    <% end %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="goal-modal" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- End Container fluid  -->
+            <%= render partial: 'shared/footer' %>
+        </div>

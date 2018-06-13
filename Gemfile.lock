@@ -353,7 +353,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bootstrap
+  bootstrap (~> 4.1.1)
   byebug
   capistrano
   capistrano-bundler

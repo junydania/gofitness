@@ -10,10 +10,12 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :subscription_plans
     resources :features
+    resources :fitness_goals
   end
 
   root 'welcome#index'
     
+  
   get 'welcome/index'
 
 end
