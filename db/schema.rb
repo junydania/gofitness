@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180613154711) do
+ActiveRecord::Schema.define(version: 20180613164159) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,6 +26,13 @@ ActiveRecord::Schema.define(version: 20180613154711) do
     t.integer "loyalty_points_balance"
     t.string "gym_plan"
     t.boolean "recurring_billing"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "attendance_histories", force: :cascade do |t|
+    t.datetime "checkin_datetime"
+    t.string "status_checking_in"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
