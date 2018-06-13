@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180613164159) do
+ActiveRecord::Schema.define(version: 20180613171112) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -50,12 +50,50 @@ ActiveRecord::Schema.define(version: 20180613164159) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "health_conditions", force: :cascade do |t|
+    t.string "condition_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "loyalty_histories", force: :cascade do |t|
     t.integer "points_earned"
     t.integer "points_redeemed"
     t.string "loyalty_activity_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "member_health_conditions", force: :cascade do |t|
+    t.bigint "member_id"
+    t.bigint "health_condition_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["health_condition_id"], name: "index_member_health_conditions_on_health_condition_id"
+    t.index ["member_id"], name: "index_member_health_conditions_on_member_id"
+  end
+
+  create_table "members", force: :cascade do |t|
+    t.integer "customer_code"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "email"
+    t.integer "phone_number"
+    t.string "next_of_kin_name"
+    t.integer "next_of_kin_phone"
+    t.string "next_of_kin_email"
+    t.string "address"
+    t.date "date_of_birth"
+    t.string "referal_name"
+    t.string "voucher_code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "fitness_goal_id"
+    t.bigint "payment_method_id"
+    t.bigint "subscription_plan_id"
+    t.index ["fitness_goal_id"], name: "index_members_on_fitness_goal_id"
+    t.index ["payment_method_id"], name: "index_members_on_payment_method_id"
+    t.index ["subscription_plan_id"], name: "index_members_on_subscription_plan_id"
   end
 
   create_table "pause_histories", force: :cascade do |t|
@@ -129,6 +167,11 @@ ActiveRecord::Schema.define(version: 20180613164159) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "member_health_conditions", "health_conditions"
+  add_foreign_key "member_health_conditions", "members"
+  add_foreign_key "members", "fitness_goals"
+  add_foreign_key "members", "payment_methods"
+  add_foreign_key "members", "subscription_plans"
   add_foreign_key "subscription_plan_features", "features"
   add_foreign_key "subscription_plan_features", "subscription_plans"
 end
