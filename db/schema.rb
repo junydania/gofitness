@@ -10,10 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180610232544) do
+ActiveRecord::Schema.define(version: 20180613151437) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "account_details", force: :cascade do |t|
+    t.datetime "subscribe_date"
+    t.datetime "expiry_date"
+    t.string "member_status"
+    t.datetime "pause_start_date"
+    t.datetime "pause_cancel_date"
+    t.integer "amount"
+    t.integer "loyalty_points_used"
+    t.integer "loyalty_points_balance"
+    t.string "gym_plan"
+    t.boolean "recurring_billing"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "features", force: :cascade do |t|
     t.string "name"
@@ -24,6 +39,35 @@ ActiveRecord::Schema.define(version: 20180610232544) do
 
   create_table "fitness_goals", force: :cascade do |t|
     t.string "goal_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "loyalty_histories", force: :cascade do |t|
+    t.integer "points_earned"
+    t.integer "points_redeemed"
+    t.string "loyalty_activity_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "pause_histories", force: :cascade do |t|
+    t.datetime "pause_start_date"
+    t.string "pause_reason"
+    t.datetime "pause_cancel_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "subscription_histories", force: :cascade do |t|
+    t.datetime "subscribe_date"
+    t.datetime "expiry_date"
+    t.string "subscription_type"
+    t.string "subscription_plan"
+    t.integer "amount"
+    t.string "payment_method"
+    t.string "member_status"
+    t.string "subscription_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

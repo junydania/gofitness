@@ -1,0 +1,2 @@
+class PauseHistory < ApplicationRecord
+end

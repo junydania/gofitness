@@ -1,0 +1,2 @@
+class SubscriptionHistory < ApplicationRecord
+end
