@@ -11,11 +11,11 @@ Rails.application.routes.draw do
     resources :subscription_plans
     resources :features
     resources :fitness_goals
+    resources :payment_methods
   end
-
-  root 'welcome#index'
-    
   
+  root 'welcome#index'
+
   get 'welcome/index'
 
 end
