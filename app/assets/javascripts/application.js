@@ -32,6 +32,9 @@
 //= require turbolinks
 //= require admin/subscription_plans
 //= require admin/general
+//= require admin/fitness_goals
+
+
 
 
 

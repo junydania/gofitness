@@ -1,13 +1,23 @@
-<%= form_for([:admin, fitness_goal], remote: true, html: {class: 'form-group m-t-40', "data-type" => :json }) do |f| %>
-    <div class='alert alert-success' id='flash-box'>
-        <div class='flash-message'> <%= flash[:notice] %> </div>
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button id='close-modal' type="button" class="close" data-toggle="modal" data-target="#goal-modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel">Edit </h4> </div>
+        <div class="modal-body">
+            <%= form_for([:admin, goal], remote: true, html: {class: 'form-group m-t-40' }) do |f| %>
+                <h4>Edit Goal </h4>
+                <br/>
+                <div class="form-group">
+                    <%= f.label :goal_name, 'Goal Name' %>
+                    <%= f.text_field :goal_name, class: 'form-control form-control-line' %>
+                </div>
+                <div>
+                    <%= f.submit 'Update', class: 'btn btn-danger m-r-10' %>
+                </div>
+            <% end %>
+        </div>
     </div>
-     <h4>Edit Goal </h4>
-    <div class="form-group">
-        <%= f.label :goal_name, 'Goal Name' %>
-        <%= f.text_field :goal_name, class: 'form-control form-control-line' %>
-    </div>
-    <div>
-        <%= f.submit 'Update', class: 'btn btn-danger m-r-10' %>
-    </div>
-<% end %>
+</div>
+
+
+

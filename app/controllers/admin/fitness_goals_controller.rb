@@ -1,6 +1,6 @@
 class Admin::FitnessGoalsController < ApplicationController
 
-    before_action :set_fitness_goal, only: [:show, :edit, :update, :destroy] 
+    before_action :find_fitness_goal, only: [:show, :edit, :update, :destroy] 
 
     def index
         @goals = FitnessGoal.all
@@ -17,18 +17,30 @@ class Admin::FitnessGoalsController < ApplicationController
         end
     end
 
+    def edit
+      @goal
+      respond_to do |format|
+        format.js
+      end
+    end
+
+
     def update
+        @goal
         respond_to do |format|
             if @goal.update_attributes(goal_param)
-                format.html { redirect_to admin_fitness_goals_path }
-                format.json { head :no_content }
-                format.js { render action: 'index', status: :updated, location: @goal }
+                format.js { render action: 'index', status: :updated }
             else
                 format.json { render json: @goal.errors, status: :unprocessable_entity }
             end
         end        
     end
 
+    def destroy
+        @goal.destroy
+        redirect_to admin_fitness_goals_path
+    end
+    
 
     private
 
@@ -37,11 +49,8 @@ class Admin::FitnessGoalsController < ApplicationController
             .permit(:goal_name)
     end
 
-    def set_fitness_goal
-        @goal = @goal = FitnessGoal.find(params[:id])
+    def find_fitness_goal
+        @goal = FitnessGoal.find(params[:id])
     end
-
-
-
 
 end

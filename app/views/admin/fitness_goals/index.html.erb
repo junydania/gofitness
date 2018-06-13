@@ -44,27 +44,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                        <% @goals.each do |goal| %>
-                                            <tr>
-                                                <td><%= goal.id %></td>
-                                                <td><%= goal.goal_name %></td>
-                                                <td><%= link_to "Edit", '#', data: { toggle: 'modal', url: edit_admin_fitness_goal_path(goal), target: "#goal-modal" }, class: 'btn btn-success m-r-10'  %>
-                                                    <div id="goal-modal" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                                        <div class="modal-dialog">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                                                    <h4 class="modal-title" id="myModalLabel">Edit </h4> </div>
-                                                                <div class="modal-body">
-                                                                    <%= render 'admin/fitness_goals/edit', fitness_goal: goal %>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td><%= link_to "Delete", admin_fitness_goal_path(goal) , method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-success m-r-10'  %>
-                                            </tr>
-                                        <% end %>                                      
+                                            <%= render 'index' %>                                    
                                         </tbody>
                                     </table>
                                 </div>
@@ -99,11 +79,14 @@
                             </div>
                         </div>
                     </div>
+
+                    <div id="goal-modal" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    </div>
+
                 </div>
             </div>
 
             <!-- ============================================================== -->
             <!-- End Container fluid  -->
-
             <%= render partial: 'shared/footer' %>
         </div>

@@ -1,2 +1,3 @@
 class FitnessGoal < ApplicationRecord
+    
 end

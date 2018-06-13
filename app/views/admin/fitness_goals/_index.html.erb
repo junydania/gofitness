@@ -1,0 +1,8 @@
+<% @goals.each do |goal| %>
+    <tr>
+        <td><%= goal.id %></td>
+        <td><%= goal.goal_name %></td>
+        <td><%= link_to "Edit", edit_admin_fitness_goal_path(id: goal.id), remote: true, class: 'btn btn-success m-r-10'  %></td>
+        <td><%= link_to "Delete", admin_fitness_goal_path(goal) , method: :delete, data: { confirm: 'Sure about this?'}, class: 'btn btn-success m-r-10'  %>
+    </tr>
+<% end %>       
