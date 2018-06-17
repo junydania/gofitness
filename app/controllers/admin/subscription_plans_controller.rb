@@ -1,4 +1,6 @@
 class Admin::SubscriptionPlansController < ApplicationController
+
+    before_action :authenticate_user!
     
     require 'paystack_module'
 

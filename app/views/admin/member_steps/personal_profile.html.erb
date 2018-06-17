@@ -4,7 +4,7 @@
             <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
-                    <h3 class="text-themecolor">Membership</h3>
+                    <h3 class="text-themecolor">Subscription Plan</h3>
                 </div>
                 <div class="col-md-7 align-self-center">
                     <ol class="breadcrumb">
@@ -26,37 +26,33 @@
                 <div
                 <div class="row">
                     <div class="col-12">
-                        <div class='alert alert-success' id='flash-box'>
-                            <div class='flash-message'> <%= flash[:notice] %> </div>
-                        </div>
                         </br>
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title">Create Personal Profile</h4>
-                                <%= form_for([:admin, @member], url: wizard_path, html: {class: 'form-material m-t-40' }, method: :put) do |f| %> 
+                                <%= form_for([:admin, @member], url: wizard_path, html: {class: 'form-group m-t-40' }, method: :put) do |f| %> 
                                     <div class="form-group">
                                         <%= f.label :customer_code, 'Customer Code' %>
-                                        <%= f.text_field :customer_code, class: 'form-control form-control-line', placeholder: 'Scan a new card for Customer' %>
+                                        <%= f.text_field :customer_code, class: 'form-control form-control-line' %>
                                     </div>
                                      <div class="form-group">
                                         <%= f.label :phone_number, 'Phone Number' %>
-                                        <%= f.text_field :phone_number, class: 'form-control form-control-line' %>
+                                        <%= f.number_field :phone_number, class: 'form-control form-control-line' %>
                                     </div>
                                     <div class="form-group">
                                         <%= f.label :address, 'Address' %>
-                                        <%= f.email_field :email, autofocus: true, class: 'form-control' %>
+                                        <%= f.text_field :address, class: 'form-control form-control-line' %>
                                     </div>
-                                    <div class="form-group">
-                                         <%= f.label :subscription_plan_id, 'Subscription Plan' %>
-                                         <%= f.collection_select(:subscription_plan_id, @subscription_plans, :id, :plan_name, { include_blank: "Select a Membership Plan"}, {class: "form-control"} ) %>
+                                    <div class="input-group">
+                                        <%= f.text_field :date_of_birth, class:"form-control", id:"datepicker-autoclose", placeholder:"Select Date of Birth" %>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><i class="icon-calender"></i></span>
+                                        </div>
                                     </div>
+                                    <br/>
                                     <div class="form-group">
-                                         <%= f.label :payment_method_id, 'Payment Method' %>
-                                         <%= f.collection_select(:payment_method_id, @payment_methods, :id, :payment_system, { include_blank: "Select a Payment Method"}, {class: "form-control"} ) %>
-                                    </div>
-                                    <div class="form-group">
-                                         <%= f.label :fitness_goal_id, 'Fitness Goal' %>
-                                         <%= f.collection_select(:fitness_goal_id,   @fitness_goals, :id, :goal_name, { include_blank: "Select Customer Fitness Goal"}, {class: "form-control"} ) %>
+                                        <%= f.label :health_condition_ids, 'Health Conditions' %>
+                                        <%= f.select(:health_condition_ids, HealthCondition.all.pluck(:condition_name, :id), {}, { multiple: true, class: "health_selectize" }) %>
                                     </div>
                                     <div>
                                         <%= f.submit 'Next', class: 'btn btn-danger m-r-10' %>
@@ -65,6 +61,75 @@
                             </div>
                         </div>
                     </div>
+
+                    <div id="add-contact" class="modal fade in health-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                    <h4 class="modal-title" id="myModalLabel">Add Health Condition</h4> </div>
+                                <div class="modal-body">
+                                    <%= form_for([:admin, HealthCondition.new], html: {class: 'form-material m-t-40', id:"health_condition_form" }) do |f| %>
+                                        <div class="form-group">
+                                            <div class="col-md-12 m-b-20">
+                                                <%= f.label :condition_name, 'Health Condition Name' %>
+                                                <%= f.text_field :condition_name, class: 'form-control' %>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                             <%= f.submit 'Save', class: 'btn btn-info' %>
+                                            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cancel</button>
+                                        </div>
+                                    <% end %>
+                                </div> 
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
                 </div>
             </div>
         </div>
+         <%= content_for :after_body do %>
+            <script>
+                // Date Picker
+                jQuery('.mydatepicker, #datepicker').datepicker();
+                jQuery('#datepicker-autoclose').datepicker({
+                    autoclose: true,
+                    todayHighlight: true
+                });
+                jQuery('#date-range').datepicker({
+                    toggleActive: true
+                });
+                jQuery('#datepicker-inline').datepicker({
+                    todayHighlight: true
+                });
+                // Daterange picker
+                $('.input-daterange-datepicker').daterangepicker({
+                    buttonClasses: ['btn', 'btn-sm'],
+                    applyClass: 'btn-danger',
+                    cancelClass: 'btn-inverse'
+                });
+                $('.input-daterange-timepicker').daterangepicker({
+                    timePicker: true,
+                    format: 'MM/DD/YYYY h:mm A',
+                    timePickerIncrement: 30,
+                    timePicker12Hour: true,
+                    timePickerSeconds: false,
+                    buttonClasses: ['btn', 'btn-sm'],
+                    applyClass: 'btn-danger',
+                    cancelClass: 'btn-inverse'
+                });
+                $('.input-limit-datepicker').daterangepicker({
+                    format: 'MM/DD/YYYY',
+                    minDate: '06/01/2015',
+                    maxDate: '06/30/2015',
+                    buttonClasses: ['btn', 'btn-sm'],
+                    applyClass: 'btn-danger',
+                    cancelClass: 'btn-inverse',
+                    dateLimit: {
+                        days: 6
+                    }
+                });
+            </script>
+        <% end %>

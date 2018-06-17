@@ -20,6 +20,7 @@ Rails.application.routes.draw do
     resources :fitness_goals
     resources :payment_methods
     resources :member_steps
+    resources :health_conditions
     post 'paystack_subscribe' => 'member_steps#paystack_customer_subscribe', as: :paystack_subscription
   end
   

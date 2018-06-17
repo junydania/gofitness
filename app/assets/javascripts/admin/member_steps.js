@@ -51,3 +51,41 @@ $(document).on("turbolinks:load", function() {
   }
         
  });
+
+
+ //Code to display selectize field
+$(document).on("turbolinks:load", function() {
+
+    var HealthHealthselectizeCallback = null;
+
+    $(".health-modal").on("hide.bs.modal", function(e){
+        if(HealthselectizeCallback != null) {
+            HealthselectizeCallback();
+            HealthselectizeCallback = null;
+        }
+        $("#health_condition_form").trigger("reset");
+        $.rails.enableFormElements($("#health_condition_form"));
+    });
+
+    $('#health_condition_form').on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            method: "POST",
+            url: $(this).attr("action"),
+            data: $(this).serialize(),
+            success: function(response) {
+                HealthselectizeCallback({value: response.id, text: response.condition_name});
+                HealthselectizeCallback = null;
+
+                $(".health-modal").modal('toggle');
+            }
+        })
+    })
+    $(".health_selectize").selectize({
+        create: function(input, callback) {
+            HealthselectizeCallback = callback
+            $(".health-modal").modal();
+            $("#health_condition_condition_name").val(input);
+        }
+    });
+ });

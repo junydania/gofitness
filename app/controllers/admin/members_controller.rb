@@ -1,6 +1,8 @@
 class Admin::MembersController < Devise::RegistrationsController
-    prepend_before_action :require_no_authentication, only: [:new, :create, :cancel]
     
+    prepend_before_action :require_no_authentication, only: [:new, :create, :cancel]
+    before_action :authenticate_user!
+
     require 'securerandom'
 
 
@@ -21,6 +23,7 @@ class Admin::MembersController < Devise::RegistrationsController
         new_params = new_member_params.clone
         new_params[:password] = SecureRandom.hex(7)
         new_params[:password_confirmation] = new_params[:password]
+        ## Implement feature to mail login address and password to new member
         build_resource(new_params)
         if resource.save
           session[:member_id] = resource.id
@@ -44,8 +47,8 @@ class Admin::MembersController < Devise::RegistrationsController
                     :subscription_plan_id,
                     :payment_method_id,
                     :fitness_goal_id,
-                    pos_transactions_attributes: [:id, :transaction_success, :transaction_reference, :processed_by, :_destroy]
-                    cash_transactions_attributes: [:id, :amount_received, :cash_received_by, :service_paid_for, :_destroy]
+                    pos_transaction_attributes: [:id, :transaction_success, :transaction_reference, :processed_by, :_destroy],
+                    cash_transaction_attributes: [:id, :amount_received, :cash_received_by, :service_paid_for, :_destroy]
             )
     end
 end

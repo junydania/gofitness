@@ -11,7 +11,6 @@ $(document).on("turbolinks:load", function() {
 
 
  //Code to display selectize field
-
 $(document).on("turbolinks:load", function() {
 
     var selectizeCallback = null;

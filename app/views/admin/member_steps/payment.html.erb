@@ -42,7 +42,7 @@
                                 <% elsif @member.payment_method.payment_system == "POS Terminal" %>
                                     <div><h5>Amount to Charge: </h5><button class="btn btn-success" href="#">₦<%= @member.subscription_plan.cost %></button></div>
                                     <%= form_for([:admin, @member], url: wizard_path, method: :put) do |f| %>
-                                        <%= f.fields_for :pos_transaction, PosTransaction.new do |transaction| %>
+                                        <%= f.fields_for :pos_transactions, PosTransaction.new do |transaction| %>
                                             <br/>
                                             <%= render 'postransaction_fields', f: transaction %>
                                         <% end %>
@@ -50,7 +50,7 @@
                                 <% elsif @member.payment_method.payment_system.titleize == "Cash"  %>
                                     <div><h5>Amount to Collect: </h5><button class="btn btn-success" href="#">₦<%= @member.subscription_plan.cost %></button></div>
                                     <%= form_for([:admin, @member], url: wizard_path, method: :put) do |f| %>
-                                        <%= f.fields_for :cash_transaction, CashTransaction.new do |transaction| %>
+                                        <%= f.fields_for :cash_transactions, CashTransaction.new do |transaction| %>
                                             <br/>
                                             <%= render 'cashtransaction_fields', f: transaction %>
                                         <% end %>

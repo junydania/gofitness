@@ -1,6 +1,7 @@
 class Admin::PaymentMethodsController < ApplicationController
 
     before_action :find_payment_method, only: [:show, :edit, :update, :destroy] 
+    before_action :authenticate_user!
 
     def index
         @payment_methods = PaymentMethod.all

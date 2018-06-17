@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180616213257) do
+ActiveRecord::Schema.define(version: 20180617105550) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,8 @@ ActiveRecord::Schema.define(version: 20180616213257) do
     t.boolean "recurring_billing"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "member_id"
+    t.index ["member_id"], name: "index_account_details_on_member_id"
   end
 
   create_table "attendance_histories", force: :cascade do |t|
@@ -69,9 +71,14 @@ ActiveRecord::Schema.define(version: 20180616213257) do
   create_table "loyalty_histories", force: :cascade do |t|
     t.integer "points_earned"
     t.integer "points_redeemed"
-    t.string "loyalty_activity_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "loyalty_balance"
+    t.integer "loyalty_transaction_type"
+    t.bigint "member_id"
+    t.index ["loyalty_balance"], name: "index_loyalty_histories_on_loyalty_balance"
+    t.index ["loyalty_transaction_type"], name: "index_loyalty_histories_on_loyalty_transaction_type"
+    t.index ["member_id"], name: "index_loyalty_histories_on_member_id"
   end
 
   create_table "member_health_conditions", force: :cascade do |t|
@@ -153,6 +160,8 @@ ActiveRecord::Schema.define(version: 20180616213257) do
     t.string "subscription_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "member_id"
+    t.index ["member_id"], name: "index_subscription_histories_on_member_id"
   end
 
   create_table "subscription_plan_features", force: :cascade do |t|
