@@ -1,1 +1,77 @@
-<p>This is Payment Page</p>
+        <div class="page-wrapper">
+            <!-- ============================================================== -->
+            <!-- Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <div class="row page-titles">
+                <div class="col-md-5 align-self-center">
+                    <h3 class="text-themecolor">Membership Payment</h3>
+                </div>
+                <div class="col-md-7 align-self-center">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                        <li class="breadcrumb-item">Member</li>
+                        <li class="breadcrumb-item active">Receive Payment</li>
+                    </ol>
+                </div>
+                <div class="">
+                    <button class="right-side-toggle waves-effect waves-light btn-inverse btn btn-circle btn-sm pull-right m-l-10"><i class="ti-settings text-white"></i></button>
+                </div>
+            </div>
+
+
+            <div class="container-fluid">
+                <!-- ============================================================== -->
+                <!-- Start Page Content -->
+                <!-- ============================================================== -->
+                <div
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <%= flash[:notice] %>
+                        </div>
+                        </br>
+                        <div class="card">
+                            <div class form-group id="paystack-success">
+                            </div>
+                            <div class="card-body">
+                                <h4 class="card-title">Receive Payment</h4>
+                                <% if @member.payment_method.payment_system == "Debit Card" %>
+                                    <div class="button-box m-t-20">
+                                        <button id="paystack-button" class="btn btn-success" href="#">Pay with Card Online</button>
+                                    </div>
+                                <% elsif @member.payment_method.payment_system == "POS Terminal" %>
+                                    <div><h5>Amount to Charge: </h5><button class="btn btn-success" href="#">₦<%= @member.subscription_plan.cost %></button></div>
+                                    <%= form_for([:admin, @member], url: wizard_path, method: :put) do |f| %>
+                                        <%= f.fields_for :pos_transaction, PosTransaction.new do |transaction| %>
+                                            <br/>
+                                            <%= render 'postransaction_fields', f: transaction %>
+                                        <% end %>
+                                    <% end %>
+                                <% elsif @member.payment_method.payment_system.titleize == "Cash"  %>
+                                    <div><h5>Amount to Collect: </h5><button class="btn btn-success" href="#">₦<%= @member.subscription_plan.cost %></button></div>
+                                    <%= form_for([:admin, @member], url: wizard_path, method: :put) do |f| %>
+                                        <%= f.fields_for :cash_transaction, CashTransaction.new do |transaction| %>
+                                            <br/>
+                                            <%= render 'cashtransaction_fields', f: transaction %>
+                                        <% end %>
+                                    <% end %>
+                                <% end %>
+                            </div>
+                        </div>
+                    </div>
+                    
+                
+
+                    <div class="card hide" id="payment-next">
+                        <div class="card-body">
+                            <%= link_to "Proceed to Personal Profile", next_wizard_path , class: 'btn btn-danger m-r-10'%>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        
+        <%= content_for :after_body do %>
+            <script src="https://js.paystack.co/v1/inline.js"></script>
+        <% end %>

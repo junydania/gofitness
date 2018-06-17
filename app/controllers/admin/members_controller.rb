@@ -24,8 +24,8 @@ class Admin::MembersController < Devise::RegistrationsController
         build_resource(new_params)
         if resource.save
           session[:member_id] = resource.id
-          redirect_to admin_member_steps_path
           flash[:notice] = "User created! Receive Payment & Complete the Registration Process"
+          redirect_to admin_member_steps_path
         else
           clean_up_passwords resource
           respond_with resource
@@ -43,7 +43,9 @@ class Admin::MembersController < Devise::RegistrationsController
                     :last_name,
                     :subscription_plan_id,
                     :payment_method_id,
-                    :fitness_goal_id
+                    :fitness_goal_id,
+                    pos_transactions_attributes: [:id, :transaction_success, :transaction_reference, :processed_by, :_destroy]
+                    cash_transactions_attributes: [:id, :amount_received, :cash_received_by, :service_paid_for, :_destroy]
             )
     end
 end

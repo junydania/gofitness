@@ -5,6 +5,14 @@ class Member < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
 
     has_many :member_health_conditions
+    has_many :pos_transactions
+    accepts_nested_attributes_for :pos_transactions,
+                                reject_if: :all_blank, allow_destroy: true
+
+    has_many :cash_transactions
+    accepts_nested_attributes_for :cash_transactions,
+                                reject_if: :all_blank, allow_destroy: true
+
     has_many :health_conditions, through: :member_health_conditions
     belongs_to :fitness_goal
     belongs_to :payment_method
@@ -12,4 +20,8 @@ class Member < ApplicationRecord
 
     validates_presence_of  :first_name, :last_name, :email, :encrypted_password
 
+    def fullname
+      "#{first_name} #{last_name}"
+    end
+    
 end

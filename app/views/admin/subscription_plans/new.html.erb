@@ -57,6 +57,10 @@
                                         <%= f.label :duration, 'Plan Duration' %>
                                         <%= f.select(:duration, options_for_select(SubscriptionPlan.durations.keys.map { |duration| [duration.titleize, duration]}), {include_blank: true}, { :class =>  "form-control" } ) %>
                                     </div>
+                                    <div class="form-group">
+                                        <%= f.label :recurring, 'Recurring Plan' %>
+                                        <%= f.select(:recurring, options_for_select([['Yes', :true], ['No', :false]]), {include_blank: "Choose Yes or No"}, { :class =>  'form-control' } ) %>
+                                    </div>
                                      <div class="form-group">
                                         <%= f.label :group_plan, 'Group Plan' %>
                                         <%= f.select(:group_plan, options_for_select([['Yes', :true], ['No', :false]]), {include_blank: "Choose Yes or No"}, { :class =>  'form-control', id: 'group_plan_select' } ) %>

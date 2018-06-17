@@ -14,7 +14,7 @@
     <%= favicon_link_tag asset_path('favicon.ico'), :rel => 'icon', :type => "image/x-icon", :sizes=>"16x16"  %>
 
     <title> GOFitness Enterprise Resource Application </title>
-
+    <%= include_gon %>
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -566,7 +566,7 @@
         <%= yield %>
         
         <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
-        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <%= yield :after_body %>
 
 </body>
 

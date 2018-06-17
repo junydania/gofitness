@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180613180102) do
+ActiveRecord::Schema.define(version: 20180616213257) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,6 +35,16 @@ ActiveRecord::Schema.define(version: 20180613180102) do
     t.string "status_checking_in"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "cash_transactions", force: :cascade do |t|
+    t.integer "amount_received"
+    t.string "cash_received_by"
+    t.string "service_paid_for"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "member_id"
+    t.index ["member_id"], name: "index_cash_transactions_on_member_id"
   end
 
   create_table "features", force: :cascade do |t|
@@ -122,6 +132,16 @@ ActiveRecord::Schema.define(version: 20180613180102) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "pos_transactions", force: :cascade do |t|
+    t.boolean "transaction_success"
+    t.string "transaction_reference"
+    t.string "processed_by"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "member_id"
+    t.index ["member_id"], name: "index_pos_transactions_on_member_id"
+  end
+
   create_table "subscription_histories", force: :cascade do |t|
     t.datetime "subscribe_date"
     t.datetime "expiry_date"
@@ -153,6 +173,8 @@ ActiveRecord::Schema.define(version: 20180613180102) do
     t.integer "duration"
     t.boolean "group_plan"
     t.integer "no_of_group_members"
+    t.boolean "recurring"
+    t.string "paystack_plan_code"
   end
 
   create_table "users", force: :cascade do |t|

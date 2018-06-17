@@ -33,6 +33,8 @@
 //= require admin/subscription_plans
 //= require admin/general
 //= require admin/fitness_goals
+//= require admin/member_steps.js
+
 
 
 
