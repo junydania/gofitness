@@ -58,6 +58,10 @@
                                          <%= f.label :fitness_goal_id, 'Fitness Goal' %>
                                          <%= f.collection_select(:fitness_goal_id,   @fitness_goals, :id, :goal_name, { include_blank: "Select Customer Fitness Goal"}, {class: "form-control"} ) %>
                                     </div>
+                                    <div class="form-group">
+                                         <%= f.label :image_data, 'Customer Picture' %>
+                                         <%= f.file_field :image, id: :member_image %> 
+                                    </div>
                                     <div>
                                         <%= f.submit 'Next', class: 'btn btn-danger m-r-10' %>
                                     </div>

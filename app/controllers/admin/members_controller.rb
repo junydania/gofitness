@@ -20,6 +20,7 @@ class Admin::MembersController < Devise::RegistrationsController
 
 
     def create
+      binding.pry
         new_params = new_member_params.clone
         new_params[:password] = SecureRandom.hex(7)
         new_params[:password_confirmation] = new_params[:password]
@@ -44,6 +45,7 @@ class Admin::MembersController < Devise::RegistrationsController
                     :password_confirmation,
                     :first_name,
                     :last_name,
+                    :image,
                     :subscription_plan_id,
                     :payment_method_id,
                     :fitness_goal_id,

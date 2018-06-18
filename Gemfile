@@ -25,6 +25,8 @@ gem 'selectize-rails'
 gem 'wicked', '~> 1.3.2'
 gem 'gon'
 gem 'paystack'
+gem 'shrine'
+gem 'aws-sdk-s3'
 
 
 # Use Capistrano for deployment
