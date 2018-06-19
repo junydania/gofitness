@@ -35,8 +35,10 @@ class Admin::MemberStepsController < ApplicationController
             else
                 skip_step
             end
+
         when :personal_profile
             @member.update_attributes(member_params)
+
         when :next_of_kin
             
         end
@@ -44,10 +46,10 @@ class Admin::MemberStepsController < ApplicationController
         render_wizard @member
     end
 
+
     def upload_image
-        binding.pry
-        image = io = Shrine.data_uri(params[:image])
-        @member.image = image
+        member_image = Shrine.data_uri(params[:image])
+        @member.image = member_image
     end
 
     

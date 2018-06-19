@@ -13,6 +13,7 @@ class Admin::SubscriptionPlansController < ApplicationController
     end
 
     def create
+        binding.pry
         @subscription_plan = SubscriptionPlan.new(plan_param)
         if @subscription_plan.save
             if @subscription_plan.recurring == true
@@ -56,7 +57,8 @@ class Admin::SubscriptionPlansController < ApplicationController
                     :group_plan,
                     :recurring,
                     :no_of_group_members,
-                    :paystack_plan_code)
+                    :paystack_plan_code,
+                    feature_ids: [] )
     end
 
 end
