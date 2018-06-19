@@ -36,4 +36,5 @@
 //= require admin/member_steps
 //= require bootstrap-datepicker/bootstrap-datepicker.min
 //= require bootstrap-daterangepicker/daterangepicker
-
+//= require webcam.min
+//= require admin/cam.js

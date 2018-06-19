@@ -15,3 +15,8 @@ Shrine.storages = {
 
 
 Shrine.plugin :activerecord
+Shrine.plugin :versions
+Shrine.plugin :data_uri
+Shrine.plugin :infer_extension
+Shrine.plugin :determine_mime_type
+

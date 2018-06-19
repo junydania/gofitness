@@ -8,7 +8,7 @@ class Admin::MemberStepsController < ApplicationController
     include GoFitPaystack
 
     before_action :get_paystack_object, only: [:paystack_customer_subscribe]
-    before_action :find_member, only: [:show, :update]
+    before_action :find_member, only: [:show, :update, :upload_image]
 
     steps :payment, :personal_profile, :next_of_kin
 
@@ -43,8 +43,14 @@ class Admin::MemberStepsController < ApplicationController
         
         render_wizard @member
     end
-    
 
+    def upload_image
+        binding.pry
+        image = io = Shrine.data_uri(params[:image])
+        @member.image = image
+    end
+
+    
     def paystack_customer_subscribe
         reference = params[:reference_code]
         transactions = PaystackTransactions.new(@paystackObj)
@@ -137,6 +143,5 @@ class Admin::MemberStepsController < ApplicationController
                     cash_transactions_attributes: [:amount_received, :cash_received_by, :service_paid_for, :_destroy]
             )
     end
-
 
 end

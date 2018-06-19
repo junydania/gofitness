@@ -20,7 +20,6 @@ class Admin::MembersController < Devise::RegistrationsController
 
 
     def create
-      binding.pry
         new_params = new_member_params.clone
         new_params[:password] = SecureRandom.hex(7)
         new_params[:password_confirmation] = new_params[:password]
@@ -35,6 +34,10 @@ class Admin::MembersController < Devise::RegistrationsController
           respond_with resource
         end
     end
+
+    # def create
+    #   redirect_to admin_member_steps_path
+    # end
 
     private
 

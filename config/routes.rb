@@ -22,6 +22,7 @@ Rails.application.routes.draw do
     resources :member_steps
     resources :health_conditions
     post 'paystack_subscribe' => 'member_steps#paystack_customer_subscribe', as: :paystack_subscription
+    post 'upload_image' => 'member_steps#upload_image', as: :image_upload
   end
   
   root 'welcome#index'
@@ -29,3 +30,4 @@ Rails.application.routes.draw do
   get 'welcome/index'
 
 end
+
