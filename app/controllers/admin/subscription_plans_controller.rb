@@ -13,12 +13,8 @@ class Admin::SubscriptionPlansController < ApplicationController
     end
 
     def create
-        binding.pry
         @subscription_plan = SubscriptionPlan.new(plan_param)
         if @subscription_plan.save
-            # flash[:notice] = "New Plan Successfully Created in the System"
-            # redirect_to new_admin_subscription_plan_path
-
             if @subscription_plan.recurring == true
                 paystackObj = GoFitPaystack.instantiate_paystack
                 plans = PaystackPlans.new(paystackObj)

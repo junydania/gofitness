@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180621170344) do
+ActiveRecord::Schema.define(version: 20180621185101) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -118,11 +118,13 @@ ActiveRecord::Schema.define(version: 20180621170344) do
     t.bigint "customer_code"
     t.bigint "phone_number"
     t.bigint "next_of_kin_phone"
+    t.bigint "referring_customer_id"
     t.index ["customer_code"], name: "index_members_on_customer_code", unique: true
     t.index ["email"], name: "index_members_on_email", unique: true
     t.index ["fitness_goal_id"], name: "index_members_on_fitness_goal_id"
     t.index ["payment_method_id"], name: "index_members_on_payment_method_id"
     t.index ["phone_number"], name: "index_members_on_phone_number", unique: true
+    t.index ["referring_customer_id"], name: "index_members_on_referring_customer_id"
     t.index ["reset_password_token"], name: "index_members_on_reset_password_token", unique: true
     t.index ["subscription_plan_id"], name: "index_members_on_subscription_plan_id"
   end

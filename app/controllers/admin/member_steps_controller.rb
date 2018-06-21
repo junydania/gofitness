@@ -167,5 +167,4 @@ class Admin::MemberStepsController < ApplicationController
                     cash_transactions_attributes: [:amount_received, :cash_received_by, :service_paid_for, :_destroy]
             )
     end
-
 end

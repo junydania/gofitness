@@ -7,12 +7,8 @@ $(document).on("turbolinks:load", function() {
             $(".group_member_hide").fadeOut('fast'); 
         }
     })
- });
 
-
- //Code to display selectize field
-$(document).on("turbolinks:load", function() {
-
+    //code for selectize on subscription plan page
     var selectizeCallback = null;
 
     $(".feature-modal").on("hide.bs.modal", function(e){
@@ -47,6 +43,7 @@ $(document).on("turbolinks:load", function() {
         }
     });
  });
+
 
 
 

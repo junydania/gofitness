@@ -54,6 +54,7 @@
                                         <%= f.label :health_condition_ids, 'Health Conditions' %>
                                         <%= f.select(:health_condition_ids, HealthCondition.all.pluck(:condition_name, :id), {}, { multiple: true, class: "health_selectize" }) %>
                                     </div>
+                                    
                                     <div>
                                         <%= f.submit 'Next', class: 'btn btn-danger m-r-10' %>
                                     </div>

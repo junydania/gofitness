@@ -33,6 +33,7 @@
 //= require admin/subscription_plans
 //= require admin/general
 //= require admin/fitness_goals
+//= require admin/members
 //= require admin/member_steps
 //= require bootstrap-datepicker/bootstrap-datepicker.min
 //= require bootstrap-daterangepicker/daterangepicker

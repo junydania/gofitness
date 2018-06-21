@@ -127,3 +127,13 @@ $(document).on("turbolinks:load", function() {
 
 
  });
+
+ 
+//Code to display with members with selectize
+$(document).on("turbolinks:load", function() {
+    $(".referral_selectize").selectize({
+        sortField: 'text'
+    });
+ });
+
+ 

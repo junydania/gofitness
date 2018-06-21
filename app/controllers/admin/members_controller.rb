@@ -9,7 +9,7 @@ class Admin::MembersController < Devise::RegistrationsController
     def index
     end
 
-    def new 
+    def new
       @subscription_plans = SubscriptionPlan.all  
       @payment_methods = PaymentMethod.all
       @fitness_goals = FitnessGoal.all
@@ -64,4 +64,6 @@ class Admin::MembersController < Devise::RegistrationsController
                     cash_transaction_attributes: [:id, :amount_received, :cash_received_by, :service_paid_for, :_destroy]
             )
     end
+
+
 end
