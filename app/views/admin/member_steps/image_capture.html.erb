@@ -30,6 +30,8 @@
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title">Image Capture</h4>
+                                <div class form-group id="image_upload-status">
+                                </div>
                                 <div id="my_camera">
                                 </div>
                                 <br/>
@@ -39,9 +41,11 @@
                                 <div id="results">
                         
                                 </div>
-                                <div class form-group id="image_upload-success">
-
-                                </div>
+                            </div>
+                        </div>
+                         <div class="card hide" id="image_capture-next">
+                            <div class="card-body">
+                                <%= link_to "Complete Registration", next_wizard_path , class: 'btn btn-danger m-r-10'%>
                             </div>
                         </div>
                     </div>
@@ -49,11 +53,7 @@
             </div>
         </div>
 
-        <div class="card hide" id="image_capture-next">
-            <div class="card-body">
-                <%= link_to "Complete Registration", next_wizard_path , class: 'btn btn-danger m-r-10'%>
-            </div>
-        </div>
+       
 
         
 

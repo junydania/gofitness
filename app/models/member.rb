@@ -7,6 +7,8 @@ class Member < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
 
     has_one  :account_detail
+    accepts_nested_attributes_for :account_detail, update_only: true
+
     has_many :member_health_conditions
     has_many :pos_transactions
     accepts_nested_attributes_for :pos_transactions,
@@ -17,8 +19,15 @@ class Member < ApplicationRecord
                                 reject_if: :all_blank, allow_destroy: true
 
     has_many :health_conditions, through: :member_health_conditions
+
     has_many :loyalty_histories
+    accepts_nested_attributes_for :loyalty_histories,
+                                reject_if: :all_blank, allow_destroy: true
+
     has_many :subscription_histories
+    accepts_nested_attributes_for :subscription_histories,
+                                reject_if: :all_blank, allow_destroy: true
+
     
     belongs_to :fitness_goal
     belongs_to :payment_method

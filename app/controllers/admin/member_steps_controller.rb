@@ -7,10 +7,10 @@ class Admin::MemberStepsController < ApplicationController
     include Wicked::Wizard
     include GoFitPaystack
 
-    before_action :get_paystack_object, only: [:paystack_customer_subscribe]
+    before_action :get_paystack_object, only: [:paystack_subscribe]
     before_action :find_member, only: [:show, :update, :upload_image]
 
-    steps :payment, :personal_profile, :next_of_kin
+    steps :payment, :personal_profile, :next_of_kin, :image_capture
 
     def show
         gon.amount, gon.email, gon.firstName = @member.subscription_plan.cost * 100, @member.email, @member.first_name
@@ -35,25 +35,44 @@ class Admin::MemberStepsController < ApplicationController
             else
                 skip_step
             end
-
+            render_wizard @member
         when :personal_profile
-            @member.update_attributes(member_params)
-
+            customer_code = member_params[:customer_code]
+            check_code = Member.find_by(customer_code: customer_code)
+            if check_code.nil? == true
+                @member.update_attributes(member_params)
+                render_wizard @member
+            else 
+                render_wizard
+            end
         when :next_of_kin
-            
+            @member.update_attributes(member_params)
+            render_wizard @member
         end
-        
-        render_wizard @member
+
+    end
+
+    def finish_wizard_path
+        member_profile_path(@member)
     end
 
 
     def upload_image
         member_image = Shrine.data_uri(params[:image])
         @member.image = member_image
+        if @member.save
+            render json: {
+                message: "Image Uploaded"
+            } 
+        else
+            render status: 500, json: {
+                message: "Failed to Upload"
+            }
+        end
     end
 
-    
-    def paystack_customer_subscribe
+
+    def paystack_subscribe
         reference = params[:reference_code]
         transactions = PaystackTransactions.new(@paystackObj)
         result = transactions.verify(reference)
@@ -82,7 +101,7 @@ class Admin::MemberStepsController < ApplicationController
                 enable_subscription = @create_subscription.enable(code: subscription_code, token: email_token)
                 if enable_subscription["status"] == true
                     ## Feature to Update AccountDetail, LoyaltyHistory, PaystackTransactions, SubscriptionHistory, GeneralTransactions.
-                    render json: {
+                    render status: 200, json: {
                         message: "success"
                     }
                 end
@@ -140,6 +159,9 @@ class Admin::MemberStepsController < ApplicationController
                     :phone_number,
                     :address, 
                     :date_of_birth, 
+                    :next_of_kin_name,
+                    :next_of_kin_phone,
+                    :next_of_kin_email,
                     health_condition_ids: [],
                     pos_transactions_attributes: [:transaction_success, :transaction_reference, :processed_by, :_destroy],
                     cash_transactions_attributes: [:amount_received, :cash_received_by, :service_paid_for, :_destroy]

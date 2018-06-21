@@ -10,7 +10,7 @@ Rails.application.routes.draw do
 
   devise_scope :user do
     get 'members' => 'admin/members#index', as: :members
-    # get 'user/:id' => 'admin/users#show', as: :user_profile
+    get 'member/:id' => 'admin/members#show', as: :member_profile
   end
 
 
@@ -21,7 +21,7 @@ Rails.application.routes.draw do
     resources :payment_methods
     resources :member_steps
     resources :health_conditions
-    post 'paystack_subscribe' => 'member_steps#paystack_customer_subscribe', as: :paystack_subscription
+    post 'paystack_subscribe' => 'member_steps#paystack_subscribe', as: :paystack_subscription
     post 'upload_image' => 'member_steps#upload_image', as: :image_upload
   end
   

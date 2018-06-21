@@ -16,6 +16,9 @@ class Admin::SubscriptionPlansController < ApplicationController
         binding.pry
         @subscription_plan = SubscriptionPlan.new(plan_param)
         if @subscription_plan.save
+            # flash[:notice] = "New Plan Successfully Created in the System"
+            # redirect_to new_admin_subscription_plan_path
+
             if @subscription_plan.recurring == true
                 paystackObj = GoFitPaystack.instantiate_paystack
                 plans = PaystackPlans.new(paystackObj)
@@ -26,10 +29,10 @@ class Admin::SubscriptionPlansController < ApplicationController
                         :interval => @subscription_plan.duration,
                         :currency => "NGN"
                 }
-                result = plans.create(data)
-                if result["status"] == true
-                    paystack_plan_code = result["data"]["plan_code"]
-                    @subscription_plan.update_attribute(:paystack_plan_id, paystack_plan_code)
+                @result = plans.create(data)
+                if @result["status"] == true
+                    paystack_plan_code = @result["data"]["plan_code"]
+                    @subscription_plan.update_attribute(:paystack_plan_code, paystack_plan_code)
                     flash[:notice] = "New Plan Successfully Created in System & Paystack"
                     redirect_to new_admin_subscription_plan_path
                 else

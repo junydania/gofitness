@@ -5,7 +5,6 @@ function take_snapshot(){
         if (id.length) {
             id.val(data_uri);
         }
-        // $("[name='member[image]']").val(data_uri)     
         data = { image: data_uri}   
         $.ajax({
             url: '/admin/upload_image',
@@ -13,14 +12,18 @@ function take_snapshot(){
             data: data,
             success: function(data, textStatus, xhr) {
                          content = `<div class="card-body">
-                                         <button class="tst2 btn btn-warning">Image Upload Successful! Click Complete</button>
+                                         <button class="tst2 btn btn-success">${data.message}</button>
                                     </div>`
-                         $('#image_upload-success').append(content)
+                         $('#image_upload-status').append(content)
                          $("#image_capture-next").fadeIn('fast')
                      },
-            error: function() {
-                    alert("Ajax error!")
-                  }
+            error: function(data) {
+                content = `<div class="card-body">
+                                    <button class="tst2 btn btn-danger">${data.message}</button>
+                            </div>`
+                $('#image_upload-status').append(content)
+
+            }
         })
 
         document.getElementById('results').innerHTML = '<img src="' + data_uri + '"/>';

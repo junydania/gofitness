@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180618174047) do
+ActiveRecord::Schema.define(version: 20180621170344) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,12 +91,9 @@ ActiveRecord::Schema.define(version: 20180618174047) do
   end
 
   create_table "members", force: :cascade do |t|
-    t.integer "customer_code"
     t.string "first_name"
     t.string "last_name"
-    t.integer "phone_number"
     t.string "next_of_kin_name"
-    t.integer "next_of_kin_phone"
     t.string "next_of_kin_email"
     t.string "address"
     t.date "date_of_birth"
@@ -118,9 +115,14 @@ ActiveRecord::Schema.define(version: 20180618174047) do
     t.inet "current_sign_in_ip"
     t.inet "last_sign_in_ip"
     t.text "image_data"
+    t.bigint "customer_code"
+    t.bigint "phone_number"
+    t.bigint "next_of_kin_phone"
+    t.index ["customer_code"], name: "index_members_on_customer_code", unique: true
     t.index ["email"], name: "index_members_on_email", unique: true
     t.index ["fitness_goal_id"], name: "index_members_on_fitness_goal_id"
     t.index ["payment_method_id"], name: "index_members_on_payment_method_id"
+    t.index ["phone_number"], name: "index_members_on_phone_number", unique: true
     t.index ["reset_password_token"], name: "index_members_on_reset_password_token", unique: true
     t.index ["subscription_plan_id"], name: "index_members_on_subscription_plan_id"
   end

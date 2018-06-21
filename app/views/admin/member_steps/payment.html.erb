@@ -37,7 +37,7 @@
                                 <h4 class="card-title">Receive Payment</h4>
                                 <% if @member.payment_method.payment_system == "Debit Card" %>
                                     <div class="button-box m-t-20">
-                                        <button id="paystack-button" class="btn btn-success" href="#">Pay with Card Online</button>
+                                        <button id="paystack-button" class="btn btn-info" href="#">Pay with Card Online</button>
                                     </div>
                                 <% elsif @member.payment_method.payment_system == "POS Terminal" %>
                                     <div><h5>Amount to Charge: </h5><button class="btn btn-success" href="#">₦<%= @member.subscription_plan.cost %></button></div>
@@ -58,13 +58,32 @@
                                 <% end %>
                             </div>
                         </div>
+                        <div class="card remove-back-button">
+                            <div class="card-body">
+                                <%= link_to "Back", 'javascript:history.back()', class: 'btn btn-danger m-r-10'%>
+                            </div>
+                        </div>
+                        <div class="card hide" id="reference-code">
+
+                        </div>
+                        <div class="card hide" id="manual-subscribe">
+                            <div class="card-body">
+                                <form>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="manual-subscribe-reference" placeholder="Enter reference code displayed above!"> 
+                                    </div>
+                                    <button type="submit" class="btn btn-info" id="reference-submit">Submit</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>                   
                     <div class="card hide" id="payment-next">
                         <div class="card-body">
-                            <%= link_to "Proceed to Personal Profile", next_wizard_path , class: 'btn btn-danger m-r-10'%>
+                            <%= link_to "Back", previous_wizard_path, class: 'btn btn-danger m-r-10'%>
+                            <%= link_to "Proceed to Personal Profile", next_wizard_path , class: 'btn btn-success m-r-10'%>
                         </div>
                     </div>
-
+                    
                 </div>
             </div>
         </div>

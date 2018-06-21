@@ -14,7 +14,6 @@ $(document).on("turbolinks:load", function() {
             // ref: ''+Math.floor((Math.random() * 1000000000) + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
             firstname: gon.firstName,
             lastname: gon.lastName,
-            // label: "Optional string that replaces customer email"
             metadata: {
                 custom_fields: [
                     {
@@ -25,7 +24,6 @@ $(document).on("turbolinks:load", function() {
                 ]
         },
         callback: function(response){
-            // alert('success. transaction ref is ' + response.reference);
             var data = {reference_code: response.reference}
             $.ajax({
                 url: '/admin/paystack_subscribe',
@@ -33,20 +31,28 @@ $(document).on("turbolinks:load", function() {
                 data: data,
                 success: function(data, textStatus, xhr) {
                              content = `<div class="card-body">
-                                             <button class="tst2 btn btn-warning">Payment and Membership Successful!</button>
+                                             <button class="tst2 btn btn-warning">Payment & Subscription Successful! Continue</button>
                                         </div>`
-                             $('#paystack-success').append(content)
-                             $("#payment-next").fadeIn('fast')
+                             $('#paystack-success').append(content);
+                             $('.remove-back-button').remove();
+                             $("#payment-next").fadeIn('fast');
                          },
                 error: function() {
-                        alert("Ajax error!")
+                            content = `<div class="card-body">
+                                            <p>Recurring subscription wasn't successfully activated.</p>
+                                            <p>Enter this reference code in the field below: ${response.reference} </p>
+                                       </div>`
+                            $("#reference-code").append(content);
+                            $("#reference-code").fadeIn('fast');
+                            $("#manual-subscribe").fadeIn('fast');                            
                       }
             })
         },
         onClose: function(){
-            alert('window closed');
+            alert('Payment Window Closed');
         }
         });
+
         handler.openIframe();
   }
         
@@ -56,8 +62,8 @@ $(document).on("turbolinks:load", function() {
  //Code to display selectize field
 $(document).on("turbolinks:load", function() {
 
-    var HealthHealthselectizeCallback = null;
-
+    var HealthselectizeCallback = null;
+    
     $(".health-modal").on("hide.bs.modal", function(e){
         if(HealthselectizeCallback != null) {
             HealthselectizeCallback();
@@ -88,4 +94,36 @@ $(document).on("turbolinks:load", function() {
             $("#health_condition_condition_name").val(input);
         }
     });
+ });
+
+
+ //Code to send reference manually to the backend for processing
+
+ $(document).on("turbolinks:load", function() {
+
+    $("#reference-submit").click(function(event) {
+
+        var referenceCode = $("#manual-subscribe-reference").val()
+        var data = {reference_code: referenceCode}
+        $.ajax({
+            url: '/admin/paystack_subscribe',
+            type: 'POST',
+            data: data,
+            success: function(data, textStatus, xhr) {
+                         content = `<div class="card-body">
+                                         <button class="tst2 btn btn-warning">Payment & Subscription Successful! Continue</button>
+                                    </div>`
+                         $('#paystack-success').append(content)
+                         $("#payment-next").fadeIn('fast')
+                     },
+            error: function() {
+                        content = `<p>Recurring Subscription was stil unsuccessful, click back and select an alternate payment method</p>`
+                        $("#reference-code").append(content)
+                        $("#reference-code").fadeIn('fast')
+                  }
+        })
+
+    })
+
+
  });
