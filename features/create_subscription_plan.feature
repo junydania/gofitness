@@ -26,8 +26,9 @@ Feature: As an administrator
     And I fill in field "Cost" with "15000"
     And I fill in field "subscription_plan_description" with "Gofitness Basic monthly package"
     And I select "Monthly" from "Duration"
+    And I select "No" from "subscription_plan_recurring"
     And I select "No" from "group_plan_select"
     And I select "Diet Plan" from "subscription_plan_feature_ids"
     And I click on "Create"
-    Then I should see "New Plan Successfully Created"
+    Then I should see "New Plan Successfully Created in the System"
 
