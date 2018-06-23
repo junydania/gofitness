@@ -1,6 +1,7 @@
 class Admin::MemberStepsController < ApplicationController
 
     before_action :authenticate_user!
+
     require 'paystack_module'  
     require 'rest-client'
 
@@ -8,8 +9,7 @@ class Admin::MemberStepsController < ApplicationController
     include GoFitPaystack
 
     before_action :get_paystack_object, only: [:paystack_subscribe]
-    before_action :find_member, only: [:show, :update, :upload_image]
-
+    before_action :find_member
     steps :payment, :personal_profile, :next_of_kin, :image_capture
 
     def show
@@ -73,34 +73,34 @@ class Admin::MemberStepsController < ApplicationController
 
 
     def paystack_subscribe
+        binding.pry
         reference = params[:reference_code]
         transactions = PaystackTransactions.new(@paystackObj)
         result = transactions.verify(reference)
         if result["status"] == true     
             @auth_code = result["data"]["authorization"]["authorization_code"]
-            @customer_code = result["data"]["customer"]["customer_code"]
-            member_id = session[:member_id]
-            @member = Member.find(member_id)
-            start_date = nil
-            if @member.subscription_plan.duration == "monthly"
-                start_date = DateTime.now.next_month.to_s
-            elsif @member.subscription_plan.duration == "quarterly"
-                start_date = (DateTime.now + 90).to_s
-            elsif @member.subscription_plan.duration == "annually"
-                start_date = DateTime.now.next_year.to_s
-            end
+            @paystack_customer_code = result["data"]["customer"]["customer_code"]
+            @start_date = set_paystack_start_date
             @plan_code = @member.subscription_plan.paystack_plan_code
             @create_subscription = PaystackSubscriptions.new(@paystackObj)
-            subscribe = @create_subscription.create(  customer: @customer_code,
+            subscribe = @create_subscription.create(  customer: @paystack_customer_code,
                                                       plan: @plan_code,
                                                       authorization: @auth_code,
-                                                      start_date: start_date )
+                                                      start_date: @start_date )
             if subscribe["status"] == true
                 subscription_code = subscribe["data"]["subscription_code"]
                 email_token = subscribe["data"]["email_token"]
+                paystack_created_date = subscribe["data"]["createdAt"]
+                subscribe_date = Time.iso8601(paystack_created_date).strftime('%d-%m-%Y %H:%M:%S')
+                expiry_date = set_expiry_date(subscribe_date)
+                amount = retrieve_amount
+                gym_plan = retrieve_gym_plan
+                recurring = true
                 enable_subscription = @create_subscription.enable(code: subscription_code, token: email_token)
                 if enable_subscription["status"] == true
-                    ## Feature to Update AccountDetail, LoyaltyHistory, PaystackTransactions, SubscriptionHistory, GeneralTransactions.
+                    ## Feature to Update AccountDetail, LoyaltyHistory, GeneralTransactions, SubscriptionHistory
+                    account_update = update_account_detail(subscribe_date, expiry_date, amount, gym_plan, recurring)
+                    account_update.save
                     render status: 200, json: {
                         message: "success"
                     }
@@ -119,7 +119,21 @@ class Admin::MemberStepsController < ApplicationController
 
     private
 
-    def update_account_detail
+    def find_member
+        member_id = session[:member_id]
+        @member = Member.find(member_id) 
+    end
+
+    def update_account_detail(subscribe_date, expiry_date, amount, gym_plan, recurring)
+        account_update = @member.build_account_detail(
+                                    subscribe_date:subscribe_date,
+                                    expiry_date: expiry_date,
+                                    member_status: "Active",
+                                    amount: amount,
+                                    loyalty_points_balance: 1000,
+                                    gym_plan: gym_plan,
+                                    recurring_billing: recurring )
+        return account_update
     end
 
     def update_loyalty_history
@@ -128,21 +142,45 @@ class Admin::MemberStepsController < ApplicationController
     def update_subscription_history
     end
 
-    def update_general_transactions
+    def retrieve_amount
+        amount = @member.subscription_plan.cost
+        return amount
+    end
+
+    def retrieve_gym_plan
+        plan = @member.subscription_plan.plan_name
+        return plan
     end
 
 
-    def verify_payment
-        
+    def set_expiry_date(subscribe_date)
+        expiry_date = String.new
+        if @member.subscription_plan.duration == "monthly"
+            expiry_date =  (DateTime.parse(subscribe_date) + 30).strftime('%d-%m-%Y %H:%M:%S')
+        elsif @member.subscription_plan.duration == "quarterly"
+            expiry_date =  (DateTime.parse(subscribe_date) + 90).strftime('%d-%m-%Y %H:%M:%S')
+        elsif @member.subscription_plan.duration == "annually"
+            expiry_date = (DateTime.parse(subscribe_date).next_year).strftime('%d-%m-%Y %H:%M:%S')
+        end
+        return expiry_date
     end
+
+
+    def set_paystack_start_date
+        start_date = String.new
+        if @member.subscription_plan.duration == "monthly"
+            start_date = DateTime.now.next_month.to_s
+        elsif @member.subscription_plan.duration == "quarterly"
+            start_date = (DateTime.now + 90).to_s
+        elsif @member.subscription_plan.duration == "annually"
+            start_date = DateTime.now.next_year.to_s
+        end
+        return start_date
+    end
+ 
 
     def get_paystack_object
         @paystackObj = GoFitPaystack.instantiate_paystack
-    end
-
-    def find_member
-        member_id = session[:member_id]
-        @member = Member.find(member_id) 
     end
 
     def member_params

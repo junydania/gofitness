@@ -31,4 +31,4 @@ Feature: As an administrator
     And I select "Diet Plan" from "subscription_plan_feature_ids"
     And I click on "Create"
     Then I should see "New Plan Successfully Created in the System"
-
+    
