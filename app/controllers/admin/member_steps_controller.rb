@@ -80,8 +80,7 @@ class Admin::MemberStepsController < ApplicationController
         if result["status"] == true     
             @auth_code = result["data"]["authorization"]["authorization_code"]
             @paystack_customer_code = result["data"]["customer"]["customer_code"]
-            @start_date = set_paystack_start_date
-            @plan_code = @member.subscription_plan.paystack_plan_code
+            @start_date, @plan_code = set_paystack_start_date, @member.subscription_plan.paystack_plan_code
             @create_subscription = PaystackSubscriptions.new(@paystackObj)
             subscribe = @create_subscription.create(  customer: @paystack_customer_code,
                                                       plan: @plan_code,
@@ -91,16 +90,17 @@ class Admin::MemberStepsController < ApplicationController
                 subscription_code = subscribe["data"]["subscription_code"]
                 email_token = subscribe["data"]["email_token"]
                 paystack_created_date = subscribe["data"]["createdAt"]
-                subscribe_date = Time.iso8601(paystack_created_date).strftime('%d-%m-%Y %H:%M:%S')
-                expiry_date = set_expiry_date(subscribe_date)
-                amount = retrieve_amount
-                gym_plan = retrieve_gym_plan
-                recurring = true
                 enable_subscription = @create_subscription.enable(code: subscription_code, token: email_token)
+                subscribe_date = Time.iso8601(paystack_created_date).strftime('%d-%m-%Y %H:%M:%S')
+                amount, gym_plan, expiry_date = retrieve_amount, retrieve_gym_plan, set_expiry_date(subscribe_date)
+                recurring, payment_method = true, @member.payment_method.payment_system
                 if enable_subscription["status"] == true
                     ## Feature to Update AccountDetail, LoyaltyHistory, GeneralTransactions, SubscriptionHistory
                     account_update = update_account_detail(subscribe_date, expiry_date, amount, gym_plan, recurring)
-                    account_update.save
+                    if account_update.save?
+                        create_subscription_history(subscribe_date, expiry_date, gym_plan, amount, payment_method)
+                        update_loyalty_history
+                        
                     render status: 200, json: {
                         message: "success"
                     }
@@ -116,6 +116,13 @@ class Admin::MemberStepsController < ApplicationController
     #     } 
     # end
     
+    t.integer "points_earned"
+    t.integer "points_redeemed"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "loyalty_balance"
+    t.integer "loyalty_transaction_type"
+
 
     private
 
@@ -136,20 +143,40 @@ class Admin::MemberStepsController < ApplicationController
         return account_update
     end
 
+
     def update_loyalty_history
+        loyalty_history = @member.create_loyalty_history(
+            points_earned = 1000,
+            points_redeemed = 0,
+            loyalty_transaction_type = "New Activation"
+        )
+        loyalty_history
     end
 
-    def update_subscription_history
+
+    def create_subscription_history(subscribe_date, expiry_date, gym_plan, amount, payment_method)
+        subscription_history = @member.create_subscription_history(
+            subscribe_date: subscribe_date,
+            expiry_date: expiry_date,
+            subscription_type: "New Subscription",
+            subscription_plan: gym_plan,
+            amount: amount,
+            payment_method: payment_method,
+            member_status: "Status",
+            subscription_status: "Paid"
+        )
+        subscription_history
     end
+
 
     def retrieve_amount
         amount = @member.subscription_plan.cost
-        return amount
+        amount
     end
 
     def retrieve_gym_plan
         plan = @member.subscription_plan.plan_name
-        return plan
+        plan
     end
 
 
