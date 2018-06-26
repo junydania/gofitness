@@ -1,0 +1,28 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button id="close-loyalty-modal" type="button" class="close" data-toggle="modal" data-target="#loyalty-modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="loyaltyModalLabel">Edit </h4> </div>
+        <div class="modal-body">
+            <%= form_for([:admin, loyalty], remote: true, html: {class: 'form-material m-t-40' }) do |f| %>
+                <h4>Edit Loyalty </h4>
+                <br/>
+                <div class="form-group">
+                    <%= f.label :loyalty_type, 'Loyalty Type' %>
+                    <%= f.text_field :loyalty_type, readonly: true, placeholder: "#{loyalty.loyalty_type}", class:'form-control form-control-line' %>
+                </div>
+                <div class="form-group">
+                    <%= f.label :loyalty_points_percentage, 'Loyalty Points Percentage' %>
+                    <%= f.number_field :loyalty_points_percentage, class: 'form-control form-control-line' %>
+                </div>
+                
+                <div>
+                    <%= f.submit 'Update', class: 'btn btn-danger m-r-10' %>
+                </div>
+            <% end %>
+        </div>
+    </div>
+</div>
+
+
+

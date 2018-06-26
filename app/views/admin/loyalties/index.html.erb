@@ -1,0 +1,97 @@
+        <div class="page-wrapper">
+            <!-- ============================================================== -->
+            <!-- Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <div class="row page-titles">
+                <div class="col-md-5 align-self-center">
+                    <h3 class="text-themecolor">Loyalty Plan</h3>
+                </div>
+                <div class="col-md-7 align-self-center">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                        <li class="breadcrumb-item">Loyalty</li>
+                        <li class="breadcrumb-item active">View Loyalty Plans</li>
+                    </ol>
+                </div>
+                <div>
+                    <button class="right-side-toggle waves-effect waves-light btn-inverse btn btn-circle btn-sm pull-right m-l-10"><i class="ti-settings text-white"></i></button>
+                </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- Container fluid  -->
+            <!-- ============================================================== -->
+            <div class="container-fluid">
+                <!-- ============================================================== -->
+                <!-- Start Page Content -->
+                <!-- ============================================================== -->
+                
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Loyalty Plans</h4>
+                                <div class="table-responsive">
+                                    <table class="table full-color-table full-dark-table hover-table">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Loyalty Type</th>
+                                                <th>Loyalty Percentage</th>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <%= render 'index' %>                                    
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Create New Loyalty</h4>
+                                <div class="table-responsive">
+                                    <%= form_for([:admin, @loyalty], html: {class: 'form-material m-t-40' }) do |f| %>
+                                        <% if @loyalty.errors.any? %>
+                                            <% @loyalty.errors.full_messages.each do |message| %>
+                                                <div class='alert alert-danger flash-message'>
+                                                    <%= message %>
+                                                </div>
+                                            <% end %>
+                                        <% end %>
+                                        <div class='alert alert-success' id='flash-box'>
+                                            <div class='flash-message'> <%= flash[:notice] %> </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <%= f.label :loyalty_type, 'Loyalty Type' %>
+                                            <%= f.select(:loyalty_type, options_for_select(Loyalty.loyalty_types.keys.map { |loyalty_type| [loyalty_type.titleize, loyalty_type]}), {include_blank: true}, { :class =>  "form-control" } ) %>
+                                        </div>
+                                        <div class="form-group">
+                                            <%= f.label :loyalty_points_percentage, 'Loyalty Percentage(%)' %>
+                                            <%= f.number_field :loyalty_points_percentage, class: 'form-control form-control-line' %>
+                                        </div>
+                                        <div>
+                                            <%= f.submit 'Create', class: 'btn btn-danger m-r-10' %>
+                                        </div>
+                                    <% end %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="loyalty-modal" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="loyaltyModalLabel" aria-hidden="true">
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- End Container fluid  -->
+            <%= render partial: 'shared/footer' %>
+        </div>
