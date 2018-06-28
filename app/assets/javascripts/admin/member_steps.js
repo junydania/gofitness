@@ -24,7 +24,7 @@ $(document).on("turbolinks:load", function() {
                 ]
         },
         callback: function(response){
-            var data = {reference_code: response.reference}
+            var data = {reference_code: response.reference};
             $.ajax({
                 url: '/admin/paystack_subscribe',
                 type: 'POST',
@@ -32,7 +32,7 @@ $(document).on("turbolinks:load", function() {
                 success: function(data, textStatus, xhr) {
                              content = `<div class="card-body">
                                              <button class="tst2 btn btn-warning">Payment & Subscription Successful! Continue</button>
-                                        </div>`
+                                        </div>`;
                              $('#paystack-success').append(content);
                              $('.remove-back-button').remove();
                              $("#payment-next").fadeIn('fast');
@@ -89,7 +89,7 @@ $(document).on("turbolinks:load", function() {
     })
     $(".health_selectize").selectize({
         create: function(input, callback) {
-            HealthselectizeCallback = callback
+            HealthselectizeCallback = callback;
             $(".health-modal").modal();
             $("#health_condition_condition_name").val(input);
         }
@@ -103,8 +103,8 @@ $(document).on("turbolinks:load", function() {
 
     $("#reference-submit").click(function(event) {
 
-        var referenceCode = $("#manual-subscribe-reference").val()
-        var data = {reference_code: referenceCode}
+        var referenceCode = $("#manual-subscribe-reference").val();
+        var data = {reference_code: referenceCode};
         $.ajax({
             url: '/admin/paystack_subscribe',
             type: 'POST',
@@ -113,13 +113,13 @@ $(document).on("turbolinks:load", function() {
                          content = `<div class="card-body">
                                          <button class="tst2 btn btn-warning">Payment & Subscription Successful! Continue</button>
                                     </div>`
-                         $('#paystack-success').append(content)
-                         $("#payment-next").fadeIn('fast')
+                         $('#paystack-success').append(content);
+                         $("#payment-next").fadeIn('fast');
                      },
             error: function() {
                         content = `<p>Recurring Subscription was stil unsuccessful, click back and select an alternate payment method</p>`
-                        $("#reference-code").append(content)
-                        $("#reference-code").fadeIn('fast')
+                        $("#reference-code").append(content);
+                        $("#reference-code").fadeIn('fast');
                   }
         })
 

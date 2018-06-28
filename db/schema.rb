@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180625233909) do
+ActiveRecord::Schema.define(version: 20180628000528) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -18,7 +18,6 @@ ActiveRecord::Schema.define(version: 20180625233909) do
   create_table "account_details", force: :cascade do |t|
     t.datetime "subscribe_date"
     t.datetime "expiry_date"
-    t.string "member_status"
     t.datetime "pause_start_date"
     t.datetime "pause_cancel_date"
     t.integer "amount"
@@ -29,6 +28,7 @@ ActiveRecord::Schema.define(version: 20180625233909) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "member_id"
+    t.integer "member_status"
     t.index ["member_id"], name: "index_account_details_on_member_id"
   end
 
@@ -58,6 +58,25 @@ ActiveRecord::Schema.define(version: 20180625233909) do
 
   create_table "fitness_goals", force: :cascade do |t|
     t.string "goal_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "general_transactions", force: :cascade do |t|
+    t.string "member_fullname"
+    t.integer "transaction_type"
+    t.datetime "subscribe_date"
+    t.datetime "expiry_date"
+    t.string "staff_responsible"
+    t.integer "payment_method"
+    t.integer "loyalty_earned"
+    t.integer "loyalty_redeemed"
+    t.string "membership_plan"
+    t.integer "membership_status"
+    t.bigint "customer_code"
+    t.string "member_email"
+    t.integer "loyalty_type"
+    t.integer "amount"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -164,15 +183,15 @@ ActiveRecord::Schema.define(version: 20180625233909) do
   create_table "subscription_histories", force: :cascade do |t|
     t.datetime "subscribe_date"
     t.datetime "expiry_date"
-    t.string "subscription_type"
     t.string "subscription_plan"
     t.integer "amount"
     t.string "payment_method"
-    t.string "member_status"
     t.string "subscription_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "member_id"
+    t.integer "subscription_type"
+    t.integer "member_status"
     t.index ["member_id"], name: "index_subscription_histories_on_member_id"
   end
 

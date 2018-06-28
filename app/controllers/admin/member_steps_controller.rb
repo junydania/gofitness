@@ -1,20 +1,21 @@
 class Admin::MemberStepsController < ApplicationController
 
-    before_action :authenticate_user!
-
     require 'paystack_module'  
     require 'rest-client'
 
     include Wicked::Wizard
     include GoFitPaystack
 
+    before_action :authenticate_user!
     before_action :get_paystack_object, only: [:paystack_subscribe]
     before_action :find_member
     steps :payment, :personal_profile, :next_of_kin, :image_capture
 
+
     def show
         gon.amount, gon.email, gon.firstName = @member.subscription_plan.cost * 100, @member.email, @member.first_name
-        gon.lastName, gon.displayValue, gon.publicKey = @member.last_name, @member.phone_number, ENV["PAYSTACK_TEST_PUBLIC"]
+        gon.lastName, gon.displayValue = @member.last_name, @member.phone_number
+        gon.publicKey = ENV["PAYSTACK_TEST_PUBLIC"]
         render_wizard
     end
 
@@ -36,6 +37,7 @@ class Admin::MemberStepsController < ApplicationController
                 skip_step
             end
             render_wizard @member
+            
         when :personal_profile
             customer_code = member_params[:customer_code]
             check_code = Member.find_by(customer_code: customer_code)
@@ -49,9 +51,9 @@ class Admin::MemberStepsController < ApplicationController
             @member.update_attributes(member_params)
             render_wizard @member
         end
-
     end
 
+    
     def finish_wizard_path
         member_profile_path(@member)
     end
@@ -73,14 +75,13 @@ class Admin::MemberStepsController < ApplicationController
 
 
     def paystack_subscribe
-        binding.pry
         reference = params[:reference_code]
         transactions = PaystackTransactions.new(@paystackObj)
         result = transactions.verify(reference)
         if result["status"] == true     
             @auth_code = result["data"]["authorization"]["authorization_code"]
             @paystack_customer_code = result["data"]["customer"]["customer_code"]
-            @start_date, @plan_code = set_paystack_start_date, @member.subscription_plan.paystack_plan_code
+            @start_date, @plan_code = set_paystack_start_date, get_subscription_plan_code
             @create_subscription = PaystackSubscriptions.new(@paystackObj)
             subscribe = @create_subscription.create(  customer: @paystack_customer_code,
                                                       plan: @plan_code,
@@ -92,91 +93,94 @@ class Admin::MemberStepsController < ApplicationController
                 paystack_created_date = subscribe["data"]["createdAt"]
                 enable_subscription = @create_subscription.enable(code: subscription_code, token: email_token)
                 subscribe_date = Time.iso8601(paystack_created_date).strftime('%d-%m-%Y %H:%M:%S')
-                amount, gym_plan, expiry_date = retrieve_amount, retrieve_gym_plan, set_expiry_date(subscribe_date)
-                recurring, payment_method = true, @member.payment_method.payment_system
+                expiry_date = set_expiry_date(subscribe_date)
                 if enable_subscription["status"] == true
-                    ## Feature to Update AccountDetail, LoyaltyHistory, GeneralTransactions, SubscriptionHistory
-                    account_update = update_account_detail(subscribe_date, expiry_date, amount, gym_plan, recurring)
+                    account_update = update_account_detail(subscribe_date, expiry_date)
                     if account_update.save?
-                        create_subscription_history(subscribe_date, expiry_date, gym_plan, amount, payment_method)
-                        update_loyalty_history
-                        
-                    render status: 200, json: {
-                        message: "success"
-                    }
+                        create_subscription_history(subscribe_date, expiry_date)
+                        create_loyalty_history(amount)
+                        create_general_transaction(subscribe_date, amount)    
+                    end
                 end
             end
+            render status: 200, json: {
+                message: "success"
+            }
+        else
+            render  status: 400, json: { 
+                success: false 
+            }
         end    
     end
     
 
-    # def paystack_customer_subscribe
-    #     render json: {
-    #         message: "success"
-    #     } 
-    # end
-    
-    t.integer "points_earned"
-    t.integer "points_redeemed"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "loyalty_balance"
-    t.integer "loyalty_transaction_type"
-
-
+   
     private
 
     def find_member
-        member_id = session[:member_id]
-        @member = Member.find(member_id) 
+        @member = Member.find(session[:member_id]) 
     end
 
-    def update_account_detail(subscribe_date, expiry_date, amount, gym_plan, recurring)
+    def update_account_detail(subscribe_date, expiry_date, amount)
         account_update = @member.build_account_detail(
                                     subscribe_date:subscribe_date,
                                     expiry_date: expiry_date,
-                                    member_status: "Active",
-                                    amount: amount,
-                                    loyalty_points_balance: 1000,
-                                    gym_plan: gym_plan,
-                                    recurring_billing: recurring )
-        return account_update
+                                    member_status: 1,
+                                    amount: retrieve_amount,
+                                    loyalty_points_balance: get_loyalty_points(amount),
+                                    loyalty_points_used: 0,
+                                    gym_plan: retrieve_gym_plan,
+                                    recurring_billing: true )
     end
 
-
-    def update_loyalty_history
+    
+    def create_loyalty_history(amount)
+        points = get_loyalty_points(amount)
         loyalty_history = @member.create_loyalty_history(
-            points_earned = 1000,
-            points_redeemed = 0,
-            loyalty_transaction_type = "New Activation"
-        )
-        loyalty_history
+            points_earned: points,
+            points_redeemed: 0,
+            loyalty_transaction_type: "New Registration",
+            loyalty_balance: points )
     end
 
 
-    def create_subscription_history(subscribe_date, expiry_date, gym_plan, amount, payment_method)
+    def get_loyalty_points(amount)
+        point = Loyalty.find_by(loyalty_type: "register").loyalty_points_percentage
+        point = ((point * 0.01) * amount).to_i
+    end
+
+    
+    def loyalty_current_balance
+        @member.account_detail.loyalty_points_balance
+    end
+    
+    
+    def retrieve_payment_method
+        @member.payment_method.payment_system
+    end
+
+    
+    def create_subscription_history(subscribe_date, expiry_date)
         subscription_history = @member.create_subscription_history(
             subscribe_date: subscribe_date,
             expiry_date: expiry_date,
-            subscription_type: "New Subscription",
-            subscription_plan: gym_plan,
-            amount: amount,
-            payment_method: payment_method,
-            member_status: "Status",
+            subscription_type: 1,
+            subscription_plan: retrieve_gym_plan,
+            amount: retrieve_amount,
+            payment_method: retrieve_payment_method,
+            member_status: 1,
             subscription_status: "Paid"
         )
-        subscription_history
     end
 
 
     def retrieve_amount
         amount = @member.subscription_plan.cost
-        amount
     end
 
+    
     def retrieve_gym_plan
         plan = @member.subscription_plan.plan_name
-        plan
     end
 
 
@@ -189,9 +193,8 @@ class Admin::MemberStepsController < ApplicationController
         elsif @member.subscription_plan.duration == "annually"
             expiry_date = (DateTime.parse(subscribe_date).next_year).strftime('%d-%m-%Y %H:%M:%S')
         end
-        return expiry_date
+        expiry_date
     end
-
 
     def set_paystack_start_date
         start_date = String.new
@@ -202,12 +205,34 @@ class Admin::MemberStepsController < ApplicationController
         elsif @member.subscription_plan.duration == "annually"
             start_date = DateTime.now.next_year.to_s
         end
-        return start_date
+        start_date
     end
  
+    def get_subscription_plan_code
+        @member.subscription_plan.paystack_plan_code
+    end
+
 
     def get_paystack_object
         @paystackObj = GoFitPaystack.instantiate_paystack
+    end
+
+    def create_general_transaction(subscribe_date, amount, payment_method)
+        GeneralTransaction.create(
+            member_fullname: @member.fullname,
+            transaction_type: 1,
+            subscribe_date: subscribe_date,
+            expiry_date: set_expiry_date(subscribe_date),
+            staff_responsible: current_user.fullname,
+            payment_method: payment_method,
+            loyalty_earned: get_loyalty_points(amount)
+            loyalty_redeemed: 0,
+            membership_plan: retrieve_gym_plan
+            membership_status: 1,
+            customer_code: @member.customer_code
+            member_email: @member.email,
+            loyalty_type: 1,
+            amount: amount )
     end
 
     def member_params
