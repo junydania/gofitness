@@ -83,7 +83,7 @@ namespace :deploy do
     task :npm_install do
       on roles(:app) do
         within deploy_to do
-          execute("npm install")
+          execute("npm install --save")
         end
       end
     end
@@ -92,8 +92,9 @@ namespace :deploy do
    
 
     # before :starting,   :check_revision
+
     # before "deploy:assets:precompile", "deploy:npm_install"
-    before :finishing, :npm_install
+    before :compile_assets, :npm_install
     after  :finishing,  :compile_assets
     after  :finishing,  :cleanup
     after  :finishing,  :restart 
