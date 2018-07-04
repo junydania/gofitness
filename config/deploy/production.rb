@@ -80,21 +80,21 @@ namespace :deploy do
       end
     end
 
-    # desc 'Install node modules'
-    # task :install_node_modules do
-    #   on roles(:app) do
-    #     within release_path do
-    #       execute :npm, 'install', '-s'
-    #     end
-    #   end
-    # end
-
     desc 'Install node modules'
-    task :compile_node_modules do
+    task :install_node_modules do
       on roles(:app) do
-          invoke 'rake npm:install:clean'
+        within release_path do
+          execute :npm, 'install', '-s'
+        end
       end
     end
+
+    # desc 'Install node modules'
+    # task :compile_node_modules do
+    #   on roles(:app) do
+    #       invoke 'rake npm:install:clean'
+    #   end
+    # end
    
 
 
