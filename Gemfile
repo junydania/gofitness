@@ -27,6 +27,7 @@ gem 'gon'
 gem 'paystack'
 gem 'shrine'
 gem "aws-sdk-s3"
+gem "browserify-rails"
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

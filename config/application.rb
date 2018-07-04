@@ -16,6 +16,6 @@ module Gofitness
     # -- all .rb files in that directory are automatically loaded.
     config.eager_load_paths << "#{Rails.root}/lib/capistrano/tasks"
     config.eager_load_paths << Rails.root.join('lib')
-    
+    config.browserify_rails.commandline_options = "-t coffeeify --extension=\".js.coffee\""
   end
 end
