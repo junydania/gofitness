@@ -21,7 +21,6 @@ class Admin::MemberStepsController < ApplicationController
     def update
         case step
         when :payment
-            binding.pry
             if @member.payment_method.payment_system.upcase == "CASH" 
                 amount_received = member_params[:cash_transactions_attributes]["0"][:amount_received].to_i
                 expected_amount = retrieve_amount
