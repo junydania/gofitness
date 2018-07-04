@@ -82,7 +82,7 @@ namespace :deploy do
     desc 'Run npm:install'
     task :npm_install do
       on roles(:app) do
-        within deploy_to do
+        within release_path do
           execute("npm install --save")
         end
       end
