@@ -93,10 +93,9 @@ namespace :deploy do
     task :compile_node_modules do
       on roles(:app) do
           invoke 'rake npm:install:clean'
-        end
       end
     end
-
+   
 
 
     before :starting,   :check_revision
