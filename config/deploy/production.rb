@@ -83,13 +83,13 @@ namespace :deploy do
     task :npm_install do
       on roles(:app) do
         within release_path do
-          execute("npm install --save")
+          execute("cd #{release_path} && npm install")
         end
       end
     end
 
 
-   
+  
 
     # before :starting,   :check_revision
 
