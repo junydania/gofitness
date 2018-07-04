@@ -23,7 +23,6 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:sign_up, keys: [:username])
   end
 
-
   def layout_by_resource
     if devise_controller? && resource_name == :user && controller_name == 'sessions' && action_name == "new"
       "layout_blank"

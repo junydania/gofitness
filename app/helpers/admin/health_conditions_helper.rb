@@ -1,0 +1,2 @@
+module Admin::HealthConditionsHelper
+end

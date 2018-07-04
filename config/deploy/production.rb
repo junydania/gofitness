@@ -22,6 +22,7 @@ set :ssh_options, {
 set :puma_preload_app, true
 set :puma_worker_timeout, nil
 set :puma_init_active_record, true  # Change to true if using ActiveRecord
+set :puma_restart_command, 'bundle exec puma'
 
 
 role :app, %w{deployer@206.189.27.129}
@@ -67,7 +68,6 @@ namespace :deploy do
     desc 'Initial Deploy'
     task :initial do
       on roles(:app) do
-        invoke 'puma:restart'
         before 'deploy:restart', 'puma:start'
         invoke 'deploy'
       end
@@ -79,17 +79,6 @@ namespace :deploy do
         invoke 'puma:restart'
       end
     end
-
-    # desc 'Runs rake db:seed'
-    # task :seed => [:set_rails_env] do
-    #   on primary fetch(:migration_role) do
-    #     within release_path do
-    #       with rails_env: fetch(:rails_env) do
-    #         execute :rake, "db:seed"
-    #       end
-    #     end
-    #   end
-    # end
   
     before :starting,     :check_revision
     after  :finishing,    :compile_assets

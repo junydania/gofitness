@@ -1,4 +1,6 @@
 class Admin::FeaturesController < ApplicationController
+    
+    before_action :authenticate_user!
 
     def create
         @feature = Feature.new(feature_params)

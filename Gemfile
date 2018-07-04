@@ -22,8 +22,11 @@ gem 'jquery-rails'
 gem 'material_design_icons'
 gem 'devise'
 gem 'selectize-rails'
-
-
+gem 'wicked', '~> 1.3.2'
+gem 'gon'
+gem 'paystack'
+gem 'shrine'
+gem "aws-sdk-s3"
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

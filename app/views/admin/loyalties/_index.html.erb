@@ -1,0 +1,9 @@
+<% @loyalties.each do |loyalty| %>
+    <tr>
+        <td><%= loyalty.id %></td>
+        <td><%= loyalty.loyalty_type %></td>
+        <td><%= loyalty.loyalty_points_percentage %>%</td>
+        <td><%= link_to "Edit", edit_admin_loyalty_path(id: loyalty.id), remote: true, class: 'btn btn-success m-r-10'  %></td>
+        <td><%= link_to "Delete", admin_loyalty_path(loyalty) , method: :delete, data: { confirm: 'Sure about this?'}, class: 'btn btn-success m-r-10'  %>
+    </tr>
+<% end %>       

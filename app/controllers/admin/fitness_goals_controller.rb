@@ -1,5 +1,6 @@
 class Admin::FitnessGoalsController < ApplicationController
-
+    
+    before_action :authenticate_user!
     before_action :find_fitness_goal, only: [:show, :edit, :update, :destroy] 
 
     def index
