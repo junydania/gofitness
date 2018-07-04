@@ -1,5 +1,11 @@
 {
   "name": "gofitness",
-  "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "browserify": "^14.0.0",
+    "browserify-incremental": "^3.1.0"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">= 0.10"
+  }
 }
