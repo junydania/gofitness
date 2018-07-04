@@ -92,7 +92,8 @@ namespace :deploy do
    
 
     # before :starting,   :check_revision
-    before :deploy, :npm_install
+    # before "deploy:assets:precompile", "deploy:npm_install"
+    before :finishing, :npm_install
     after  :finishing,  :compile_assets
     after  :finishing,  :cleanup
     after  :finishing,  :restart 
