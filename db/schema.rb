@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180628000528) do
+ActiveRecord::Schema.define(version: 20180703215623) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,7 +68,6 @@ ActiveRecord::Schema.define(version: 20180628000528) do
     t.datetime "subscribe_date"
     t.datetime "expiry_date"
     t.string "staff_responsible"
-    t.integer "payment_method"
     t.integer "loyalty_earned"
     t.integer "loyalty_redeemed"
     t.string "membership_plan"
@@ -79,6 +78,7 @@ ActiveRecord::Schema.define(version: 20180628000528) do
     t.integer "amount"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "payment_method"
   end
 
   create_table "health_conditions", force: :cascade do |t|

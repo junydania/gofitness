@@ -9,7 +9,6 @@ class Admin::LoyaltiesController < ApplicationController
     end
 
     def create
-        binding.pry
         @new_loyalty = Loyalty.new(loyalty_param)
         if @new_loyalty.save
             flash[:notice] = "Loyalty Plan Successfully Created"

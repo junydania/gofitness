@@ -26,9 +26,11 @@
                 <div
                 <div class="row">
                     <div class="col-12">
-                        <div class='alert alert-success' id='flash-box'>
-                            <div class='flash-message'> <%= flash[:notice] %> </div>
-                        </div>
+                        <% flash.each do |key, value| %>
+                            <div class="<%= flash_class(key) %>">
+                                    <%= value %>
+                            </div>
+                        <% end %>
                         </br>
                         <div class="card">
                             <div class="card-body">

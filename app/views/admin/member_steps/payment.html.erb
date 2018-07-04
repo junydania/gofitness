@@ -26,13 +26,16 @@
                 <div
                 <div class="row">
                     <div class="col-12">
-                        <div class="card">
-                            <%= flash[:notice] %>
-                        </div>
+                        <% flash.each do |key, value| %>
+                            <div class="<%= flash_class(key) %>">
+                                    <%= value %>
+                            </div>
+                        <% end %>
                         </br>
                         <div class="card">
                             <div class form-group id="paystack-success">
                             </div>
+                  
                             <div class="card-body">
                                 <h4 class="card-title">Receive Payment</h4>
                                 <% if @member.payment_method.payment_system == "Debit Card" %>
