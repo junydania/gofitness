@@ -10,7 +10,7 @@ set :user,            'railsdeploy'
 set :puma_threads,    [4, 16]
 set :puma_workers,    0
 # set :deploy_to, "/home/railsdeploy/apps/gofitness"
-set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
+set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system node_modules}
 set :pty, true
 
 set :format, :pretty

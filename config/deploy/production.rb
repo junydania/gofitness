@@ -79,10 +79,20 @@ namespace :deploy do
         invoke 'puma:restart'
       end
     end
+
+    desc 'Install node modules'
+    task :install_node_modules do
+      on roles(:app) do
+        within release_path do
+          execute :npm, 'install', '-s'
+        end
+      end
+   end
   
-    before :starting,     :check_revision
-    after  :finishing,    :compile_assets
-    after  :finishing,    :cleanup
-    after  :finishing,    :restart 
+    before :starting,   :check_revision
+    before :starting,   :install_node_modules
+    after  :finishing,  :compile_assets
+    after  :finishing,  :cleanup
+    after  :finishing,  :restart 
 end
   
