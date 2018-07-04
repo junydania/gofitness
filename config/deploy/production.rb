@@ -4,8 +4,8 @@
 set :pty,             true
 set :use_sudo,        true
 set :stage,           :production
-set :rails_env, :production
-set :branch, "develop"
+set :rails_env,       :production
+set :branch,          "develop"
 set :deploy_via,      :remote_cache
 set :deploy_to,       "/home/#{fetch(:user)}/apps/#{fetch(:application)}"
 set :puma_bind,       "unix://#{shared_path}/tmp/sockets/#{fetch(:application)}-puma.sock"
@@ -80,15 +80,23 @@ namespace :deploy do
       end
     end
 
+    # desc 'Install node modules'
+    # task :install_node_modules do
+    #   on roles(:app) do
+    #     within release_path do
+    #       execute :npm, 'install', '-s'
+    #     end
+    #   end
+    # end
+
     desc 'Install node modules'
     task :install_node_modules do
       on roles(:app) do
-        within release_path do
-          execute :npm, 'install', '-s'
-        end
+          invoke 'rake npm:install:clean'
       end
-   end
-  
+    end
+   
+
     before :starting,   :check_revision
     before :starting,   :install_node_modules
     after  :finishing,  :compile_assets

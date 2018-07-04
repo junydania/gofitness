@@ -14,4 +14,6 @@ set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public
 set :pty, true
 
 set :format, :pretty
-
+set :assets_prefix, 'prepackaged-assets'
+set :assets_manifests, ['app/assets/config/manifest.js']
+set :rails_assets_groups, :assets
