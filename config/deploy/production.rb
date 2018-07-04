@@ -5,7 +5,7 @@ set :pty,             true
 set :use_sudo,        true
 set :stage,           :production
 set :rails_env,       :production
-set :branch,          "develop"
+set :branch,          "fix-asset-compile"
 set :deploy_via,      :remote_cache
 set :deploy_to,       "/home/#{fetch(:user)}/apps/#{fetch(:application)}"
 set :puma_bind,       "unix://#{shared_path}/tmp/sockets/#{fetch(:application)}-puma.sock"
@@ -23,8 +23,6 @@ set :puma_preload_app, true
 set :puma_worker_timeout, nil
 set :puma_init_active_record, true  # Change to true if using ActiveRecord
 set :puma_restart_command, 'bundle exec puma'
-set :release_path,  "/home/#{fetch(:user)}/apps/#{fetch(:application)}"
-
 
 role :app, %w{deployer@206.189.27.129}
 role :web, %w{deployer@206.189.27.129}
@@ -81,11 +79,11 @@ namespace :deploy do
       end
     end
 
-    desc 'Run rake yarn:install'
+    desc 'Run npm:install'
     task :npm_install do
       on roles(:app) do
-        within release_path do
-          execute("cd #{release_path} && npm install")
+        within deploy_to do
+          execute("npm install")
         end
       end
     end
@@ -93,7 +91,7 @@ namespace :deploy do
 
    
 
-    before :starting,   :check_revision
+    # before :starting,   :check_revision
     before "deploy:assets:precompile", "deploy:npm_install"
     after  :finishing,  :compile_assets
     after  :finishing,  :cleanup
