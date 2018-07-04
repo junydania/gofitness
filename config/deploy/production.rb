@@ -23,6 +23,7 @@ set :puma_preload_app, true
 set :puma_worker_timeout, nil
 set :puma_init_active_record, true  # Change to true if using ActiveRecord
 set :puma_restart_command, 'bundle exec puma'
+set :release_path,  "/home/#{fetch(:user)}/apps/#{fetch(:application)}"
 
 
 role :app, %w{deployer@206.189.27.129}
@@ -80,27 +81,23 @@ namespace :deploy do
       end
     end
 
-    # desc 'Install node modules'
-    # task :install_node_modules do
-    #   on roles(:app) do
-    #     within release_path do
-    #       execute :npm, 'install', '-s'
-    #     end
-    #   end
-    # end
-
-    desc 'Install node modules'
-    task :install_node_modules do
+    desc 'Run rake yarn:install'
+    task :npm_install do
       on roles(:app) do
-          invoke 'rake npm:install:clean'
+        within release_path do
+          execute("cd #{release_path} && npm install")
+        end
       end
     end
+
+
    
 
     before :starting,   :check_revision
-    before :starting,   :install_node_modules
+    before "deploy:assets:precompile", "deploy:npm_install"
     after  :finishing,  :compile_assets
     after  :finishing,  :cleanup
     after  :finishing,  :restart 
+
 end
   
