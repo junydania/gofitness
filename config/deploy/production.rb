@@ -5,7 +5,7 @@ set :pty,             true
 set :use_sudo,        true
 set :stage,           :production
 set :rails_env,       :production
-set :branch,          "fix-asset-compile"
+set :branch,          "develop"
 set :deploy_via,      :remote_cache
 set :deploy_to,       "/home/#{fetch(:user)}/apps/#{fetch(:application)}"
 set :puma_bind,       "unix://#{shared_path}/tmp/sockets/#{fetch(:application)}-puma.sock"
@@ -88,12 +88,7 @@ namespace :deploy do
       end
     end
 
-
-  
-
-    # before :starting,   :check_revision
-
-    # before "deploy:assets:precompile", "deploy:npm_install"
+    before :starting,   :check_revision
     before :compile_assets, :npm_install
     after  :finishing,  :compile_assets
     after  :finishing,  :cleanup
