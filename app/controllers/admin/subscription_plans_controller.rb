@@ -14,40 +14,50 @@ class Admin::SubscriptionPlansController < ApplicationController
         @feature = Feature.new
     end
 
+    
     def create
-        @subscription_plan = SubscriptionPlan.new(plan_param)
-        if @subscription_plan.save
-            if @subscription_plan.recurring == true
-                paystackObj = GoFitPaystack.instantiate_paystack
-                plans = PaystackPlans.new(paystackObj)
-                data = {
-                        :name => @subscription_plan.plan_name,
-                        :description =>  @subscription_plan.description,
-                        :amount => @subscription_plan.cost * 100,
-                        :interval => @subscription_plan.duration,
-                        :currency => "NGN"
-                }
-                @result = plans.create(data)
-                if @result["status"] == true
-                    paystack_plan_code = @result["data"]["plan_code"]
-                    @subscription_plan.update_attribute(:paystack_plan_code, paystack_plan_code)
+        if plan_param[:recurring] == "true"
+            result = create_paystack_plan(plan_param)
+            if result["status"] == true
+                paystack_plan_code = result["data"]["plan_code"]
+                @subscription_plan = SubscriptionPlan.create(plan_param)
+                @subscription_plan.update_attribute(:paystack_plan_code, paystack_plan_code)
                     flash[:notice] = "New Plan Successfully Created in System & Paystack"
                     redirect_to new_admin_subscription_plan_path
-                else
-                    flash[:notice] = "Plan was not successfully created in Paystack"
-                    redirect_to new_admin_subscription_plan_path
-                end
-            else
-                flash[:notice] = "New Plan Successfully Created in the System"
+            else 
+                flash[:notice] = "Check to ensure the form is properly filled"
                 redirect_to new_admin_subscription_plan_path
             end
-        else 
-            render action: :new
+        else
+            @subscription_plan = SubscriptionPlan.new(plan_param)
+            if @subscription_plan.save
+                flash[:notice] = "New Plan Successfully Created in the System"
+                redirect_to new_admin_subscription_plan_path
+            else
+                flash[:notice] = "Error creating new record! Check to ensure all fields are filled"
+                redirect_to new_admin_subscription_plan_path
+            end
         end
     end
+
+
     
 
     private
+
+    def create_paystack_plan(plan_param)
+        paystackObj = GoFitPaystack.instantiate_paystack
+        plans = PaystackPlans.new(paystackObj)
+        data = {
+                :name => plan_param[:plan_name],
+                :description =>  plan_param[:description],
+                :amount => plan_param[:cost].to_i * 100,
+                :interval => plan_param[:duration],
+                :currency => "NGN"
+        }
+        result = plans.create(data)
+        return result
+    end
 
     def plan_param
         params.require(:subscription_plan) 
