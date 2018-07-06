@@ -14,7 +14,7 @@ class Admin::MemberStepsController < ApplicationController
     def show
         gon.amount, gon.email, gon.firstName = @member.subscription_plan.cost * 100, @member.email, @member.first_name
         gon.lastName, gon.displayValue = @member.last_name, @member.phone_number
-        gon.publicKey = ENV["PAYSTACK_TEST_PUBLIC"]
+        gon.publicKey = ENV["PAYSTACK_PUBLIC_KEY"]
         render_wizard
     end
 
