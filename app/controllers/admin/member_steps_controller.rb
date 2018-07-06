@@ -120,7 +120,6 @@ class Admin::MemberStepsController < ApplicationController
 
     
     def paystack_subscribe
-        binding.pry
         reference = params[:reference_code]
         transactions = PaystackTransactions.new(@paystackObj)
         result = transactions.verify(reference)
@@ -237,8 +236,8 @@ class Admin::MemberStepsController < ApplicationController
     end
 
     def set_expiry_date(subscribe_date)
-        expiry_date = String.new
-        if @member.subscription_plan.duration == "monthly"
+        expiry_date = DateTime.new
+        if @member.subscription_plquitan.duration == "monthly"
             expiry_date =  (DateTime.parse(subscribe_date) + 30).strftime('%d-%m-%Y %H:%M:%S')
         elsif @member.subscription_plan.duration == "quarterly"
             expiry_date =  (DateTime.parse(subscribe_date) + 90).strftime('%d-%m-%Y %H:%M:%S')
