@@ -7,6 +7,7 @@ class Admin::MembersController < Devise::RegistrationsController
 
 
     def index
+      @members = Member.all
     end
 
     def new

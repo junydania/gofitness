@@ -39,15 +39,16 @@
                                     <h6><span>Customer Code: <%= @member.customer_code %> </span></h6>
                                     <div class="row text-center justify-content-md-center">
                                         <% if @member.account_detail.member_status == 'active' %>
-                                            <button class="btn btn-success" href="#"><%= @member.account_detail.member_status %></button>
+                                            <button class="btn btn-success" href="#"><%= @member.account_detail.member_status.titleize %></button>
                                         <% else %>
-                                             <button class="btn btn-danger" href="#"><%= @member.account_detail.member_status %></button>
+                                             <button class="btn btn-danger" href="#"><%= @member.account_detail.member_status.titleize %></button>
                                         <% end %>
                                     </div>
                                 </center>
                             </div>
                             <div>
-                                <hr> </div>
+                                <hr> 
+                            </div>
                             <div class="card-body"> <small class="text-muted">Email address </small>
                                 <h6><%= @member.email %></h6> <small class="text-muted p-t-30 db">Phone</small>
                                 <h6>+234<%= @member.phone_number %></h6> <small class="text-muted p-t-30 db">Address</small>
@@ -57,7 +58,9 @@
                                 <% @member.health_conditions.each do|condition| %>
                                     <p><%= condition.condition_name %></p>
                                 <% end %>
+                                <%= link_to 'Edit Profile', edit_member_registration_path, class:"btn btn-info btn-rounded" %>
                             </div>
+                            
                         </div>
                     </div>
                     <!-- Column -->
