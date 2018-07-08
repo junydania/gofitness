@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180703215623) do
+ActiveRecord::Schema.define(version: 20180708013315) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -145,6 +145,8 @@ ActiveRecord::Schema.define(version: 20180703215623) do
     t.bigint "phone_number"
     t.bigint "next_of_kin_phone"
     t.bigint "referring_customer_id"
+    t.string "paystack_subscription_code"
+    t.string "paystack_email_token"
     t.index ["customer_code"], name: "index_members_on_customer_code", unique: true
     t.index ["email"], name: "index_members_on_email", unique: true
     t.index ["fitness_goal_id"], name: "index_members_on_fitness_goal_id"

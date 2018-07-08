@@ -2,6 +2,7 @@ class Admin::MembersController < Devise::RegistrationsController
     
     prepend_before_action :require_no_authentication, only: [:new, :create, :cancel]
     before_action :authenticate_user!
+    before_action :find_member, only: [:renew_membership, :paystack_renewal, :cash_renewal, :pos_renewal ]
 
     require 'securerandom'
 
@@ -47,8 +48,52 @@ class Admin::MembersController < Devise::RegistrationsController
         end
     end
 
+    def renew_membership
+      gon.amount, gon.email, gon.firstName = @member.subscription_plan.cost * 100, @member.email, @member.first_name
+      gon.lastName, gon.displayValue = @member.last_name, @member.phone_number
+      gon.publicKey = ENV["PAYSTACK_PUBLIC_KEY"]
+    end
+
+    def cash_renewal
+    end
+
+    def pos_renewal
+    end
+
+    def paystack_renewal
+      if  check_paystack_subscription == true
+        
+      else
+      end
+
+      
+
+
+    end
+
+
+  #   subscription_id = "123456778"
+	# subscriptions = PaystackSubscriptions.new(paystackObj)
+	# result = subscriptions.get(subscription_id)
+  # subscription =  result['data']
+  
  
     private
+
+    def find_member
+      @member = Member.find(session[:member_id]) 
+    end
+
+    def check_paystack_subscription
+      paystack_subscription_code = @member.paystack_subscription_code
+      subscription = PaystackSubscriptions.new(paystackObj)
+      result = subscriptions.get(paystack_subscription_code)
+      subscription =  result['status']
+    end
+
+    def enable_paystack_subscription
+      
+    end
 
     def new_member_params
         params.require(:member)
