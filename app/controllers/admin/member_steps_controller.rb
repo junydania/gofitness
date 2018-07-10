@@ -1,9 +1,6 @@
 class Admin::MemberStepsController < ApplicationController
 
-    require 'paystack_module'  
-
     include Wicked::Wizard
-    include GoFitPaystack
 
     before_action :authenticate_user!
     before_action :get_paystack_object, only: [:paystack_subscribe]
@@ -121,6 +118,7 @@ class Admin::MemberStepsController < ApplicationController
     
     def paystack_subscribe
         reference = params[:reference_code]
+        
         transactions = PaystackTransactions.new(@paystackObj)
         result = transactions.verify(reference)
         if result["status"] == true     
@@ -267,8 +265,9 @@ class Admin::MemberStepsController < ApplicationController
 
 
     def get_paystack_object
-        @paystackObj = GoFitPaystack.instantiate_paystack
+        @paystackObj = Paystack.new
     end
+
 
     def create_general_transaction(subscribe_date, amount, payment_method)
         GeneralTransaction.create(

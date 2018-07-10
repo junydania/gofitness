@@ -4,9 +4,9 @@ class Admin::SubscriptionPlansController < ApplicationController
 
     before_action :authenticate_user!
     
-    require 'paystack_module'
+    # require 'paystack_module'
 
-    include GoFitPaystack
+    # include GoFitPaystack
 
 
     def new
@@ -45,8 +45,13 @@ class Admin::SubscriptionPlansController < ApplicationController
 
     private
 
+    def instantiate_paystack
+        paystackObj = Paystack.new
+        return paystackObj
+    end  
+
     def create_paystack_plan(plan_param)
-        paystackObj = GoFitPaystack.instantiate_paystack
+        paystackObj = instantiate_paystack
         plans = PaystackPlans.new(paystackObj)
         data = {
                 :name => plan_param[:plan_name],
