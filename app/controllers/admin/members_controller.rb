@@ -2,6 +2,7 @@ class Admin::MembersController < Devise::RegistrationsController
     
     prepend_before_action :require_no_authentication, only: [:new, :create, :cancel]
     before_action :authenticate_user!
+    before_action :find_member, only: [:renew_membership, :paystack_renewal, :cash_renewal, :pos_renewal ]
 
     require 'securerandom'
 
@@ -32,14 +33,14 @@ class Admin::MembersController < Devise::RegistrationsController
 
 
     def create
-        new_params = new_member_params.clone
+        new_params = member_params.clone
         new_params[:password] = SecureRandom.hex(7)
         new_params[:password_confirmation] = new_params[:password]
         ## Implement feature to mail login address and password to new member
         build_resource(new_params)
         if resource.save
           session[:member_id] = resource.id
-          flash[:notice] = "User created! Receive Payment & Complete the Registration Process"
+          flash[:notice] = "Receive Payment & Complete the Registration Process"
           redirect_to admin_member_steps_path
         else
           clean_up_passwords resource
@@ -47,10 +48,48 @@ class Admin::MembersController < Devise::RegistrationsController
         end
     end
 
- 
+    def renew_membership
+      gon.amount, gon.email, gon.firstName = @member.subscription_plan.cost * 100, @member.email, @member.first_name
+      gon.lastName, gon.displayValue = @member.last_name, @member.phone_number
+      gon.publicKey = ENV["PAYSTACK_PUBLIC_KEY"]
+    end
+
+    def cash_renewal
+      
+    end
+
+    def pos_renewal
+    end
+
+    def paystack_renewal
+      if check_paystack_subscription == true
+
+        
+      else
+      end
+
+      
+    end
+
+
     private
 
-    def new_member_params
+    def find_member
+      @member = Member.find(params[:id]) 
+    end
+
+    def check_paystack_subscription
+      paystack_subscription_code = @member.paystack_subscription_code
+      subscription = PaystackSubscriptions.new(paystackObj)
+      result = subscriptions.get(paystack_subscription_code)
+      subscription =  result['status']
+    end
+
+    def enable_paystack_subscription
+      
+    end
+
+    def member_params
         params.require(:member)
             .permit(:email,
                     :password,

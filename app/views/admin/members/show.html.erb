@@ -44,6 +44,12 @@
                                              <button class="btn btn-danger" href="#"><%= @member.account_detail.member_status.titleize %></button>
                                         <% end %>
                                     </div>
+                                    <br/>
+                                    <div>
+                                         <% if @member.account_detail.member_status != 'active' %>
+                                            <%= link_to "Renew",  renew_member_path(@member), class:"btn btn-success" %> 
+                                        <% end %>
+                                    </div>
                                 </center>
                             </div>
                             <div>

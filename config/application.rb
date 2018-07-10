@@ -15,7 +15,7 @@ module Gofitness
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
     config.eager_load_paths << "#{Rails.root}/lib/capistrano/tasks"
-    config.eager_load_paths << Rails.root.join('lib')
+    config.eager_load_paths << "#{Rails.root}/lib/*"
     config.browserify_rails.commandline_options = "-t coffeeify --extension=\".js.coffee\""
   end
 end
