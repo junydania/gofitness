@@ -33,14 +33,14 @@ class Admin::MembersController < Devise::RegistrationsController
 
 
     def create
-        new_params = new_member_params.clone
+        new_params = member_params.clone
         new_params[:password] = SecureRandom.hex(7)
         new_params[:password_confirmation] = new_params[:password]
         ## Implement feature to mail login address and password to new member
         build_resource(new_params)
         if resource.save
           session[:member_id] = resource.id
-          flash[:notice] = "User created! Receive Payment & Complete the Registration Process"
+          flash[:notice] = "Receive Payment & Complete the Registration Process"
           redirect_to admin_member_steps_path
         else
           clean_up_passwords resource
@@ -55,33 +55,27 @@ class Admin::MembersController < Devise::RegistrationsController
     end
 
     def cash_renewal
+      
     end
 
     def pos_renewal
     end
 
     def paystack_renewal
-      if  check_paystack_subscription == true
+      if check_paystack_subscription == true
+
         
       else
       end
 
       
-
-
     end
 
 
-  #   subscription_id = "123456778"
-	# subscriptions = PaystackSubscriptions.new(paystackObj)
-	# result = subscriptions.get(subscription_id)
-  # subscription =  result['data']
-  
- 
     private
 
     def find_member
-      @member = Member.find(session[:member_id]) 
+      @member = Member.find(params[:id]) 
     end
 
     def check_paystack_subscription
@@ -95,7 +89,7 @@ class Admin::MembersController < Devise::RegistrationsController
       
     end
 
-    def new_member_params
+    def member_params
         params.require(:member)
             .permit(:email,
                     :password,
