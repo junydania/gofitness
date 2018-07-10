@@ -118,7 +118,6 @@ class Admin::MemberStepsController < ApplicationController
     
     def paystack_subscribe
         reference = params[:reference_code]
-        
         transactions = PaystackTransactions.new(@paystackObj)
         result = transactions.verify(reference)
         if result["status"] == true     
