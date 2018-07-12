@@ -121,9 +121,9 @@ class Admin::MemberStepsController < ApplicationController
         transactions = PaystackTransactions.new(@paystackObj)
         result = transactions.verify(reference)
         if result["status"] == true     
-            auth_code = result["data"]["authorization"]["authorization_code"]
+            auth_code = (result["data"]["authorization"]["authorization_code"]).to_s
             paystack_customer_code = (result["data"]["customer"]["customer_code"]).to_s
-            start_date, plan_code = set_paystack_start_date, get_subscription_plan_code, 
+            start_date, plan_code = set_paystack_start_date.to_s, get_subscription_plan_code.to_s, 
             create_subscription = PaystackSubscriptions.new(@paystackObj)
             subscribe = create_subscription.create(customer: paystack_customer_code,
                                                     plan: plan_code,
@@ -185,7 +185,7 @@ class Admin::MemberStepsController < ApplicationController
         loyalty_history = @member.loyalty_histories.create(
             points_earned: points,
             points_redeemed: 0,
-            loyalty_transaction_type: "New Registration",
+            loyalty_transaction_type: 0,
             loyalty_balance: points )
     end
 
@@ -210,7 +210,7 @@ class Admin::MemberStepsController < ApplicationController
         subscription_history = @member.subscription_histories.create(
             subscribe_date: subscribe_date,
             expiry_date: expiry_date,
-            subscription_type: 1,
+            subscription_type: 0,
             subscription_plan: retrieve_gym_plan,
             amount: retrieve_amount,
             payment_method: retrieve_payment_method,

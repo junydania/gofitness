@@ -45,7 +45,7 @@
 
                             <div class="card-body hide" id="renew-pos-box">
                                 <div><h5>Amount to Charge: </h5><button class="btn btn-success" href="#">₦<%= @member.subscription_plan.cost %></button></div>
-                                <%= form_for([:admin, @member], url: {:action => "pos_renewal"}) do |f| %>
+                                <%= form_for([:admin, @member], url: pos_renewal_path, method: :put) do |f| %>
                                     <%= f.fields_for :pos_transactions, PosTransaction.new do |transaction| %>
                                         <br/>
                                         <%= render 'postransaction_fields', f: transaction %>
@@ -54,40 +54,13 @@
                             </div>
 
                             <div class="card-body hide" id="renew-cash-box">
-                            <div><h5>Amount to Collect: </h5><button class="btn btn-success" href="#">₦<%= @member.subscription_plan.cost %></button></div>
-                                <%= form_for([:admin, @member], url: {:action => "cash_renewal"}) do |f| %>
-                                    <%= f.fields_for :cash_transactions, CashTransaction.new do |transaction| %>
-                                        <br/>
-                                        <%= render 'cashtransaction_fields', f: transaction %>
-                                    <% end %>
-                                <% end %>
-                            </div>
-
-
-
-                            <div class="card-body hide">
-                                <h4 class="card-title">Receive Payment</h4>
-                                <% if @member.payment_method.payment_system == "Debit Card" %>
-                                    <div class="button-box m-t-20">
-                                        <button id="paystack-renew-button" class="btn btn-info" href="#">Pay with Card Online</button>
-                                    </div>
-                                <% elsif @member.payment_method.payment_system == "POS Terminal" %>
-                                    <div><h5>Amount to Charge: </h5><button class="btn btn-success" href="#">₦<%= @member.subscription_plan.cost %></button></div>
-                                    <%= form_for([:admin, @member], url: wizard_path, method: :put) do |f| %>
-                                        <%= f.fields_for :pos_transactions, PosTransaction.new do |transaction| %>
-                                            <br/>
-                                            <%= render 'postransaction_fields', f: transaction %>
-                                        <% end %>
-                                    <% end %>
-                                <% elsif @member.payment_method.payment_system.titleize == "Cash"  %>
-                                    <div><h5>Amount to Collect: </h5><button class="btn btn-success" href="#">₦<%= @member.subscription_plan.cost %></button></div>
-                                    <%= form_for([:admin, @member], url: wizard_path, method: :put) do |f| %>
+                                <div><h5>Amount to Collect: </h5><button class="btn btn-success" href="#">₦<%= @member.subscription_plan.cost %></button></div>
+                                    <%= form_for([:admin, @member], url: cash_renewal_path, method: :put) do |f| %>
                                         <%= f.fields_for :cash_transactions, CashTransaction.new do |transaction| %>
                                             <br/>
                                             <%= render 'cashtransaction_fields', f: transaction %>
                                         <% end %>
                                     <% end %>
-                                <% end %>
                             </div>
                         </div>
                         <div class="card remove-back-button">
