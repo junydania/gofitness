@@ -67,10 +67,11 @@ $(document).on("turbolinks:load", function() {
                 data: data,
                 success: function(data, textStatus, xhr) {
                              content = `<div class="card-body">
-                                             <button class="tst2 btn btn-warning">Renewal Successful! Continue</button>
+                                             <button class="tst2 btn btn-info">Renewal Successful!</button>
                                         </div>`;
                              $('#paystack-renew-success').append(content);
                              $('.remove-back-button').remove();
+                             $('#paystack-renew-button, #renew-cash-button, #renew-pos-button').remove();
                              $("#complete-renewal").fadeIn('fast');
                          },
                 error: function() {

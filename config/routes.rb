@@ -12,8 +12,8 @@ Rails.application.routes.draw do
     get 'members' => 'admin/members#index', as: :members
     get 'member/:id' => 'admin/members#show', as: :member_profile
     get 'renew_member/:id' => 'admin/members#renew_membership', as: :renew_member
-    post 'cash_renewal' => 'admin/members#cash_renewal', as: :cash_renewal
-    post 'pos_renewal' => 'admin/members#pos_renewal', as: :pos_renewal
+    put 'cash_renewal/:id' => 'admin/members#cash_renewal', as: :cash_renewal
+    put 'pos_renewal/:id' => 'admin/members#pos_renewal', as: :pos_renewal
     post 'paystack_renewal' => 'admin/members#paystack_renewal', as: :paystack_renewal
   end
 
