@@ -25,9 +25,9 @@ set :puma_worker_timeout, nil
 set :puma_init_active_record, true  # Change to true if using ActiveRecord
 set :puma_restart_command, 'bundle exec puma'
 
-role :app, %w{deployer@35.196.34.34}
+role :app, %w{gofitnessadmin@35.196.34.34}
 # role :web, %w{gofitnessadmin@35.196.34.34}
-role :db,  %w{deployer@35.196.34.34}
+# role :db,  %w{deployer@35.196.34.34}
 
 set :migration_role, :app
 
