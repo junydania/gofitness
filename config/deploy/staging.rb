@@ -26,8 +26,8 @@ set :puma_init_active_record, true  # Change to true if using ActiveRecord
 set :puma_restart_command, 'bundle exec puma'
 
 role :app, %w{gofitnessadmin@35.196.34.34}
-role :web, %w{gofitnessadmin@35.196.34.34}
-role :db,  %w{gofitnessadmin@35.196.34.34}
+# role :web, %w{gofitnessadmin@35.196.34.34}
+# role :db,  %w{gofitnessadmin@35.196.34.34}
 
 set :migration_role, :app
 
@@ -35,7 +35,7 @@ set :migration_role, :app
 set :migration_servers, -> { primary(fetch(:migration_role)) }
 
 # Define server(s)
-server '35.196.34.34', user: 'gofitnessadmin', roles: %w{web}, port: 7872 
+server '35.196.34.34', user: 'gofitnessadmin', roles: %w{app}, port: 7872 
 
 # SSH Options
 # See the example commented out section in the file
