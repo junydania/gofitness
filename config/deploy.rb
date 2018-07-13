@@ -6,7 +6,7 @@ lock "~> 3.11.0"
 set :application, "gofitness"
 set :repo_url, 'https://github.com/junydania/gofitness.git'
 set :use_sudo, true
-set :user,            'railsdeploy'
+set :user,            'gofitnessadmin'
 set :puma_threads,    [4, 16]
 set :puma_workers,    0
 # set :deploy_to, "/home/railsdeploy/apps/gofitness"
