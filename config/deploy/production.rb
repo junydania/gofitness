@@ -25,9 +25,9 @@ set :puma_worker_timeout, nil
 set :puma_init_active_record, true  # Change to true if using ActiveRecord
 set :puma_restart_command, 'bundle exec puma'
 
-role :app, %w{gofitnessadmin@178.128.181.200}
-role :web, %w{gofitnessadmin@178.128.181.200}
-role :db,  %w{gofitnessadmin@178.128.181.200}
+role :app, %w{deployer@178.128.181.200}
+# role :web, %w{deployer@178.128.181.200}
+# role :db,  %w{deployer@178.128.181.200}
 
 set :migration_role, :app
 
@@ -35,7 +35,7 @@ set :migration_role, :app
 set :migration_servers, -> { primary(fetch(:migration_role)) }
 
 # Define server(s)
-server '178.128.181.200', user: 'gofitnessadmin', roles: %w{web}, port: 7872
+server '178.128.181.200', user: 'gofitnessadmin', roles: %w{app}, port: 7872
 
 # SSH Options
 # See the example commented out section in the file
