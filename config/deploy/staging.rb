@@ -3,7 +3,7 @@
 
 set :pty,             true
 set :use_sudo,        true
-set :stage,           :production
+set :stage,           :staging
 set :rails_env,       :production
 set :branch,          "change-servers"
 set :deploy_via,      :remote_cache
