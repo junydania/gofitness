@@ -15,6 +15,7 @@ set :puma_access_log, "#{release_path}/log/puma.error.log"
 set :puma_error_log,  "#{release_path}/log/puma.access.log"
 set :ssh_options, {
     forward_agent: true,
+    port: 7872,
     auth_methods: %w[publickey],
     keys: %w(~/.ssh/gofitness-dev-key),
     user: fetch(:user)

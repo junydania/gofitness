@@ -18,3 +18,4 @@ set :format, :pretty
 set :assets_prefix, 'prepackaged-assets'
 set :assets_manifests, ['app/assets/config/manifest.js']
 set :rails_assets_groups, :assets
+set :port, 7872
