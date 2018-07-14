@@ -95,9 +95,9 @@ class Admin::MemberStepsController < ApplicationController
         subscribe_date = set_subscribe_date
         expiry_date = set_expiry_date(subscribe_date)
         account_update = update_account_detail(subscribe_date, expiry_date)
-        amount, payment_method = retrieve_amount, retrieve_payment_method
+        amount, payment_method, subscription_status = retrieve_amount, retrieve_payment_method, 0
         if account_update.save
-            create_subscription_history(subscribe_date, expiry_date)
+            create_subscription_history(subscribe_date, expiry_date, subscription_status)
             create_loyalty_history(amount)
             create_general_transaction(subscribe_date, amount, payment_method)
         end
@@ -108,8 +108,9 @@ class Admin::MemberStepsController < ApplicationController
         expiry_date = set_expiry_date(subscribe_date)
         account_update = update_account_detail(subscribe_date, expiry_date)
         amount, payment_method = retrieve_amount, retrieve_payment_method
+        subscription_status = 0
         if account_update.save
-            create_subscription_history(subscribe_date, expiry_date)
+            create_subscription_history(subscribe_date, expiry_date, subscription_status)
             create_loyalty_history(amount)
             create_general_transaction(subscribe_date, amount, payment_method)
         end
@@ -139,11 +140,11 @@ class Admin::MemberStepsController < ApplicationController
                 enable_subscription = create_subscription.enable(code: subscription_code, token: email_token)
                 subscribe_date = Time.iso8601(paystack_created_date).strftime('%d-%m-%Y %H:%M:%S')
                 expiry_date, amount = set_expiry_date(subscribe_date), retrieve_amount
-                payment_method = retrieve_payment_method
+                payment_method, subscription_status = retrieve_payment_method, 0
                 if enable_subscription["status"] == true
                     account_update = update_account_detail(subscribe_date, expiry_date)
                     if account_update.save
-                        create_subscription_history(subscribe_date, expiry_date)
+                        create_subscription_history(subscribe_date, expiry_date, subscription_status)
                         create_loyalty_history(amount)
                         create_general_transaction(subscribe_date, amount, payment_method)    
                     end
@@ -206,7 +207,7 @@ class Admin::MemberStepsController < ApplicationController
     end
 
     
-    def create_subscription_history(subscribe_date, expiry_date)
+    def create_subscription_history(subscribe_date, expiry_date, subscription_status)
         subscription_history = @member.subscription_histories.create(
             subscribe_date: subscribe_date,
             expiry_date: expiry_date,
@@ -214,9 +215,8 @@ class Admin::MemberStepsController < ApplicationController
             subscription_plan: retrieve_gym_plan,
             amount: retrieve_amount,
             payment_method: retrieve_payment_method,
-            member_status: 1,
-            subscription_status: "Paid"
-        )
+            member_status: 0,
+            subscription_status: subscription_status )
     end
 
 

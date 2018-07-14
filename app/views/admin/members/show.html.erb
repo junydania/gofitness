@@ -132,18 +132,21 @@
                                         <br/>
 
 
-                                        
                                         <h4 class="font-medium m-t-30">Member Activity</h4>
                                         <hr>
-                                        <% if @member.account_detail.member_status == 'active' %>
-                                            <button class="btn btn-danger" href="#">Unsubscribe</button>
-                                        <% else %>
-                                             <button class="btn btn-active" href="#">Subscribe</button>
+                                        <% if @member.account_detail.member_status == 'active' && @member.payment_method.payment_system.titleize == "Debit Card" && @member.account_detail.unsubscribe_date.nil? %>
+                                             <%= link_to 'Unsubscribe', unsubscribe_member_path(@member), class:"btn btn-danger" %>
+                                        <% elsif @member.account_detail.member_status == 'active' && @member.payment_method.payment_system.titleize == "Debit Card" && !@member.account_detail.unsubscribe_date.nil? %>
+                                             <%= link_to 'Reactivate Membership', renew_member_path(@member), class:"btn btn-success" %>
+                                        <% elsif @member.account_detail.member_status == 'deactivated' && @member.payment_method.payment_system.titleize == "Debit Card" %>
+                                             <%= link_to 'Subscribe', renew_member_path(@member), class:"btn btn-success" %>
                                         <% end %>
+
                                         <button class="btn btn-warning" href="#">Pause Membership</button>
                                         <button class="btn btn-success" href="#">Change Plan</button>
                                     </div>
                                 </div>
+
                                 <div class="tab-pane" id="settings" role="tabpanel">
                                     <div class="card-body">
                                         <form class="form-horizontal form-material">
