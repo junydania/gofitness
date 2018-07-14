@@ -27,11 +27,6 @@ set :use_sudo,        true
 set :stages,          %w(production staging)
 set :default_stage,   "staging"
 
-require 'capistrano/ext/multistage'
-require 'bundler/capistrano'
-
-
-
 set :rails_env,       :production
 set :branch,          "change-servers"
 set :deploy_via,      :remote_cache
