@@ -29,7 +29,7 @@ set :default_stage,   "staging"
 
 set :rails_env,       :production
 # set :branch,          ENV["BRANCH_NAME"] || "develop"
-set :branch           "change-servers"
+set :branch,           "change-servers"
 set :deploy_via,      :remote_cache
 set :deploy_to,       "/home/#{fetch(:user)}/apps/#{fetch(:application)}"
 set :puma_bind,       "unix://#{shared_path}/tmp/sockets/#{fetch(:application)}-puma.sock"
