@@ -106,14 +106,15 @@ class Admin::MembersController < Devise::RegistrationsController
         subscription_status = 1
         if @member.account_detail.expiry_date < DateTime.now 
            @member.account_detail.member_status = 1
-           @member.account_detail.unsubscribe_date = Datetime.now
+           @member.account_detail.unsubscribe_date = DateTime.now
            @member.save    
            create_subscription_history(subscribe_date, expiry_date, subscription_status)
            redirect_to member_profile_path(@member)
         else 
           subscribe_date = @member.account_detail.subscribe_date
           expiry_date = @member.account_detail.expiry_date
-          @member.account_detail.unsubscribe_date = Datetime.now
+          @member.account_detail.unsubscribe_date = DateTime.now
+          @member.save
           create_subscription_history(subscribe_date, expiry_date, subscription_status)
           redirect_to member_profile_path(@member)
         end
