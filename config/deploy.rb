@@ -1,7 +1,7 @@
 # config valid for current version and patch releases of Capistrano
 lock "~> 3.11.0"
 
-# load 'lib/capistrano/tasks/seed'
+load 'lib/capistrano/tasks/seed'
 
 set :application, "gofitness"
 set :repo_url, 'https://github.com/junydania/gofitness.git'
@@ -100,6 +100,11 @@ namespace :deploy do
           execute("cd #{release_path} && npm install")
         end
       end
+    end
+
+    desc "reload the database with seed data"
+    task :seed do
+      run "cd #{current_path}; bundle exec rake db:seed RAILS_ENV=#{rails_env}"
     end
 
     # before :starting,   :check_revision
