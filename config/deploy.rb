@@ -1,7 +1,8 @@
 # config valid for current version and patch releases of Capistrano
 lock "~> 3.11.0"
 
-load 'lib/capistrano/tasks/seed'
+# load 'lib/capistrano/tasks/seed'
+load  "#{Rails.root}/capistrano/tasks/seed"
 
 set :application, "gofitness"
 set :repo_url, 'https://github.com/junydania/gofitness.git'
