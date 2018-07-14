@@ -2,8 +2,8 @@ class Admin::MembersController < Devise::RegistrationsController
     
     prepend_before_action :require_no_authentication, only: [:new, :create, :cancel]
     before_action :authenticate_user!
-    before_action :find_member, only: [:renew_membership, :pos_renewal, :cash_renewal, :check_paystack_subscription ]
-    before_action :get_paystack_object, only: [:check_paystack_subscription, :paystack_renewal, :initiate_paystack_sub]
+    before_action :find_member, only: [:renew_membership, :pos_renewal, :cash_renewal, :check_paystack_subscription, :unsubscribe_membership ]
+    before_action :get_paystack_object, only: [:check_paystack_subscription, :paystack_renewal, :initiate_paystack_sub, :unsubscribe_membership]
 
     require 'securerandom'
 
@@ -62,8 +62,9 @@ class Admin::MembersController < Devise::RegistrationsController
       if cash_received ==  customer_current_amount
         subscribe_date, recurring, amount = set_subscribe_date, false, retrieve_amount
         expiry_date, payment_method = set_expiry_date(subscribe_date), retrieve_payment_method
+        subscription_status = 0
         create_cash_transaction(cash_received)
-        update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method)
+        update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
         redirect_to member_profile_path(@member)
       else
         flash[:notice] = "Sorry Wrong Amount Received! Enter correct amount or change customer plan"
@@ -79,8 +80,9 @@ class Admin::MembersController < Devise::RegistrationsController
       if !transaction_reference.nil? && transaction_success == true
         subscribe_date, recurring, amount = set_subscribe_date, false, retrieve_amount
         expiry_date, payment_method = set_expiry_date(subscribe_date), retrieve_payment_method
+        subscription_status = 0
         create_pos_transaction(transaction_reference, transaction_success_param)
-        update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method)
+        update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
         redirect_to member_profile_path(@member)
       else
         flash[:notice] = "Sorry! Enter the POS Transaction Reference ID & Confirm if transaction was successful"
@@ -97,6 +99,31 @@ class Admin::MembersController < Devise::RegistrationsController
       end
     end
 
+    def unsubscribe_membership
+      binding.pry
+      unsubscribe = disable_current_paystack_subscription
+      if unsubscribe["status"] == true
+        subscription_status = 1
+        if @member.account_detail.expiry_date < DateTime.now 
+           @member.account_detail.member_status = 1
+           @member.account_detail.unsubscribe_date = DateTime.now
+           @member.save    
+           create_subscription_history(subscribe_date, expiry_date, subscription_status)
+           redirect_to member_profile_path(@member)
+        else 
+          subscribe_date = @member.account_detail.subscribe_date
+          expiry_date = @member.account_detail.expiry_date
+          @member.account_detail.unsubscribe_date = DateTime.now
+          @member.save
+          create_subscription_history(subscribe_date, expiry_date, subscription_status)
+          redirect_to member_profile_path(@member)
+        end
+      else
+        flash[:notice] = "Customer doesn't have recurring membership plan"
+        redirect_to member_profile_path(@member)
+      end
+    end
+
 
     private
 
@@ -104,9 +131,9 @@ class Admin::MembersController < Devise::RegistrationsController
       obj.to_s == "true"
     end
 
-    def update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method)
+    def update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
       update_account_detail(subscribe_date, expiry_date, recurring)
-      create_subscription_history(subscribe_date, expiry_date)
+      create_subscription_history(subscribe_date, expiry_date, subscription_status)
       create_loyalty_history(amount)
       create_general_transaction(subscribe_date, amount, payment_method)
     end
@@ -147,7 +174,7 @@ class Admin::MembersController < Devise::RegistrationsController
                                   recurring_billing: recurring )
     end
 
-    def create_subscription_history(subscribe_date, expiry_date)
+    def create_subscription_history(subscribe_date, expiry_date, subscription_status)
       subscription_history = @member.subscription_histories.create(
           subscribe_date: subscribe_date,
           expiry_date: expiry_date,
@@ -156,8 +183,7 @@ class Admin::MembersController < Devise::RegistrationsController
           amount: retrieve_amount,
           payment_method: retrieve_payment_method,
           member_status: 0,
-          subscription_status: "Paid"
-      )
+          subscription_status: subscription_status )
     end
 
 
@@ -302,10 +328,10 @@ class Admin::MembersController < Devise::RegistrationsController
               enable_subscription = create_subscription.enable(code: subscription_code, token: email_token)
               subscribe_date = Time.iso8601(paystack_created_date).strftime('%d-%m-%Y %H:%M:%S')
               expiry_date, amount = set_expiry_date(subscribe_date), retrieve_amount
-              recurring = true
+              recurring, subscription_status = true, 0
               payment_method = retrieve_payment_method
               if enable_subscription["status"] == true
-                  update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method)
+                  update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
                   render status: 200, json: {
                     message: "success"
                 }    

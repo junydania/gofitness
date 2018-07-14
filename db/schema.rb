@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180708013315) do
+ActiveRecord::Schema.define(version: 20180714160723) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 20180708013315) do
     t.datetime "updated_at", null: false
     t.bigint "member_id"
     t.integer "member_status"
+    t.datetime "unsubscribe_date"
     t.index ["member_id"], name: "index_account_details_on_member_id"
   end
 
@@ -188,12 +189,12 @@ ActiveRecord::Schema.define(version: 20180708013315) do
     t.string "subscription_plan"
     t.integer "amount"
     t.string "payment_method"
-    t.string "subscription_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "member_id"
     t.integer "subscription_type"
     t.integer "member_status"
+    t.integer "subscription_status"
     t.index ["member_id"], name: "index_subscription_histories_on_member_id"
   end
 
