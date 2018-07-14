@@ -1,8 +1,6 @@
 # config valid for current version and patch releases of Capistrano
 lock "~> 3.11.0"
 
-# load 'lib/capistrano/tasks/seed'
-
 set :application, "gofitness"
 set :repo_url, 'https://github.com/junydania/gofitness.git'
 set :use_sudo, true
@@ -101,6 +99,18 @@ namespace :deploy do
         end
       end
     end
+
+    desc "reload the database with seed data"
+    task :seed do
+      on primary fetch(:migration_role) do
+        within release_path do
+          with rails_env: fetch(:rails_env)  do
+            execute :rake, 'db:seed'
+          end
+        end
+      end
+    end
+
 
     # before :starting,   :check_revision
     before :compile_assets, :npm_install
