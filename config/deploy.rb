@@ -101,14 +101,6 @@ namespace :deploy do
     end
 
     desc "reload the database with seed data"
-    # task :seed do
-    #   on roles(:app) do
-    #     puts "\n=== Seeding Database ===\n"
-    #     within release_path do
-    #       execute("cd #{release_path}; bundle exec rake db:seed RAILS_ENV=#{rails_env}")
-    #     end
-    #   end
-    # end
     task :seed do
       on primary fetch(:migration_role) do
         within release_path do
@@ -120,7 +112,6 @@ namespace :deploy do
     end
 
 
-     
     # before :starting,   :check_revision
     before :compile_assets, :npm_install
     after  :finishing,  :compile_assets
