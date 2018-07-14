@@ -10,5 +10,5 @@ set :migration_role, :app
 set :migration_servers, -> { primary(fetch(:migration_role)) }
 
 # Define server(s)
-server '35.196.34.34', user: 'gofitnessadmin', roles: %w{web app db}, port: 7872, primary: true
+server '35.196.34.34', user: 'gofitnessadmin', roles: %w{app}, port: 7872, primary: true
 

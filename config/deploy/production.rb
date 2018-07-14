@@ -2,7 +2,7 @@ set :rails_env, "production"  # tell cap to run migrations using production env
 
 role :app, %w{gofitnessadmin@178.128.181.200}
 # role :web, %w{gofitnessadmin@178.128.181.200}
-role :db,  %w{gofitnessadmin@178.128.181.200}
+# role :db,  %w{gofitnessadmin@178.128.181.200}
 
 set :migration_role, :app
 
