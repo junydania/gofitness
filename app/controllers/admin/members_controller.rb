@@ -100,7 +100,6 @@ class Admin::MembersController < Devise::RegistrationsController
     end
 
     def unsubscribe_membership
-      binding.pry
       unsubscribe = disable_current_paystack_subscription
       if unsubscribe["status"] == true
         subscription_status = 1
