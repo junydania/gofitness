@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180714160723) do
+ActiveRecord::Schema.define(version: 20180717232307) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,6 +30,7 @@ ActiveRecord::Schema.define(version: 20180714160723) do
     t.bigint "member_id"
     t.integer "member_status"
     t.datetime "unsubscribe_date"
+    t.integer "pause_permit_count", default: 0
     t.index ["member_id"], name: "index_account_details_on_member_id"
   end
 
@@ -160,10 +161,10 @@ ActiveRecord::Schema.define(version: 20180714160723) do
 
   create_table "pause_histories", force: :cascade do |t|
     t.datetime "pause_start_date"
-    t.string "pause_reason"
     t.datetime "pause_cancel_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "paused_by"
   end
 
   create_table "payment_methods", force: :cascade do |t|

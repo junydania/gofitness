@@ -53,6 +53,7 @@ class Admin::MembersController < Devise::RegistrationsController
       gon.amount, gon.email, gon.firstName = @member.subscription_plan.cost * 100, @member.email, @member.first_name
       gon.lastName, gon.displayValue = @member.last_name, @member.phone_number
       gon.publicKey = ENV["PAYSTACK_PUBLIC_KEY"]
+      gon.member_id = @member.id
       session[:member_id] = @member.id
     end
 
@@ -123,11 +124,71 @@ class Admin::MembersController < Devise::RegistrationsController
       end
     end
 
+    def pause_subscription
+     customer_plan_duration = @member.subscription_plan.duration
+     case customer_plan_duration 
+     when "monthly"
+        if @member.account_detail.pause_count < 2
+          pause_subscription_steps
+        else
+          render status: 401, json: {
+            message: "pause exceeded"
+          }
+        end
+     when "quarterly"
+        if @member.account_detail.pause_count < 3
+          pause_subscription_steps
+        else
+          render status: 401, json: {
+            message: "pause exceeded"
+          }
+        end
+     when "annually"
+        if @member.account_detail.pause_count < 5
+          pause_subscription_steps
+        else
+          render status: 401, json: {
+            message: "pause exceeded"
+          }
+        end
+      end
+    end
+
 
     private
 
     def true?(obj)
       obj.to_s == "true"
+    end
+
+    def pause_subscription_steps
+      if check_paystack_subscription == true
+        disable_current_paystack_subscription
+        update_pause_account_detail
+        create_pause_history
+        render status: 200, json: {
+          message: "success"
+        }
+      else
+        render status: 401, json: {
+          message: "no subscription"
+        }
+      end
+    end
+
+    def create_pause_history
+      @member.pause_histories.create(
+        pause_start_date: @member.account_detail.pause_start_date,
+        pause_cancel_date: @member.account_detail.pause_cancel_date,
+        paused_by: current_user.fullname)
+    end
+
+    def update_pause_account_detail
+        @member.account_detail.pause_count = @member.account_detail.pause_count + 1
+        @member.account_detail.pause_start_date = DateTime.now
+        @member.account_detail.pause_cancel_date = DateTime.now + 7
+        @member.account_detail.member_status = 2
+        @member.save
     end
 
     def update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
@@ -247,7 +308,7 @@ class Admin::MembersController < Devise::RegistrationsController
     end
    
     def check_paystack_subscription
-      @member = Member.find(session[:member_id])
+      @member = Member.find(params[:id].to_i)
       if @member.paystack_subscription_code.nil?
         return false
       else

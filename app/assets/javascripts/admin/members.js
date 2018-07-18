@@ -60,7 +60,8 @@ $(document).on("turbolinks:load", function() {
                 ]
         },
         callback: function(response){
-            var data = {reference_code: response.reference};
+            var data = { reference_code: response.reference, id: parseInt(gon.member_id) };
+            console.log (gon.member_id);
             $.ajax({
                 url: '/paystack_renewal',
                 type: 'POST',
@@ -92,5 +93,33 @@ $(document).on("turbolinks:load", function() {
 
         handler.openIframe();
   }
+
+  $("#pause-subscriber").click(function(event) {
+
+    var click_value = $("#pause-subscriber").val();
+
+    var data = { id: click_value };
+    $.ajax({
+        url: '/pause_subscription',
+        type: 'POST',
+        data: data,
+        success: function(data, response, xhr) {
+            console.log(response);
+            // if ( response.reference == "success" ) {
+            //             $('#pause-subscriber').text("Membership Paused");
+            // } else if( ) {
+            //     content = `<div class="card-body">
+            //                     <button class="tst2 btn btn-warning">Payment & Subscription Successful! Continue</button>
+            //                </div>`;
+            // }             
+        },
+        error: function() {
+                    content = `<div class="card-body">
+                                    <p>Recurring subscription wasn't successfully activated.</p>
+                                    <p>Enter this reference code in the field below: ${response.reference} </p>
+                                </div>`
+                }
+    })
+});
         
  });

@@ -28,6 +28,8 @@ class Member < ApplicationRecord
     accepts_nested_attributes_for :subscription_histories,
                                 reject_if: :all_blank, allow_destroy: true
 
+    has_many :pause_histories
+
     
     belongs_to :fitness_goal
     belongs_to :payment_method
