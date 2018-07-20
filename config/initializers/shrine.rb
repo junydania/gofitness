@@ -1,7 +1,7 @@
 require "shrine/storage/s3"
 
 s3_options = {
-    bucket:            "gofitness",
+    bucket:            "gofitnessgym",
     access_key_id:     ENV["DIGITAL_OCEAN_SPACES_KEY"],
     secret_access_key: ENV["DIGITAL_OCEAN_SPACES_SECRET"],
     endpoint: 'https://nyc3.digitaloceanspaces.com',

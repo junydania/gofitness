@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     put 'pos_renewal/:id' => 'admin/members#pos_renewal', as: :pos_renewal
     post 'paystack_renewal' => 'admin/members#paystack_renewal', as: :paystack_renewal
     post 'pause_subscription' => 'admin/members#pause_subscription', as: :pause_subscription
+    post 'cancel_pause' => 'admin/members#cancel_pause', as: :cancel_pause
 
   end
 

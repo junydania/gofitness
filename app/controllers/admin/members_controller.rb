@@ -2,8 +2,13 @@ class Admin::MembersController < Devise::RegistrationsController
     
     prepend_before_action :require_no_authentication, only: [:new, :create, :cancel]
     before_action :authenticate_user!
-    before_action :find_member, only: [:renew_membership, :pos_renewal, :cash_renewal, :check_paystack_subscription, :unsubscribe_membership ]
-    before_action :get_paystack_object, only: [:check_paystack_subscription, :paystack_renewal, :initiate_paystack_sub, :unsubscribe_membership]
+    before_action :find_member, only: [:renew_membership, :pos_renewal, :cash_renewal, :check_paystack_subscription, :unsubscribe_membership, :pause_subscription, :cancel_pause ]
+    before_action :get_paystack_object, only: [:check_paystack_subscription, 
+                                               :paystack_renewal,
+                                               :initiate_paystack_sub, 
+                                               :unsubscribe_membership,
+                                               :pause_subscription,
+                                               :cancel_pause]
 
     require 'securerandom'
 
@@ -128,33 +133,80 @@ class Admin::MembersController < Devise::RegistrationsController
      customer_plan_duration = @member.subscription_plan.duration
      case customer_plan_duration 
      when "monthly"
-        if @member.account_detail.pause_count < 2
+        if @member.account_detail.pause_permit_count < 2
           pause_subscription_steps
         else
-          render status: 401, json: {
+          render status: 200, json: {
             message: "pause exceeded"
           }
         end
      when "quarterly"
-        if @member.account_detail.pause_count < 3
+        if @member.account_detail.pause_permit_count < 3
           pause_subscription_steps
         else
-          render status: 401, json: {
+          render status: 200, json: {
             message: "pause exceeded"
           }
         end
      when "annually"
-        if @member.account_detail.pause_count < 5
+        if @member.account_detail.pause_permit_count < 5
           pause_subscription_steps
         else
-          render status: 401, json: {
+          render status: 200, json: {
             message: "pause exceeded"
           }
         end
       end
     end
 
+    def cancel_pause
+      binding.pry
+      auth_code, current_date = @member.paystack_auth_code.to_s, DateTime.now
+      previous_expiry_date = @member.account_detail.expiry_date.to_datetime
+      previous_pause_start_date = @member.account_detail.pause_start_date.to_datetime
+      duration = (current_date - previous_pause_start_date).to_f.ceil
+      new_expiry_date = previous_expiry_date + duration
+      paystack_charge_date = new_expiry_date.to_s
+      paystack_customer_code = @member.paystack_cust_code.to_s
+      plan_code = @member.subscription_plan.paystack_plan_code.to_s
+      subscription_code = @member.paystack_subscription_code.to_s
+      email_token = @member.paystack_email_token.to_s
+      create_subscription = PaystackSubscriptions.new(@paystackObj)
+      subscribe = create_subscription.create(customer: paystack_customer_code,
+                                              plan: plan_code,
+                                              authorization: auth_code,
+                                              start_date: paystack_charge_date,
+                                            )
+      if subscribe["status"] == true
+          enable_subscription = create_subscription.enable(code: subscription_code, token: email_token)
+          @member.pause_histories.create(
+              pause_start_date: @member.account_detail.pause_start_date,
+              pause_cancel_date: @member.account_detail.pause_cancel_date,
+              paused_by: current_user.fullname,
+              pause_actual_cancel_date: current_date )
+            
+          @member.account_detail.update(
+                  expiry_date: new_expiry_date,
+                  member_status: 0,
+                  pause_start_date: nil,
+                  pause_expiry_date: nil )
+          render status: 200, json: {
+            message: "success"
+          }  
+      else
+        render status: 200, json: {
+          message: "failed"
+        }
+      end   
+    end
 
+
+
+
+
+
+
+    
     private
 
     def true?(obj)
@@ -170,7 +222,7 @@ class Admin::MembersController < Devise::RegistrationsController
           message: "success"
         }
       else
-        render status: 401, json: {
+        render status: 200, json: {
           message: "no subscription"
         }
       end
@@ -184,7 +236,7 @@ class Admin::MembersController < Devise::RegistrationsController
     end
 
     def update_pause_account_detail
-        @member.account_detail.pause_count = @member.account_detail.pause_count + 1
+        @member.account_detail.pause_permit_count = @member.account_detail.pause_permit_count + 1
         @member.account_detail.pause_start_date = DateTime.now
         @member.account_detail.pause_cancel_date = DateTime.now + 7
         @member.account_detail.member_status = 2
@@ -366,9 +418,11 @@ class Admin::MembersController < Devise::RegistrationsController
     end
 
     def paystack_subscribe
+
       reference = params[:reference_code]
       transactions = PaystackTransactions.new(@paystackObj)
       result = transactions.verify(reference)
+
       if result["status"] == true     
           auth_code = (result["data"]["authorization"]["authorization_code"]).to_s
           paystack_customer_code = (result["data"]["customer"]["customer_code"]).to_s
@@ -383,13 +437,17 @@ class Admin::MembersController < Devise::RegistrationsController
               subscription_code = subscribe["data"]["subscription_code"]
               email_token = subscribe["data"]["email_token"]
               @member.update(paystack_subscription_code: subscription_code,
-                             paystack_email_token: email_token)
+                             paystack_email_token: email_token,
+                             paystack_auth_code: auth_code,
+                             paystack_cust_code: paystack_customer_code)
+
               paystack_created_date = subscribe["data"]["createdAt"]
               enable_subscription = create_subscription.enable(code: subscription_code, token: email_token)
               subscribe_date = Time.iso8601(paystack_created_date).strftime('%d-%m-%Y %H:%M:%S')
               expiry_date, amount = set_expiry_date(subscribe_date), retrieve_amount
               recurring, subscription_status = true, 0
               payment_method = retrieve_payment_method
+
               if enable_subscription["status"] == true
                   update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
                   render status: 200, json: {
