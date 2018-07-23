@@ -135,7 +135,9 @@ class Admin::MemberStepsController < ApplicationController
                 subscription_code = subscribe["data"]["subscription_code"]
                 email_token = subscribe["data"]["email_token"]
                 @member.update(paystack_subscription_code: subscription_code,
-                               paystack_email_token: email_token)
+                               paystack_email_token: email_token,
+                               paystack_auth_code: auth_code,
+                               paystack_cust_code: paystack_customer_code)
                 paystack_created_date = subscribe["data"]["createdAt"]
                 enable_subscription = create_subscription.enable(code: subscription_code, token: email_token)
                 subscribe_date = Time.iso8601(paystack_created_date).strftime('%d-%m-%Y %H:%M:%S')
@@ -192,7 +194,7 @@ class Admin::MemberStepsController < ApplicationController
 
 
     def get_loyalty_points(amount)
-        point = Loyalty.find_by(loyalty_type: "register").loyalty_points_percentage
+        point = Loyalty.find_by(loyalty_type: "register").loyalty_points_percentage ||= 15
         point = ((point * 0.01) * amount).to_i
     end
 

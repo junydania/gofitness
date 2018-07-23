@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     get 'user/:id' => 'admin/users#show', as: :user_profile
   end
 
+  
   devise_scope :member do
     get 'members' => 'admin/members#index', as: :members
     get 'member/:id' => 'admin/members#show', as: :member_profile
@@ -16,7 +17,11 @@ Rails.application.routes.draw do
     put 'cash_renewal/:id' => 'admin/members#cash_renewal', as: :cash_renewal
     put 'pos_renewal/:id' => 'admin/members#pos_renewal', as: :pos_renewal
     post 'paystack_renewal' => 'admin/members#paystack_renewal', as: :paystack_renewal
+    post 'pause_subscription' => 'admin/members#pause_subscription', as: :pause_subscription
+    post 'cancel_pause' => 'admin/members#cancel_pause', as: :cancel_pause
+
   end
+
 
   namespace :admin do
     resources :subscription_plans

@@ -26,8 +26,8 @@ $(document).on("turbolinks:load", function() {
  });
 
 
- $(document).on("turbolinks:load", function() {
-
+$(document).on("turbolinks:load", function() {
+   
     $("#paystack-renew-button").click(function(event) {
 
         if(($('#renew-cash-box').is(':visible') == true) || ($('#renew-pos-box').is(':visible') == true)) {
@@ -60,7 +60,8 @@ $(document).on("turbolinks:load", function() {
                 ]
         },
         callback: function(response){
-            var data = {reference_code: response.reference};
+            var data = { reference_code: response.reference, id: parseInt(gon.member_id) };
+            console.log (gon.member_id);
             $.ajax({
                 url: '/paystack_renewal',
                 type: 'POST',
@@ -92,5 +93,76 @@ $(document).on("turbolinks:load", function() {
 
         handler.openIframe();
   }
-        
- });
+
+    $("#pause-subscriber").click(function(event) {
+
+        $('.loader').modal('show');
+
+        var click_value = $("#pause-subscriber").val();
+
+        var data = { id: click_value };
+        $.ajax({
+            url: '/pause_subscription',
+            type: 'POST',
+            data: data,
+            success: function(data, xhr) {
+
+                $('.loader').modal('hide');
+                
+                if ( data.message == "success" ) {
+                            $('#pause-subscriber').removeClass('btn-warning').addClass('btn-danger').text("Membership Paused");
+                            window.location.reload(true);
+                        
+                } else if(data.message == "no subscription" ) {
+                    content = `<p>Customer doesn't have an active recurring subscription & can't be paused!</p>`;
+                    $('#pause-message').append(content);
+
+                }  else if(data.message == "pause exceeded" ) {
+                    content = `<p>Customer has exceeded permitted pause count.Subscription can't be paused!</p>`;
+                    $('#pause-message').append(content);
+                }
+
+            },
+            error: function() {
+                $('.loader').modal('hide');
+                content = `<p>Error pausing subscription! </p>`;
+                $('#pause-message').append(content);
+            }
+        });
+    });
+
+    $("#cancel-pause").click(function(event) {
+
+        var id = $("#cancel-pause").val();
+
+        $('.loader').modal('show');
+
+        var data = { id: id };
+        $.ajax({
+            url: '/cancel_pause',
+            type: 'POST',
+            data: data,
+            success: function(data, xhr) {
+                $('.loader').modal('hide');
+                if ( data.message == "success" ) {
+                    // $('#pause-subscriber').removeClass('btn-warning').addClass('btn-danger').text("Membership Paused");
+                    content = `<button class="tst2 btn btn-info">Pause Cancellation was Successful!</button>`;
+                    $('#cancel-message').append(content);
+                    window.location.reload(true);
+                
+                }  else {
+                    content = `<p>Pause Cancellation wasn't succesfull!</p>`;
+                    $('#cancel-message').append(content);
+                    window.location.reload(true);
+
+                }
+            },
+            error: function() {
+                $('.loader').modal('hide');
+                content = `<p>Error pausing subscription! </p>`;
+                $('#pause-message').append(content);
+            }
+        });
+    });
+
+});

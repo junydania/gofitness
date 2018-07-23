@@ -6,7 +6,7 @@ class Member < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-    has_one  :account_detail
+    has_one  :account_detail, :dependent => :destroy
     accepts_nested_attributes_for :account_detail, update_only: true
 
     has_many :member_health_conditions
@@ -27,6 +27,8 @@ class Member < ApplicationRecord
     has_many :subscription_histories
     accepts_nested_attributes_for :subscription_histories,
                                 reject_if: :all_blank, allow_destroy: true
+
+    has_many :pause_histories
 
     
     belongs_to :fitness_goal

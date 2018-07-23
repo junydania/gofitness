@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180714160723) do
+ActiveRecord::Schema.define(version: 20180720002514) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,6 +30,7 @@ ActiveRecord::Schema.define(version: 20180714160723) do
     t.bigint "member_id"
     t.integer "member_status"
     t.datetime "unsubscribe_date"
+    t.integer "pause_permit_count", default: 0
     t.index ["member_id"], name: "index_account_details_on_member_id"
   end
 
@@ -148,6 +149,8 @@ ActiveRecord::Schema.define(version: 20180714160723) do
     t.bigint "referring_customer_id"
     t.string "paystack_subscription_code"
     t.string "paystack_email_token"
+    t.string "paystack_auth_code"
+    t.string "paystack_cust_code"
     t.index ["customer_code"], name: "index_members_on_customer_code", unique: true
     t.index ["email"], name: "index_members_on_email", unique: true
     t.index ["fitness_goal_id"], name: "index_members_on_fitness_goal_id"
@@ -160,10 +163,13 @@ ActiveRecord::Schema.define(version: 20180714160723) do
 
   create_table "pause_histories", force: :cascade do |t|
     t.datetime "pause_start_date"
-    t.string "pause_reason"
     t.datetime "pause_cancel_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "paused_by"
+    t.bigint "member_id"
+    t.datetime "pause_actual_cancel_date"
+    t.index ["member_id"], name: "index_pause_histories_on_member_id"
   end
 
   create_table "payment_methods", force: :cascade do |t|
