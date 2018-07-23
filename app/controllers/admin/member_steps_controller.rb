@@ -194,7 +194,7 @@ class Admin::MemberStepsController < ApplicationController
 
 
     def get_loyalty_points(amount)
-        point = Loyalty.find_by(loyalty_type: "register").loyalty_points_percentage
+        point = Loyalty.find_by(loyalty_type: "register").loyalty_points_percentage ||= 15
         point = ((point * 0.01) * amount).to_i
     end
 

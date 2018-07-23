@@ -1,5 +1,8 @@
 function take_snapshot(){
     Webcam.snap(function(data_uri) {
+
+        $('.loader').modal('show');
+
         id = $('[id*="_image"]');
 
         if (id.length) {
@@ -11,6 +14,7 @@ function take_snapshot(){
             type: 'POST',
             data: data,
             success: function(data, textStatus, xhr) {
+                         $('.loader').modal('hide');
                          content = `<div class="card-body">
                                          <button class="tst2 btn btn-success">${data.message}</button>
                                     </div>`
@@ -18,6 +22,7 @@ function take_snapshot(){
                          $("#image_capture-next").fadeIn('fast')
                      },
             error: function(data) {
+                $('.loader').modal('hide');
                 content = `<div class="card-body">
                                     <button class="tst2 btn btn-danger">${data.message}</button>
                             </div>`

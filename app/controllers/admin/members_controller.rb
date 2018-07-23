@@ -2,7 +2,14 @@ class Admin::MembersController < Devise::RegistrationsController
     
     prepend_before_action :require_no_authentication, only: [:new, :create, :cancel]
     before_action :authenticate_user!
-    before_action :find_member, only: [:renew_membership, :pos_renewal, :cash_renewal, :check_paystack_subscription, :unsubscribe_membership, :pause_subscription, :cancel_pause ]
+    before_action :find_member, only: [:renew_membership, 
+                                       :pos_renewal, 
+                                       :cash_renewal, 
+                                       :check_paystack_subscription, 
+                                       :unsubscribe_membership, 
+                                       :pause_subscription, 
+                                       :cancel_pause ]
+                                       
     before_action :get_paystack_object, only: [:check_paystack_subscription, 
                                                :paystack_renewal,
                                                :initiate_paystack_sub, 
@@ -46,6 +53,12 @@ class Admin::MembersController < Devise::RegistrationsController
         build_resource(new_params)
         if resource.save
           session[:member_id] = resource.id
+          member = Member.find(resource.id)
+          account_update = @member.build_account_detail(
+            subscribe_date: DateTime.now,
+            expiry_date: DateTime.now,
+            member_status: 1 )
+          account_update.save
           flash[:notice] = "Receive Payment & Complete the Registration Process"
           redirect_to admin_member_steps_path
         else
@@ -159,8 +172,7 @@ class Admin::MembersController < Devise::RegistrationsController
       end
     end
 
-    def cancel_pause
-      binding.pry
+    def cancel_pause 
       auth_code, current_date = @member.paystack_auth_code.to_s, DateTime.now
       previous_expiry_date = @member.account_detail.expiry_date.to_datetime
       previous_pause_start_date = @member.account_detail.pause_start_date.to_datetime
@@ -171,8 +183,9 @@ class Admin::MembersController < Devise::RegistrationsController
       plan_code = @member.subscription_plan.paystack_plan_code.to_s
       subscription_code = @member.paystack_subscription_code.to_s
       email_token = @member.paystack_email_token.to_s
-      create_subscription = PaystackSubscriptions.new(@paystackObj)
-      subscribe = create_subscription.create(customer: paystack_customer_code,
+      # create_subscription = PaystackSubscriptions.new(@paystackObj)
+      create_subscription = initiate_paystack_sub
+      subscribe = create_subscription.create( customer: paystack_customer_code,
                                               plan: plan_code,
                                               authorization: auth_code,
                                               start_date: paystack_charge_date,
@@ -184,12 +197,12 @@ class Admin::MembersController < Devise::RegistrationsController
               pause_cancel_date: @member.account_detail.pause_cancel_date,
               paused_by: current_user.fullname,
               pause_actual_cancel_date: current_date )
-            
+
           @member.account_detail.update(
                   expiry_date: new_expiry_date,
                   member_status: 0,
                   pause_start_date: nil,
-                  pause_expiry_date: nil )
+                  pause_cancel_date: nil )
           render status: 200, json: {
             message: "success"
           }  
@@ -201,12 +214,6 @@ class Admin::MembersController < Devise::RegistrationsController
     end
 
 
-
-
-
-
-
-    
     private
 
     def true?(obj)
@@ -374,7 +381,7 @@ class Admin::MembersController < Devise::RegistrationsController
     end
 
     def disable_current_paystack_subscription
-      paystack_subscription_code = @member.paystack_subscription_code, 
+      paystack_subscription_code = @member.paystack_subscription_code
       email_token = @member.paystack_email_token
       subscription = initiate_paystack_sub
       result = subscription.disable(

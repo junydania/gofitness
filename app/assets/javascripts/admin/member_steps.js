@@ -24,17 +24,23 @@ $(document).on("turbolinks:load", function() {
                 ]
         },
         callback: function(response){
+            // show loading gif
+            $('.loader').modal('show');
+
             var data = {reference_code: response.reference};
             $.ajax({
                 url: '/admin/paystack_subscribe',
                 type: 'POST',
                 data: data,
                 success: function(data, textStatus, xhr) {
+                             $('.loader').modal('hide');
                              content = `<div class="card-body">
                                              <button class="tst2 btn btn-warning">Payment & Subscription Successful! Continue</button>
                                         </div>`;
                              $('#paystack-success').append(content);
                              $('.remove-back-button').remove();
+                             $('#receive-payment').remove();
+                             $('#paystack-button').remove();
                              $("#payment-next").fadeIn('fast');
                          },
                 error: function() {

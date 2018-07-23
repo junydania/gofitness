@@ -6,7 +6,7 @@ class Member < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-    has_one  :account_detail
+    has_one  :account_detail, :dependent => :destroy
     accepts_nested_attributes_for :account_detail, update_only: true
 
     has_many :member_health_conditions

@@ -35,9 +35,11 @@
                         <div class="card">
                             <div class form-group id="paystack-success">
                             </div>
+
+                            <div class="loader hide modal"></div>
                   
                             <div class="card-body">
-                                <h4 class="card-title">Receive Payment</h4>
+                                <h4 class="card-title" id="receive-payment">Receive Payment</h4>
                                 <% if @member.payment_method.payment_system == "Debit Card" %>
                                     <div class="button-box m-t-20" id="remove-paystack-link">
                                         <button id="paystack-button" class="btn btn-info" href="#">Pay with Card Online</button>

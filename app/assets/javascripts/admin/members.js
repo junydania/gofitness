@@ -27,7 +27,7 @@ $(document).on("turbolinks:load", function() {
 
 
 $(document).on("turbolinks:load", function() {
-
+   
     $("#paystack-renew-button").click(function(event) {
 
         if(($('#renew-cash-box').is(':visible') == true) || ($('#renew-pos-box').is(':visible') == true)) {
@@ -96,6 +96,8 @@ $(document).on("turbolinks:load", function() {
 
     $("#pause-subscriber").click(function(event) {
 
+        $('.loader').modal('show');
+
         var click_value = $("#pause-subscriber").val();
 
         var data = { id: click_value };
@@ -104,6 +106,9 @@ $(document).on("turbolinks:load", function() {
             type: 'POST',
             data: data,
             success: function(data, xhr) {
+
+                $('.loader').modal('hide');
+                
                 if ( data.message == "success" ) {
                             $('#pause-subscriber').removeClass('btn-warning').addClass('btn-danger').text("Membership Paused");
                             window.location.reload(true);
@@ -113,12 +118,13 @@ $(document).on("turbolinks:load", function() {
                     $('#pause-message').append(content);
 
                 }  else if(data.message == "pause exceeded" ) {
-                    content = `<p>Customer has permitted pause count.Subscription can't be paused!</p>`;
+                    content = `<p>Customer has exceeded permitted pause count.Subscription can't be paused!</p>`;
                     $('#pause-message').append(content);
                 }
 
             },
             error: function() {
+                $('.loader').modal('hide');
                 content = `<p>Error pausing subscription! </p>`;
                 $('#pause-message').append(content);
             }
@@ -129,7 +135,7 @@ $(document).on("turbolinks:load", function() {
 
         var id = $("#cancel-pause").val();
 
-        console.log(id);
+        $('.loader').modal('show');
 
         var data = { id: id };
         $.ajax({
@@ -137,6 +143,7 @@ $(document).on("turbolinks:load", function() {
             type: 'POST',
             data: data,
             success: function(data, xhr) {
+                $('.loader').modal('hide');
                 if ( data.message == "success" ) {
                     // $('#pause-subscriber').removeClass('btn-warning').addClass('btn-danger').text("Membership Paused");
                     content = `<button class="tst2 btn btn-info">Pause Cancellation was Successful!</button>`;
@@ -151,6 +158,7 @@ $(document).on("turbolinks:load", function() {
                 }
             },
             error: function() {
+                $('.loader').modal('hide');
                 content = `<p>Error pausing subscription! </p>`;
                 $('#pause-message').append(content);
             }
