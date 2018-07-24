@@ -30,6 +30,7 @@ class Member < ApplicationRecord
 
     has_many :pause_histories
 
+    has_many :attendance_records
     
     belongs_to :fitness_goal
     belongs_to :payment_method

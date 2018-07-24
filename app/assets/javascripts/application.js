@@ -39,3 +39,4 @@
 //= require bootstrap-daterangepicker/daterangepicker
 //= require webcam.min
 //= require admin/cam.js
+//= require admin/attendance_records

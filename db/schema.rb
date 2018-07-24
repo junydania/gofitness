@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180720002514) do
+ActiveRecord::Schema.define(version: 20180724011419) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(version: 20180720002514) do
     t.integer "member_status"
     t.datetime "unsubscribe_date"
     t.integer "pause_permit_count", default: 0
+    t.integer "gym_attendance_status", default: 0
     t.index ["member_id"], name: "index_account_details_on_member_id"
   end
 
@@ -39,6 +40,18 @@ ActiveRecord::Schema.define(version: 20180720002514) do
     t.string "status_checking_in"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "attendance_records", force: :cascade do |t|
+    t.datetime "checkin_date"
+    t.datetime "checkout_date"
+    t.integer "membership_status"
+    t.string "membership_plan"
+    t.string "staff_on_duty"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "member_id"
+    t.index ["member_id"], name: "index_attendance_records_on_member_id"
   end
 
   create_table "cash_transactions", force: :cascade do |t|

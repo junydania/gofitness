@@ -179,10 +179,11 @@ class Admin::MemberStepsController < ApplicationController
                                     loyalty_points_balance: get_loyalty_points(amount),
                                     loyalty_points_used: 0,
                                     gym_plan: retrieve_gym_plan,
-                                    recurring_billing: true )
+                                    recurring_billing: true,
+                                    gym_attendance_status: 1 )
     end
 
-    
+
     def create_loyalty_history(amount)
         points = get_loyalty_points(amount)
         loyalty_history = @member.loyalty_histories.create(

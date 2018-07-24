@@ -57,7 +57,8 @@ class Admin::MembersController < Devise::RegistrationsController
           account_update = @member.build_account_detail(
             subscribe_date: DateTime.now,
             expiry_date: DateTime.now,
-            member_status: 1 )
+            member_status: 1,
+            gym_attendance_status: 0)
           account_update.save
           flash[:notice] = "Receive Payment & Complete the Registration Process"
           redirect_to admin_member_steps_path
@@ -290,7 +291,7 @@ class Admin::MembersController < Devise::RegistrationsController
                                   loyalty_points_balance: update_loyalty_points(amount),
                                   loyalty_points_used: 0,
                                   gym_plan: retrieve_gym_plan,
-                                  recurring_billing: recurring )
+                                  recurring_billing: recurring)
     end
 
     def create_subscription_history(subscribe_date, expiry_date, subscription_status)
