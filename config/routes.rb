@@ -24,6 +24,7 @@ Rails.application.routes.draw do
 
 
   namespace :admin do
+    resources :attendance_records, only: [:index]
     resources :subscription_plans
     resources :features
     resources :fitness_goals
@@ -32,6 +33,7 @@ Rails.application.routes.draw do
     resources :health_conditions
     post 'paystack_subscribe' => 'member_steps#paystack_subscribe', as: :paystack_subscription
     post 'upload_image' => 'member_steps#upload_image', as: :image_upload
+    post 'member_check_in' => 'attendance_records#member_check_in', as: :member_check_in
     resources :loyalties
   end
   
