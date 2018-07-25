@@ -52,21 +52,21 @@
           }
         }
 
-        var $chart = chart.container;
-        var $toolTip = $chart.querySelector('.chartist-tooltip');
-        if (!$toolTip) {
-          $toolTip = document.createElement('div');
-          $toolTip.className = (!options.class) ? 'chartist-tooltip' : 'chartist-tooltip ' + options.class;
-          if (!options.appendToBody) {
-            $chart.appendChild($toolTip);
-          } else {
-            document.body.appendChild($toolTip);
-          }
-        }
-        var height = $toolTip.offsetHeight;
-        var width = $toolTip.offsetWidth;
+        // var $chart = chart.container;
+        // var $toolTip = $chart.querySelector('.chartist-tooltip');
+        // if (!$toolTip) {
+        //   $toolTip = document.createElement('div');
+        //   $toolTip.className = (!options.class) ? 'chartist-tooltip' : 'chartist-tooltip ' + options.class;
+        //   if (!options.appendToBody) {
+        //     $chart.appendChild($toolTip);
+        //   } else {
+        //     document.body.appendChild($toolTip);
+        //   }
+        // }
+        // var height = $toolTip.offsetHeight;
+        // var width = $toolTip.offsetWidth;
 
-        hide($toolTip);
+        // hide($toolTip);
 
         function on(event, selector, callback) {
           $chart.addEventListener(event, function (e) {
