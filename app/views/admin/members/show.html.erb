@@ -116,9 +116,9 @@
                                 <div class="tab-pane" id="profile" role="tabpanel">
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-md-3 col-xs-6 b-r"> <strong>Full Name</strong>
+                                            <div class="col-md-3 col-xs-6 b-r"> <strong>Pause Count</strong>
                                                 <br>
-                                                <p class="text-muted"><%= @member.fullname %></p>
+                                                <p class="text-muted"><%= @member.account_detail.pause_permit_count %></p>                                
                                             </div>
                                             <div class="col-md-3 col-xs-6 b-r"> <strong>Customer Code</strong>
                                                 <br>
@@ -136,8 +136,9 @@
                                         <hr>
                                         <h4><span>Fitness Goal<span></h4>
                                             <button class="btn btn-info" href="#"><%= @member.fitness_goal.goal_name %></button>
+                                            
                                         <br/>
-
+                                        
 
                                         <h4 class="font-medium m-t-30">Member Activity</h4>
                                         <hr>
@@ -205,15 +206,61 @@
                                                 </div>
                                             </div>
 
-
                                         </form>
                                     </div>
                                 </div>
+                                
                             </div>
                         </div>
                     </div>
                     <!-- Column -->
+                    <div class="col-lg-4 col-xlg-3">
+                        <div class="card card-inverse card-info">
+                            <div class="card-body">
+                                <div class="d-flex">
+                                    <div class="m-r-20 align-self-center">
+                                        <h1 class="text-white"><i class="ti-light-bulb"></i></h1></div>
+                                    <div>
+                                        <h3 class="card-title">Wallet Balance</h3>
+                                        <h6 class="card-subtitle">Date Funded: March  2017</h6> </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 align-self-center">
+                                        <h2 class="font-light text-white"><sup><small>NGN</small></sup>35,487</h2>
+                                    </div>
+                                    <div class="col-6 p-t-10 p-b-20 text-right">
+                                        <div class="spark-count" style="height:65px"></div>
+                                    </div>
+                                    
+                                </div>
+                                <%= link_to "Fund Wallet", root_path, class:"btn btn-danger" %>
+                                <%= link_to "View History", root_path, class:"btn btn-danger" %>
+                            </div>
+                        </div>
+                        <div class="card card-inverse card-success">
+                            <div class="card-body">
+                                <div class="d-flex">
+                                    <div class="m-r-20 align-self-center">
+                                        <h1 class="text-white"><i class="ti-pie-chart"></i></h1></div>
+                                    <div>
+                                        <h3 class="card-title">Loyalty Balance</h3>
+                                        <h6 class="card-subtitle">Earned Last: March  2017</h6> </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 align-self-center">
+                                        <h2 class="font-light text-white">2,000 Points</h2>
+                                    </div>
+                                    <div class="col-6 p-t-10 p-b-20 text-right align-self-center">
+                                        <div class="spark-count2" style="height:65px"></div>
+                                    </div>
+                                </div>
+                                <%= link_to "View Loyalty History", root_path, class:"btn btn-danger" %>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+
                 <!-- Row -->
                 <!-- ============================================================== -->
                 <!-- End PAge Content -->
