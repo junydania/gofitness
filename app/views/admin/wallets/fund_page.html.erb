@@ -1,0 +1,100 @@
+        <div class="page-wrapper">
+            <!-- ============================================================== -->
+            <!-- Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <div class="row page-titles">
+                <div class="col-md-5 align-self-center">
+                    <h3 class="text-themecolor">Fund Wallet</h3>
+                </div>
+                <div class="col-md-7 align-self-center">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                        <li class="breadcrumb-item">Member</li>
+                        <li class="breadcrumb-item active">Fund Wallet</li>
+                    </ol>
+                </div>
+                <div class="">
+                    <button class="right-side-toggle waves-effect waves-light btn-inverse btn btn-circle btn-sm pull-right m-l-10"><i class="ti-settings text-white"></i></button>
+                </div>
+            </div>
+
+
+            <div class="container-fluid">
+                <!-- ============================================================== -->
+                <!-- Start Page Content -->
+                <!-- ============================================================== -->
+                <div
+                <div class="row">
+                    <div class="col-12">
+                        <% flash.each do |key, value| %>
+                            <div class="<%= flash_class(key) %>">
+                                    <%= value %>
+                            </div>
+                        <% end %>
+                        </br>
+                        <div class="card">
+                            
+                            <div class form-group id="paystack-wallet-success">
+                            </div>
+
+                            <div class="card-body">
+                                 <button id="wallet-paystack-button" class="btn btn-success" href="#" value="<%= @member.id %>"> Pay with Card Online </button>
+                                 <button id="wallet-cash-button" class="btn btn-info" href="#"> Pay with Cash </button>
+                                 <button id="wallet-pos-button" class="btn btn-warning" href="#"> Pay with POS Terminal</button>
+                            </div>
+
+                            <div class="card-body hide" id="renew-pos-box">
+                                <div><h5>Amount to Charge: </h5><button class="btn btn-success" href="#">₦<%= @member.subscription_plan.cost %></button></div>
+                                <%= form_for([:admin, @member], url: pos_renewal_path, method: :put) do |f| %>
+                                    <%= f.fields_for :pos_transactions, PosTransaction.new do |transaction| %>
+                                        <br/>
+                                        <%= render 'postransaction_fields', f: transaction %>
+                                    <% end %>
+                                <% end %>
+                            </div>
+
+                            <div class="card-body hide" id="renew-cash-box">
+                                <div><h5>Amount to Collect: </h5><button class="btn btn-success" href="#">₦<%= @member.subscription_plan.cost %></button></div>
+                                    <%= form_for([:admin, @member], url: cash_renewal_path, method: :put) do |f| %>
+                                        <%= f.fields_for :cash_transactions, CashTransaction.new do |transaction| %>
+                                            <br/>
+                                            <%= render 'cashtransaction_fields', f: transaction %>
+                                        <% end %>
+                                    <% end %>
+                            </div>
+                        </div>
+                        <div class="card remove-back-button">
+                            <div class="card-body">
+                                <%= link_to "Back", member_profile_path(@member), class: 'btn btn-danger m-r-10'%>
+                            </div>
+                        </div>
+
+                        <div class="card hide">
+
+                        </div>
+
+                        <div class="card hide">
+                            <div class="card-body">
+                                <form>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="manual-subscribe-reference" placeholder="Enter reference code displayed above!"> 
+                                    </div>
+                                    <button type="submit" class="btn btn-info" id="reference-submit">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>  
+                                 
+                    <div class="card hide" id="complete-renewal">
+                        <div class="card-body">
+                            <%= link_to "Proceed to Member Profile", member_profile_path(@member) , class: 'btn btn-success m-r-10'%>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        
+        <%= content_for :after_body do %>
+            <script src="https://js.paystack.co/v1/inline.js"></script>
+        <% end %>

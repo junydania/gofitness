@@ -27,10 +27,6 @@
 //= require raphael/raphael-min
 //= require morrisjs/morris.min
 //= require skycons/skycons.js
-//= require chartist-js/dist/chartist.js
-//= require chartist-plugin-tooltip-master/dist/chartist-plugin-tooltip.min.js
-//= require Chart.js/chartjs.init.js
-//= require Chart.js/Chart.min.js
 //= require dashboard1
 //= require dashboard3
 //= require dashboard4
@@ -48,3 +44,8 @@
 //= require webcam.min
 //= require admin/cam.js
 //= require admin/attendance_records
+//= require admin/wallets
+// = require Chart.js/chartjs.init.js
+// = require Chart.js/Chart.min.js
+//= require chartist-js/dist/chartist.js
+//= require chartist-plugin-tooltip-master/dist/chartist-plugin-tooltip.min.js
