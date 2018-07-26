@@ -31,6 +31,10 @@ class Member < ApplicationRecord
     has_many :pause_histories
 
     has_many :attendance_records
+
+    has_one  :wallet_detail, :dependent => :destroy
+
+    has_many  :wallet_histories
     
     belongs_to :fitness_goal
     belongs_to :payment_method

@@ -23,6 +23,7 @@ $(document).on("turbolinks:load", function() {
                     }
                 ]
             },
+
             callback: function(response){
                 // show loading gif
                 $('.loader').modal('show');
@@ -34,17 +35,22 @@ $(document).on("turbolinks:load", function() {
                     type: 'POST',
                     data: data,
                     success: function(data, textStatus, xhr) {
-                                $('.loader').modal('hide');
-                                content = `<div class="card-body">
-                                                <button class="tst2 btn btn-warning">Payment & Subscription Successful! Continue</button>
-                                            </div>`;
-                                $('#paystack-success').append(content);
-                                $('.remove-back-button').remove();
-                                $('#receive-payment').remove();
-                                $('#paystack-button').remove();
-                                $("#payment-next").fadeIn('fast');
-                            },
+                        $('.loader').modal('hide');
+                        if ( data.message == "success" ) {
+                                    content = `<div class="card-body">
+                                                    <button class="tst2 btn btn-info">Wallet Funding Successful!</button>
+                                                </div>`;
+                                    $('#paystack_wallet_status').append(content);
+                                    $('.remove-back-button').remove();
+                                    $("#access_profile").fadeIn('fast');                                
+                        } else {
+                            content = `<p>Card Payment wasn't successful! Verify payment on Paystack Dashboard</p>`;
+                            $('#paystack_wallet_status').append(content);
+                        }
+                    },
+
                     error: function() {
+                                $('.loader').modal('hide');
                                 content = `<div class="card-body">
                                                 <p>Recurring subscription wasn't successfully activated.</p>
                                                 <p>Enter this reference code in the field below: ${response.reference} </p>

@@ -26,11 +26,6 @@
 //= require bootstrap-select/bootstrap-select.min.js
 //= require raphael/raphael-min
 //= require morrisjs/morris.min
-//= require skycons/skycons.js
-//= require dashboard1
-//= require dashboard3
-//= require dashboard4
-//= require morris-data
 //= require jasny-bootstrap
 //= require styleswitcher/jQuery.style.switcher
 //= require turbolinks
@@ -49,3 +44,8 @@
 // = require Chart.js/Chart.min.js
 //= require chartist-js/dist/chartist.js
 //= require chartist-plugin-tooltip-master/dist/chartist-plugin-tooltip.min.js
+//= require skycons/skycons.js
+//= require dashboard1
+//= require dashboard3
+//= require dashboard4
+//= require morris-data

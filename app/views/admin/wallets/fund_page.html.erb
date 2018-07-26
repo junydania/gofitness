@@ -34,8 +34,9 @@
                         </br>
                         <div class="card">
                             
-                            <div class form-group id="paystack-wallet-success">
+                            <div class form-group id="paystack_wallet_status">
                             </div>
+                            
 
                             <div class="card-body">
                                  <button id="wallet-paystack-button" class="btn btn-success" href="#" value="<%= @member.id %>"> Pay with Card Online </button>
@@ -85,12 +86,12 @@
                         </div>
                     </div>  
                                  
-                    <div class="card hide" id="complete-renewal">
+                    <div class="card hide" id="access_profile">
                         <div class="card-body">
                             <%= link_to "Proceed to Member Profile", member_profile_path(@member) , class: 'btn btn-success m-r-10'%>
                         </div>
                     </div>
-                    
+                    <div class="loader hide modal"></div>
                 </div>
             </div>
         </div>

@@ -100,6 +100,7 @@ class Admin::MemberStepsController < ApplicationController
             create_subscription_history(subscribe_date, expiry_date, subscription_status)
             create_loyalty_history(amount)
             create_general_transaction(subscribe_date, amount, payment_method)
+            update_wallet_account
         end
     end
 
@@ -113,6 +114,7 @@ class Admin::MemberStepsController < ApplicationController
             create_subscription_history(subscribe_date, expiry_date, subscription_status)
             create_loyalty_history(amount)
             create_general_transaction(subscribe_date, amount, payment_method)
+            update_wallet_account
         end
     end
 
@@ -148,7 +150,8 @@ class Admin::MemberStepsController < ApplicationController
                     if account_update.save
                         create_subscription_history(subscribe_date, expiry_date, subscription_status)
                         create_loyalty_history(amount)
-                        create_general_transaction(subscribe_date, amount, payment_method)    
+                        create_general_transaction(subscribe_date, amount, payment_method)   
+                        update_wallet_account 
                     end
                 end
             end
@@ -183,6 +186,17 @@ class Admin::MemberStepsController < ApplicationController
                                     gym_attendance_status: 1 )
     end
 
+    def update_wallet_account
+        wallet_update  = @member.build_wallet_detail(
+            current_balance: 0,
+            total_amount_funded: 0,
+            amount_last_funded: 0, 
+            total_amount_used: 0,
+            amount_last_used: 0,
+            wallet_status: 1,
+        )
+        wallet_update.save
+    end
 
     def create_loyalty_history(amount)
         points = get_loyalty_points(amount)
@@ -193,22 +207,18 @@ class Admin::MemberStepsController < ApplicationController
             loyalty_balance: points )
     end
 
-
     def get_loyalty_points(amount)
         point = Loyalty.find_by(loyalty_type: "register").loyalty_points_percentage ||= 15
         point = ((point * 0.01) * amount).to_i
     end
 
-    
     def loyalty_current_balance
         @member.account_detail.loyalty_points_balance
     end
-    
-    
+        
     def retrieve_payment_method
         @member.payment_method.payment_system
     end
-
     
     def create_subscription_history(subscribe_date, expiry_date, subscription_status)
         subscription_history = @member.subscription_histories.create(

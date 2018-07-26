@@ -20,8 +20,7 @@ Rails.application.routes.draw do
     post 'pause_subscription' => 'admin/members#pause_subscription', as: :pause_subscription
     post 'cancel_pause' => 'admin/members#cancel_pause', as: :cancel_pause
     get 'fund_wallet/:id' => 'admin/wallets#fund_page', as: :wallet_fund_page
-    post 'paystack_wallet_fund' => 'admin/wallets#paystack_fund', as: :paystack_fund
-      
+    post 'paystack_wallet_fund' => 'admin/wallets#paystack_wallet_fund', as: :paystack_wallet_fund
   end
 
 
