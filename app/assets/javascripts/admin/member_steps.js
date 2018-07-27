@@ -25,9 +25,10 @@ $(document).on("turbolinks:load", function() {
         },
         callback: function(response){
             // show loading gif
-            $('.loader').modal('show');
-
+            $('.loader').modal('show')
+            
             var data = {reference_code: response.reference};
+
             $.ajax({
                 url: '/admin/paystack_subscribe',
                 type: 'POST',

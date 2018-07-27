@@ -222,18 +222,18 @@
                                         <h1 class="text-white"><i class="ti-light-bulb"></i></h1></div>
                                     <div>
                                         <h3 class="card-title">Wallet Balance</h3>
-                                        <h6 class="card-subtitle">Date Funded: March  2017</h6> </div>
+                                        <h6 class="card-subtitle">Wallet Expiry Date: <%= @member.wallet_detail.wallet_expiry_date.strftime('%v') %></h6> </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-6 align-self-center">
-                                        <h2 class="font-light text-white"><sup><small>NGN</small></sup>35,487</h2>
+                                        <h2 class="font-light text-white"><sup><small>₦</small></sup><%= @member.wallet_detail.current_balance %></h2>
                                     </div>
                                     <div class="col-6 p-t-10 p-b-20 text-right">
                                         <div class="spark-count" style="height:65px"></div>
                                     </div>
                                     
                                 </div>
-                                <%= link_to "Fund Wallet", root_path, class:"btn btn-danger" %>
+                                <%= link_to "Fund Wallet", wallet_fund_page_path, class:"btn btn-danger" %>
                                 <%= link_to "View History", root_path, class:"btn btn-danger" %>
                             </div>
                         </div>
@@ -248,7 +248,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-6 align-self-center">
-                                        <h2 class="font-light text-white">2,000 Points</h2>
+                                        <h2 class="font-light text-white">₦<%= @member.account_detail.loyalty_points_balance %> Points</h2>
                                     </div>
                                     <div class="col-6 p-t-10 p-b-20 text-right align-self-center">
                                         <div class="spark-count2" style="height:65px"></div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180724011419) do
+ActiveRecord::Schema.define(version: 20180726230908) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -199,6 +199,7 @@ ActiveRecord::Schema.define(version: 20180724011419) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "member_id"
+    t.integer "amount_received"
     t.index ["member_id"], name: "index_pos_transactions_on_member_id"
   end
 
@@ -260,6 +261,33 @@ ActiveRecord::Schema.define(version: 20180724011419) do
     t.index ["first_name"], name: "index_users_on_first_name"
     t.index ["last_name"], name: "index_users_on_last_name"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "wallet_details", force: :cascade do |t|
+    t.integer "current_balance"
+    t.integer "amount_last_funded"
+    t.integer "amount_last_used"
+    t.datetime "wallet_expiry_date"
+    t.integer "member_id"
+    t.datetime "date_last_funded"
+    t.integer "wallet_status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "total_amount_funded"
+    t.integer "total_amount_used"
+  end
+
+  create_table "wallet_histories", force: :cascade do |t|
+    t.integer "amount_paid_in"
+    t.integer "wallet_previous_balance"
+    t.integer "amount_used"
+    t.string "processed_by"
+    t.integer "wallet_new_balance"
+    t.integer "amount_last_used"
+    t.integer "member_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "wallet_fund_method"
   end
 
   add_foreign_key "member_health_conditions", "health_conditions"

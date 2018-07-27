@@ -19,10 +19,13 @@ Rails.application.routes.draw do
     post 'paystack_renewal' => 'admin/members#paystack_renewal', as: :paystack_renewal
     post 'pause_subscription' => 'admin/members#pause_subscription', as: :pause_subscription
     post 'cancel_pause' => 'admin/members#cancel_pause', as: :cancel_pause
-
+    get 'fund_wallet/:id' => 'admin/wallets#fund_page', as: :wallet_fund_page
+    post 'paystack_wallet_fund' => 'admin/wallets#paystack_wallet_fund', as: :paystack_wallet_fund
+    put  'pos_wallet_fund/:id' => 'admin/wallets#pos_wallet_fund', as: :pos_wallet_fund
+    put   'cash_wallet_fund/:id' => 'admin/wallets#cash_wallet_fund', as: :cash_wallet_fund
   end
 
-
+  
   namespace :admin do
     resources :attendance_records, only: [:index]
     resources :subscription_plans

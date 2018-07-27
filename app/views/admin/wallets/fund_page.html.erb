@@ -1,0 +1,126 @@
+        <div class="page-wrapper">
+            <!-- ============================================================== -->
+            <!-- Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <div class="row page-titles">
+                <div class="col-md-5 align-self-center">
+                    <h3 class="text-themecolor">Fund Wallet</h3>
+                </div>
+                <div class="col-md-7 align-self-center">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                        <li class="breadcrumb-item">Member</li>
+                        <li class="breadcrumb-item active">Fund Wallet</li>
+                    </ol>
+                </div>
+                <div class="">
+                    <button class="right-side-toggle waves-effect waves-light btn-inverse btn btn-circle btn-sm pull-right m-l-10"><i class="ti-settings text-white"></i></button>
+                </div>
+            </div>
+
+
+            <div class="container-fluid">
+                <!-- ============================================================== -->
+                <!-- Start Page Content -->
+                <!-- ============================================================== -->
+                <div
+                <div class="row">
+                    <div class="col-12">
+                        <% flash.each do |key, value| %>
+                            <div class="<%= flash_class(key) %>">
+                                    <%= value %>
+                            </div>
+                        <% end %>
+                        </br>
+                        <div class="card">
+                            
+                            <div class form-group id="paystack_wallet_status">
+                            </div>
+                            
+
+                            <div class="card-body">
+                                 <button id="wallet-paystack-button" class="btn btn-success" href="#" value="<%= @member.id %>"> Pay with Card Online </button>
+                                 <button id="wallet-cash-button" class="btn btn-info" href="#"> Pay with Cash </button>
+                                 <button id="wallet-pos-button" class="btn btn-warning" href="#"> Pay with POS Terminal</button>
+                            </div>
+
+                            <div class="card-body hide" id="fund_wallet_pos_form">
+                                <div><h5>Charge Using POS Terminal</h5></div>
+                                <%= form_for([:admin, @member], url: pos_wallet_fund_path, method: :put, id: "pos_form") do |f| %>
+                                    <%= f.fields_for :pos_transactions, PosTransaction.new do |transaction| %>
+                                        <br/>
+                                        <%= render 'postransaction_fields', f: transaction %>
+                                    <% end %>
+                                <% end %>
+                            </div>
+
+                            <div class="card-body hide" id="wallet_cash_form">
+                                <div><h5>Amount Collected: </h5></div>
+                                    <%= form_for([:admin, @member], url: cash_wallet_fund_path, method: :put) do |f| %>
+                                        <%= f.fields_for :cash_transactions, CashTransaction.new do |transaction| %>
+                                            <br/>
+                                            <%= render 'cashtransaction_fields', f: transaction %>
+                                        <% end %>
+                                    <% end %>
+                            </div>
+                        </div>
+                        <div class="card remove-back-button">
+                            <div class="card-body">
+                                <%= link_to "Back", member_profile_path(@member), class: 'btn btn-danger m-r-10'%>
+                            </div>
+                        </div>
+
+                        <div class="card hide">
+
+                        </div>
+
+                        <div class="card hide">
+                            <div class="card-body">
+                                <form>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="manual-subscribe-reference" placeholder="Enter reference code displayed above!"> 
+                                    </div>
+                                    <button type="submit" class="btn btn-info" id="reference-submit">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>  
+                                 
+                    <div class="card hide" id="access_profile">
+                        <div class="card-body">
+                            <%= link_to "Proceed to Member Profile", member_profile_path(@member) , class: 'btn btn-success m-r-10'%>
+                        </div>
+                    </div>
+                    <div class="loader hide modal"></div>
+                </div>
+
+                <div id="wallet_amount_form" class="modal fade in feature-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                <h4 class="modal-title" id="myModalLabel">Enter Amount</h4> </div>
+                            <div class="modal-body">
+                                <form class='form-material m-t-40' id="form_reset">
+                                    <div class="form-group">
+                                        <div class="col-md-12 m-b-20">
+                                            <input type="number" class="form-control" id="wallet_amount" placeholder="Enter Amount in Figures. e.g. 10000">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-info" id="pay_button" data-dismiss="modal">Pay</button>
+                                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cancel</button>
+                                    </div>
+                                <form>
+                            </div> 
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+            </div>
+        </div>
+        
+        <%= content_for :after_body do %>
+            <script src="https://js.paystack.co/v1/inline.js"></script>
+        <% end %>
