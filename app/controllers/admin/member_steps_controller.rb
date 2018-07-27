@@ -100,7 +100,7 @@ class Admin::MemberStepsController < ApplicationController
             create_subscription_history(subscribe_date, expiry_date, subscription_status)
             create_loyalty_history(amount)
             create_general_transaction(subscribe_date, amount, payment_method)
-            update_wallet_account
+            intiate_wallet_account
         end
     end
 
@@ -114,7 +114,7 @@ class Admin::MemberStepsController < ApplicationController
             create_subscription_history(subscribe_date, expiry_date, subscription_status)
             create_loyalty_history(amount)
             create_general_transaction(subscribe_date, amount, payment_method)
-            update_wallet_account
+            intiate_wallet_account
         end
     end
 
@@ -151,7 +151,7 @@ class Admin::MemberStepsController < ApplicationController
                         create_subscription_history(subscribe_date, expiry_date, subscription_status)
                         create_loyalty_history(amount)
                         create_general_transaction(subscribe_date, amount, payment_method)   
-                        update_wallet_account 
+                        intiate_wallet_account 
                     end
                 end
             end
@@ -186,7 +186,7 @@ class Admin::MemberStepsController < ApplicationController
                                     gym_attendance_status: 1 )
     end
 
-    def update_wallet_account
+    def intiate_wallet_account
         wallet_update  = @member.build_wallet_detail(
             current_balance: 0,
             total_amount_funded: 0,

@@ -44,9 +44,9 @@
                                  <button id="wallet-pos-button" class="btn btn-warning" href="#"> Pay with POS Terminal</button>
                             </div>
 
-                            <div class="card-body hide" id="renew-pos-box">
-                                <div><h5>Amount to Charge: </h5><button class="btn btn-success" href="#">₦<%= @member.subscription_plan.cost %></button></div>
-                                <%= form_for([:admin, @member], url: pos_renewal_path, method: :put) do |f| %>
+                            <div class="card-body hide" id="fund_wallet_pos_form">
+                                <div><h5>Charge Using POS Terminal</h5></div>
+                                <%= form_for([:admin, @member], url: pos_wallet_fund_path, method: :put, id: "pos_form") do |f| %>
                                     <%= f.fields_for :pos_transactions, PosTransaction.new do |transaction| %>
                                         <br/>
                                         <%= render 'postransaction_fields', f: transaction %>
@@ -54,9 +54,9 @@
                                 <% end %>
                             </div>
 
-                            <div class="card-body hide" id="renew-cash-box">
-                                <div><h5>Amount to Collect: </h5><button class="btn btn-success" href="#">₦<%= @member.subscription_plan.cost %></button></div>
-                                    <%= form_for([:admin, @member], url: cash_renewal_path, method: :put) do |f| %>
+                            <div class="card-body hide" id="wallet_cash_form">
+                                <div><h5>Amount Collected: </h5></div>
+                                    <%= form_for([:admin, @member], url: cash_wallet_fund_path, method: :put) do |f| %>
                                         <%= f.fields_for :cash_transactions, CashTransaction.new do |transaction| %>
                                             <br/>
                                             <%= render 'cashtransaction_fields', f: transaction %>
@@ -92,6 +92,31 @@
                         </div>
                     </div>
                     <div class="loader hide modal"></div>
+                </div>
+
+                <div id="wallet_amount_form" class="modal fade in feature-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                <h4 class="modal-title" id="myModalLabel">Enter Amount</h4> </div>
+                            <div class="modal-body">
+                                <form class='form-material m-t-40' id="form_reset">
+                                    <div class="form-group">
+                                        <div class="col-md-12 m-b-20">
+                                            <input type="number" class="form-control" id="wallet_amount" placeholder="Enter Amount in Figures. e.g. 10000">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-info" id="pay_button" data-dismiss="modal">Pay</button>
+                                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cancel</button>
+                                    </div>
+                                <form>
+                            </div> 
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
                 </div>
             </div>
         </div>

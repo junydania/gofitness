@@ -1,6 +1,10 @@
 <div class="form-group">
+    <%= f.label :amount_received, 'Amount Received' %>
+    <%= f.number_field :amount_received, class: 'form-control form-control-line', placeholder: "Enter amount in numbers without comma" %>
+</div>
+<div class="form-group">
     <%= f.label :transaction_reference, 'Transaction Reference' %>
-    <%= f.text_field :transaction_reference, class: 'form-control form-control-line' %>
+    <%= f.text_field :transaction_reference, class: 'form-control form-control-line', placeholder: "Enter POS Transaction reference number" %>
 </div>
 <div class="form-group">
     <%= f.label :transaction_success, 'Transaction Successesful?' %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180726085456) do
+ActiveRecord::Schema.define(version: 20180726230908) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -199,6 +199,7 @@ ActiveRecord::Schema.define(version: 20180726085456) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "member_id"
+    t.integer "amount_received"
     t.index ["member_id"], name: "index_pos_transactions_on_member_id"
   end
 
