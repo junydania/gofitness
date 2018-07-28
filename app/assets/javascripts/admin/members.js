@@ -30,6 +30,7 @@ $(document).on("turbolinks:load", function() {
 
     $("#renew-wallet-button").click(function(event){ 
 
+        $('.loader').modal('show');
         member = $("#renew-wallet-button").val();
         console.log(member);
         $.ajax({
@@ -37,6 +38,7 @@ $(document).on("turbolinks:load", function() {
             type: 'POST',
             data: { id: member},
             success: function(data, textStatus, xhr) {
+                            $('.loader').modal('hide');
                             content = `<div class="card-body">
                                             <button class="tst2 btn btn-info">Renewal Successful!</button>
                                     </div>`;

@@ -78,17 +78,26 @@ class Admin::MembersController < Devise::RegistrationsController
     end
 
     def wallet_renewal
-      @member = Member.find(params[:id].to_i)
-      wallet_balance = @member.wallet_detail.current_balance
-      current_plan_cost = @member.subscription_plan.cost
-      if wallet_balance > curent_plan_cost 
+      binding.pry
+      member = Member.find(params[:id].to_i)
+      wallet_balance = member.wallet_detail.current_balance.to_i
+      current_plan_cost = member.subscription_plan.cost.to_i
+      if wallet_balance >= current_plan_cost
         new_balance = wallet_balance - current_plan_cost
         subscribe_date, recurring, amount = set_subscribe_date, false, current_plan_cost
         expiry_date, payment_method = set_expiry_date(subscribe_date), "Wallet"
-        subscription_status = 0
+        subscription_status, fund_method = 0, "Wallet"
+        update_wallet_detail(member, amount, wallet_balance, new_balance)
+        update_wallet_histories(member, amount, wallet_balance, new_balance, fund_method)
         update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
-
-
+        render status: 200, json: {
+          message: "success"
+        }
+      else
+        render status: 200, json: {
+          message: "insufficient funds"
+      }
+      end
     end
     
     
@@ -236,19 +245,16 @@ class Admin::MembersController < Devise::RegistrationsController
       obj.to_s == "true"
     end
 
-    def update_wallet_detail(member, amount, existing_balance, new_balance)
-      amount_last_used = member.wallet_detail.amount_last_used ? member.wallet_detail.amount_last_used : 0 
+    def update_wallet_detail(member, amount, wallet_balance, new_balance)
       date_last_funded = member.wallet_detail.date_last_funded
       total_funded = member.wallet_detail.total_amount_funded
       total_amount_used = member.wallet_detail.total_amount_used + amount
       current_wallet_expiry_date = member.wallet_detail.wallet_expiry_date
-      new_wallet_expiry_date = current_wallet_expiry_date + 180
       member.wallet_detail.update(
           current_balance: new_balance,
           total_amount_funded: total_funded,
           amount_last_funded: amount, 
           total_amount_used: total_amount_used,
-          amount_last_used: amount,
           wallet_expiry_date:  current_wallet_expiry_date,
           wallet_status: 0,
           date_last_funded: date_last_funded,
@@ -256,16 +262,14 @@ class Admin::MembersController < Devise::RegistrationsController
     end
 
 
-    def update_wallet_histories(member, amount, existing_balance, new_balance, fund_method)
-      amount_last_used = member.wallet_detail_amount.amount_used ||= 0
+    def update_wallet_histories(member, amount, wallet_balance, new_balance, fund_method)
       member.wallet_histories.create(
            amount_paid_in: 0,
-           wallet_previous_balance: existing_balance,
+           wallet_previous_balance: wallet_balance,
            amount_used: amount,
            processed_by: current_user.fullname,
            wallet_new_balance: new_balance,
-           amount_last_used: amount_last_used,
-           wallet_fund_method: fund_method )
+           wallet_fund_method: 2,)
     end
     
     
@@ -393,7 +397,9 @@ class Admin::MembersController < Devise::RegistrationsController
 
     def set_expiry_date(subscribe_date)
       expiry_date = DateTime.new
-      if @member.subscription_plan.duration == "monthly"
+      if @member.subscription_plan.duration == "daily"
+        expiry_date =  (DateTime.parse(subscribe_date) + 1).strftime('%d-%m-%Y %H:%M:%S')
+      elsif @member.subscription_plan.duration == "monthly"
           expiry_date =  (DateTime.parse(subscribe_date) + 30).strftime('%d-%m-%Y %H:%M:%S')
       elsif @member.subscription_plan.duration == "quarterly"
           expiry_date =  (DateTime.parse(subscribe_date) + 90).strftime('%d-%m-%Y %H:%M:%S')

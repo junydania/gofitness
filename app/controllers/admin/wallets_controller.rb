@@ -102,7 +102,6 @@ class Admin::WalletsController < ApplicationController
 
 
     def update_wallet_detail(amount, existing_balance, new_balance)
-        amount_last_used = @member.wallet_detail.amount_last_used ? @member.wallet_detail.amount_last_used : 0 
         total_funded = @member.wallet_detail.total_amount_funded ?  @member.wallet_detail.total_amount_funded : 0
         total_amount_used = @member.wallet_detail.total_amount_used ? @member.wallet_detail.total_amount_used : 0
         current_wallet_expiry_date = @member.wallet_detail.wallet_expiry_date ||= DateTime.now
@@ -112,7 +111,6 @@ class Admin::WalletsController < ApplicationController
             total_amount_funded: total_funded + amount,
             amount_last_funded: amount, 
             total_amount_used: total_amount_used,
-            amount_last_used: amount_last_used,
             wallet_expiry_date: new_wallet_expiry_date,
             wallet_status: 0,
             date_last_funded: DateTime.now
@@ -135,7 +133,6 @@ class Admin::WalletsController < ApplicationController
              amount_used: 0,
              processed_by: current_user.fullname,
              wallet_new_balance: new_balance,
-             amount_last_used: 0,
              wallet_fund_method: fund_method )
     end
 
