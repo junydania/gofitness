@@ -222,7 +222,7 @@
                                         <h1 class="text-white"><i class="ti-light-bulb"></i></h1></div>
                                     <div>
                                         <h3 class="card-title">Wallet Balance</h3>
-                                        <h6 class="card-subtitle">Wallet Expiry Date: <%= @member.wallet_detail.wallet_expiry_date.strftime('%v') %></h6> </div>
+                                        <h6 class="card-subtitle">Wallet Expiry Date: <%= @member.wallet_detail.wallet_expiry_date ? @member.wallet_detail.wallet_expiry_date.strftime('%v') : DateTime.now %></h6> </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-6 align-self-center">

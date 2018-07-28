@@ -8,7 +8,8 @@ class Admin::MembersController < Devise::RegistrationsController
                                        :check_paystack_subscription, 
                                        :unsubscribe_membership, 
                                        :pause_subscription, 
-                                       :cancel_pause ]
+                                       :cancel_pause,
+                                       :wallet_renewal ]
                                        
     before_action :get_paystack_object, only: [:check_paystack_subscription, 
                                                :paystack_renewal,
@@ -76,6 +77,21 @@ class Admin::MembersController < Devise::RegistrationsController
       session[:member_id] = @member.id
     end
 
+    def wallet_renewal
+      @member = Member.find(params[:id].to_i)
+      wallet_balance = @member.wallet_detail.current_balance
+      current_plan_cost = @member.subscription_plan.cost
+      if wallet_balance > curent_plan_cost 
+        new_balance = wallet_balance - current_plan_cost
+        subscribe_date, recurring, amount = set_subscribe_date, false, current_plan_cost
+        expiry_date, payment_method = set_expiry_date(subscribe_date), "Wallet"
+        subscription_status = 0
+        update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
+
+
+    end
+    
+    
     def cash_renewal
       cash_received = member_params["cash_transactions_attributes"]["0"]["amount_received"].to_i
       customer_current_amount = @member.account_detail.amount
@@ -184,7 +200,6 @@ class Admin::MembersController < Devise::RegistrationsController
       plan_code = @member.subscription_plan.paystack_plan_code.to_s
       subscription_code = @member.paystack_subscription_code.to_s
       email_token = @member.paystack_email_token.to_s
-      # create_subscription = PaystackSubscriptions.new(@paystackObj)
       create_subscription = initiate_paystack_sub
       subscribe = create_subscription.create( customer: paystack_customer_code,
                                               plan: plan_code,
@@ -221,6 +236,39 @@ class Admin::MembersController < Devise::RegistrationsController
       obj.to_s == "true"
     end
 
+    def update_wallet_detail(member, amount, existing_balance, new_balance)
+      amount_last_used = member.wallet_detail.amount_last_used ? member.wallet_detail.amount_last_used : 0 
+      date_last_funded = member.wallet_detail.date_last_funded
+      total_funded = member.wallet_detail.total_amount_funded
+      total_amount_used = member.wallet_detail.total_amount_used + amount
+      current_wallet_expiry_date = member.wallet_detail.wallet_expiry_date
+      new_wallet_expiry_date = current_wallet_expiry_date + 180
+      member.wallet_detail.update(
+          current_balance: new_balance,
+          total_amount_funded: total_funded,
+          amount_last_funded: amount, 
+          total_amount_used: total_amount_used,
+          amount_last_used: amount,
+          wallet_expiry_date:  current_wallet_expiry_date,
+          wallet_status: 0,
+          date_last_funded: date_last_funded,
+      )
+    end
+
+
+    def update_wallet_histories(member, amount, existing_balance, new_balance, fund_method)
+      amount_last_used = member.wallet_detail_amount.amount_used ||= 0
+      member.wallet_histories.create(
+           amount_paid_in: 0,
+           wallet_previous_balance: existing_balance,
+           amount_used: amount,
+           processed_by: current_user.fullname,
+           wallet_new_balance: new_balance,
+           amount_last_used: amount_last_used,
+           wallet_fund_method: fund_method )
+    end
+    
+    
     def pause_subscription_steps
       if check_paystack_subscription == true
         disable_current_paystack_subscription
