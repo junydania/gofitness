@@ -192,8 +192,8 @@ class Admin::MemberStepsController < ApplicationController
             total_amount_funded: 0,
             amount_last_funded: 0, 
             total_amount_used: 0,
-            amount_last_used: 0,
             wallet_status: 1,
+            wallet_expiry_date: DateTime.now,
         )
         wallet_update.save
     end

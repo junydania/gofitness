@@ -27,6 +27,38 @@ $(document).on("turbolinks:load", function() {
 
 
 $(document).on("turbolinks:load", function() {
+
+    $("#renew-wallet-button").click(function(event){ 
+
+        $('.loader').modal('show');
+        member = $("#renew-wallet-button").val();
+        console.log(member);
+        $.ajax({
+            url: '/wallet_renewal',
+            type: 'POST',
+            data: { id: member},
+            success: function(data, textStatus, xhr) {
+                            $('.loader').modal('hide');
+                            content = `<div class="card-body">
+                                            <button class="tst2 btn btn-info">Renewal Successful!</button>
+                                    </div>`;
+                            $('#paystack-renew-success').append(content);
+                            $('.remove-back-button').remove();
+                            $('#paystack-renew-button, #renew-cash-button, #renew-pos-button').remove();
+                            $("#complete-renewal").fadeIn('fast');
+                        },
+            error: function() {
+                        content = `<div class="card-body">
+                                        <p>Recurring subscription wasn't successfully activated.</p>
+                                        <p>Enter this reference code in the field below: ${response.reference} </p>
+                                    </div>`
+                        $("#reference-code").append(content);
+                        $("#reference-code").fadeIn('fast');
+                        $("#manual-subscribe").fadeIn('fast');                            
+                    }
+        });
+    });
+
    
     $("#paystack-renew-button").click(function(event) {
 
