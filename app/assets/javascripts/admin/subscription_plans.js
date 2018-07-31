@@ -6,7 +6,7 @@ $(document).on("turbolinks:load", function() {
         }else {
             $(".group_member_hide").fadeOut('fast'); 
         }
-    })
+    });
 
     //code for selectize on subscription plan page
     var selectizeCallback = null;
@@ -36,7 +36,7 @@ $(document).on("turbolinks:load", function() {
     })
     $(".selectize").selectize({
         create: function(input, callback) {
-            selectizeCallback = callback
+            selectizeCallback = callback;
             $(".feature-modal").modal();
             $("#feature_name").val(input);
             

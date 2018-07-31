@@ -78,7 +78,6 @@ class Admin::MembersController < Devise::RegistrationsController
     end
 
     def wallet_renewal
-      binding.pry
       member = Member.find(params[:id].to_i)
       wallet_balance = member.wallet_detail.current_balance.to_i
       current_plan_cost = member.subscription_plan.cost.to_i
