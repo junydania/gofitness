@@ -31,10 +31,6 @@
                             <div class="card-body">
                                 <h4 class="card-title">Create Personal Profile</h4>
                                 <%= form_for([:admin, @member], url: wizard_path, html: {class: 'form-group m-t-40' }, method: :put) do |f| %> 
-                                    <div class="form-group">
-                                        <%= f.label :customer_code, 'Customer Code' %>
-                                        <%= f.text_field :customer_code, class: 'form-control form-control-line' %>
-                                    </div>
                                      <div class="form-group">
                                         <%= f.label :phone_number, 'Phone Number' %>
                                         <%= f.number_field :phone_number, class: 'form-control form-control-line' %>
@@ -53,9 +49,10 @@
                                     <div class="form-group">
                                         <%= f.label :health_condition_ids, 'Health Conditions' %>
                                         <%= f.select(:health_condition_ids, HealthCondition.all.pluck(:condition_name, :id), {}, { multiple: true, class: "health_selectize" }) %>
+                                    <div class="form-group">
+                                        <%= f.label :customer_code, 'Customer Code' %>
+                                        <%= f.text_field :customer_code, class: 'form-control form-control-line' %>
                                     </div>
-                                    
-                                    <div>
                                         <%= f.submit 'Next', class: 'btn btn-danger m-r-10' %>
                                     </div>
                                 <% end %>

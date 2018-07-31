@@ -45,6 +45,7 @@ $(document).on("turbolinks:load", function() {
                              $("#payment-next").fadeIn('fast');
                          },
                 error: function() {
+                            $('.loader').modal('hide');
                             content = `<div class="card-body">
                                             <p>Recurring subscription wasn't successfully activated.</p>
                                             <p>Enter this reference code in the field below: ${response.reference} </p>

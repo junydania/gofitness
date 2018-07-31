@@ -132,7 +132,7 @@ class Admin::MemberStepsController < ApplicationController
                                                     plan: plan_code,
                                                     authorization: auth_code,
                                                     start_date: start_date,
-                                                   )
+                                                    )
             if subscribe["status"] == true
                 subscription_code = subscribe["data"]["subscription_code"]
                 email_token = subscribe["data"]["email_token"]
