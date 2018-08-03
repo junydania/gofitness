@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
   
+  require 'sidekiq/web'
+  require 'sidekiq/cron/web'
+  mount Sidekiq::Web => '/sidekiq'
+  
   devise_for :members, :controllers => {:registrations => "admin/members"}
   devise_for :users,  :controllers => {:registrations => "admin/users"}
 
