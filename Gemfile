@@ -28,7 +28,11 @@ gem 'paystack'
 gem 'shrine'
 gem "aws-sdk-s3"
 gem "browserify-rails"
- gem 'figaro'
+gem 'figaro'
+gem 'sidekiq'
+gem "sidekiq-cron"
+gem 'sinatra', require: false
+gem 'slim'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

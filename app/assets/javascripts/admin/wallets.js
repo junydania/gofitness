@@ -34,7 +34,7 @@ $(document).on("turbolinks:load", function() {
         var reg = new RegExp(/^\d+$/);
         var amount;
         input_received = $("#wallet_amount").val();
-        if (reg.test(input_received) == true) {
+        if (reg.test(input_received) === true) {
             amount = parseInt(input_received * 100);
         }
         else {

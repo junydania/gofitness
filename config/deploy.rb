@@ -91,6 +91,13 @@ namespace :deploy do
       end
     end
 
+    desc 'Restart sidekiq'
+    task :restartsidekiq do
+      on roles(:app) do
+       execute :sudo, :systemctl, :restart, :sidekiq
+      end
+    end
+
     desc 'Run npm:install'
     task :npm_install do
       on roles(:app) do
@@ -117,6 +124,7 @@ namespace :deploy do
     after  :finishing,  :compile_assets
     after  :finishing,  :cleanup
     after  :finishing,  :restart 
-
+    after  :finishing,  :restartsidekiq
+    
 end
   
