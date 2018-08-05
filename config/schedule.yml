@@ -1,5 +1,5 @@
 update_subscription_status:
   cron: "* * * * *"
   class: "UpdateSubscriptionJob"
-  queue: default
+  queue: update_sub_status
 
