@@ -1,7 +1,10 @@
 class WebhooksController < ApplicationController
-    skip_before_filter :verify_authenticity_token
+    skip_before_action :verify_authenticity_token
+    protect_from_forgery :except => :receive
+
 
   def receive
+    binding.pry
     if request.headers['Content-Type'] == 'application/json'
       data = JSON.parse(request.body.read)
     else
@@ -9,9 +12,16 @@ class WebhooksController < ApplicationController
       data = params.as_json
     end
 
-    Webhook::Received.save(data: data, integration: params[:integration_name])
-    render nothing: true
+    SECRET_KEY = 'key'
+    data = request.body.read
+    digest = OpenSSL::Digest.new('sha1')
+
+    OpenSSL::HMAC.digest(digest, key, data)
+
+    OpenSSL::HMAC.hexdigest(digest, key, data)
 
   end
+
+  
 
 end
