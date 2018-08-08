@@ -1,4 +1,5 @@
 module Membership
+
     class SubscriptionActivity
 
         def initialize(options)
@@ -83,7 +84,7 @@ module Membership
             subscription_history = @member.subscription_histories.create(
                 subscribe_date: @subscribe_date,
                 expiry_date: @expiry_date,
-                subscription_type: 0,
+                subscription_type: 1,
                 subscription_plan: retrieve_gym_plan,
                 amount: @amount,
                 payment_method: retrieve_payment_method,
