@@ -4,4 +4,5 @@
 :logfile: ./log/sidekiq.log
 :queues:
   - update_sub_status
-:daemon: true
+  - process_web_hook
+# :daemon: true

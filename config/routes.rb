@@ -2,7 +2,10 @@ Rails.application.routes.draw do
   
   require 'sidekiq/web'
   require 'sidekiq/cron/web'
-  mount Sidekiq::Web => '/sidekiq'
+
+  authenticate :user do
+    mount Sidekiq::Web => '/sidekiq'
+  end
   
   devise_for :members, :controllers => {:registrations => "admin/members"}
   devise_for :users,  :controllers => {:registrations => "admin/users"}
@@ -43,6 +46,10 @@ Rails.application.routes.draw do
     post 'upload_image' => 'member_steps#upload_image', as: :image_upload
     post 'member_check_in' => 'attendance_records#member_check_in', as: :member_check_in
     resources :loyalties
+  end
+
+  constraints subdomain: 'hooks' do
+    post '/:paystack_webhook' => 'webhooks#receive', as: :receive_webhooks
   end
   
   root 'welcome#index'
