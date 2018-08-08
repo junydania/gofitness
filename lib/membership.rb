@@ -1,22 +1,19 @@
 module Membership
-
     class SubscriptionActivity
 
-        def initialize(*options)
-            binding.pry
-            @member = options["member_detail"]
-            @subscribe_date = options["data"]["period_start"].to_datetime
-            @expiry_date = options["data"]["period_end"].to_datetime
-            @amount = options["data"]["amount"].to_i
-            @paid_date = options["data"]["paid_at"].to_datetime
-            @auth_code = options["data"]["authorization"]["authorization_code"]
-            @subscription_code = options["data"]["subscription"]["subscription_code"]
-            @transaction_reference = options["data"]["transaction"]["reference"]
+        def initialize(options)
+            @member = Member.find(options['member_id'])
+            @subscribe_date = options['data']['period_start'].to_datetime
+            @expiry_date = options['data']['period_end'].to_datetime
+            @amount = options['data']['amount'].to_i
+            @paid_date = options['data']['paid_at'].to_datetime
+            @auth_code = options['data']['authorization']['authorization_code']
+            @subscription_code = options['data']['subscription']['subscription_code']
+            @transaction_reference = options['data']['transaction']['reference']
             @subscription_status = 0
         end
 
         def call
-            binding.pry
             amount = @amount
             update_account_detail(amount)
             create_loyalty_history(amount)
@@ -70,7 +67,6 @@ module Membership
 
     
         def get_loyalty_points(amount)
-            binding.pry
             point = Loyalty.find_by(loyalty_type: 1).loyalty_points_percentage ||= 10
             point = ((point.to_f * 0.01) * amount).to_i
         end
