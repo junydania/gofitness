@@ -4,9 +4,10 @@ class Admin::SubscriptionPlansController < ApplicationController
 
     before_action :authenticate_user!
     
-    # require 'paystack_module'
-
-    # include GoFitPaystack
+    
+    def index
+        @subscription_plans = SubscriptionPlan.all
+    end
 
 
     def new
@@ -14,7 +15,11 @@ class Admin::SubscriptionPlansController < ApplicationController
         @feature = Feature.new
     end
 
-    
+    def show
+        @subscription_plan = SubscriptionPlan.find(params[:id])
+    end
+
+
     def create
         if plan_param[:recurring] == "true"
             result = create_paystack_plan(plan_param)
@@ -41,7 +46,6 @@ class Admin::SubscriptionPlansController < ApplicationController
     end
 
 
-    
 
     private
 
