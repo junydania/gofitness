@@ -1,4 +1,5 @@
 class Admin::PaymentMethodsController < ApplicationController
+    load_and_authorize_resource param_method: :payment_param
 
     before_action :find_payment_method, only: [:show, :edit, :update, :destroy] 
     before_action :authenticate_user!

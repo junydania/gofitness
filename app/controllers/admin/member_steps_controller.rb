@@ -1,5 +1,7 @@
 class Admin::MemberStepsController < ApplicationController
 
+    load_and_authorize_resource param_method: :member_params
+
     include Wicked::Wizard
 
     before_action :authenticate_user!

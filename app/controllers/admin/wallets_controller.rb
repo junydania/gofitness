@@ -1,5 +1,7 @@
 class Admin::WalletsController < ApplicationController
 
+    load_and_authorize_resource param_method: :wallet_member_params
+
     before_action :authenticate_user!
     before_action :find_member, only: [:fund_page, 
                                        :update_wallet_detail, 

@@ -1,4 +1,6 @@
 class Admin::FitnessGoalsController < ApplicationController
+
+    load_and_authorize_resource param_method: :goal_param
     
     before_action :authenticate_user!
     before_action :find_fitness_goal, only: [:show, :edit, :update, :destroy] 

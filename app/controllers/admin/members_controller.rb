@@ -1,4 +1,6 @@
 class Admin::MembersController < Devise::RegistrationsController
+
+    load_and_authorize_resource param_method: :member_params
     
     prepend_before_action :require_no_authentication, only: [:new, :create, :cancel]
     before_action :authenticate_user!

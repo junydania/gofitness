@@ -81,6 +81,7 @@ GEM
       sprockets (>= 3.6.0)
     builder (3.2.3)
     byebug (10.0.2)
+    cancancan (2.1.2)
     capistrano (3.11.0)
       airbrussh (>= 1.0.0)
       i18n
@@ -420,6 +421,7 @@ DEPENDENCIES
   bootstrap (~> 4.1.1)
   browserify-rails
   byebug
+  cancancan (~> 2.0)
   capistrano
   capistrano-bundler
   capistrano-npm
