@@ -1,0 +1,70 @@
+        
+        <div class="page-wrapper">
+                    <!-- ============================================================== -->
+                    <!-- Bread crumb and right sidebar toggle -->
+                    <!-- ============================================================== -->
+                    <div class="row page-titles">
+                        <div class="col-md-5 align-self-center">
+                            <h3 class="text-themecolor">Gym Members</h3>
+                        </div>
+                        <div class="col-md-7 align-self-center">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                                <li class="breadcrumb-item">Subscription Plans</li>
+                                <li class="breadcrumb-item active">All Plans</li>
+                            </ol>
+                        </div>
+                        <div>
+                            <button class="right-side-toggle waves-effect waves-light btn-inverse btn btn-circle btn-sm pull-right m-l-10"><i class="ti-settings text-white"></i></button>
+                        </div>
+                    </div>
+                    <!-- ============================================================== -->
+                    <!-- End Bread crumb and right sidebar toggle -->
+                    <!-- ============================================================== -->
+                    <!-- ============================================================== -->
+                    <!-- Container fluid  -->
+                    <!-- ============================================================== -->
+                    <div class="container-fluid">
+                        <!-- ============================================================== -->
+                        <!-- Start Page Content -->
+                        <!-- ============================================================== -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="card-title">Subscription Plan List</h4>
+                                        <h6 class="card-subtitle"></h6>
+                                        <div class="table-responsive">
+                                            <table class="table m-t-30 table-hover contact-list" data-page-size="10">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>Plan Name
+                                                        <th>Cost</th>
+                                                        <th>Duration</th>
+                                                        <th>Recurring</th>
+                                                        <th></th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                <% @subscription_plans.each do |subscription_plan| %>
+                                                    <tr>
+                                                        <td><%= subscription_plan.id %></td>
+                                                        <td><%= subscription_plan.plan_name %></td>                                            
+                                                        <td><span>N <%= subscription_plan.cost %><span></td>  
+                                                        <td><%= subscription_plan.duration.titleize %></td>                                          
+                                                        <td><%= subscription_plan.recurring %></td>
+                                                        <td>
+                                                            <%= link_to "View Plan Details", admin_subscription_plan_path(subscription_plan), class:"btn btn-info btn-rounded" %>
+                                                        </td>
+                                                    </tr>
+                                                <% end %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
