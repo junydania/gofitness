@@ -1,5 +1,4 @@
 class Ability
-  include CanCan::Ability
 
   include CanCan::Ability
 
@@ -7,8 +6,8 @@ class Ability
     user ||= User.new
     if user.manager?
       can :manage, :all
-    elsif user.supevisor?
-      can [:update, :create, :read], [ FitnessGoal, 
+    elsif user.supervisor?
+      can [:update, :create, :read], [  FitnessGoal, 
                                         Feature,
                                         AttendanceRecord, 
                                         GeneralTransaction, 
@@ -29,7 +28,6 @@ class Ability
                                         Member,
                                         SubscriptionPlanFeature,
                                         PaymentMethod,
-                                        FitnessGoal
                                       ]
 
       can [:update, :read], User, id: user.id
@@ -54,7 +52,7 @@ class Ability
                           Member,
                           SubscriptionPlanFeature,
                           PaymentMethod,
-                          FitnessGoal ]
+                        ]
 
     elsif user.officer?
       can :read, [SubscriptionPlan, FitnessGoal, Feature, SubscriptionPlanFeature ]
@@ -66,7 +64,6 @@ class Ability
                                         HealthCondition,
                                         ImageUploader,
                                         LoyaltyHistory,
-                                        Loyalty,
                                         PauseHistory,
                                         PosTransaction,
                                         SubscriptionHistory,
@@ -77,7 +74,8 @@ class Ability
                                       ]
 
       can [:update, :read], User, id: user.id
-      cannot [:destroy],          [ AttendanceRecord, 
+      cannot [:destroy],          [ 
+                                    AttendanceRecord, 
                                     GeneralTransaction, 
                                     AccountDetail,
                                     CashTransaction,
