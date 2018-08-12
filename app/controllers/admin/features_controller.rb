@@ -1,4 +1,6 @@
 class Admin::FeaturesController < ApplicationController
+
+    load_and_authorize_resource param_method: :feature_params
     
     before_action :authenticate_user!
 

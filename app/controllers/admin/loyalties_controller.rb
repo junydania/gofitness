@@ -1,5 +1,7 @@
 class Admin::LoyaltiesController < ApplicationController
-    
+
+    load_and_authorize_resource param_method: :loyalty_param
+
     before_action :authenticate_user!
     before_action :find_loyalty_plan, only: [:show, :edit, :update, :destroy] 
 

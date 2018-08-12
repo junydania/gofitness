@@ -1,4 +1,6 @@
 class Admin::HealthConditionsController < ApplicationController
+    load_and_authorize_resource param_method: :health_param
+
     before_action :authenticate_user!
     
     def create

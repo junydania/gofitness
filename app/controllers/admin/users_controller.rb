@@ -1,5 +1,7 @@
 class Admin::UsersController < Devise::RegistrationsController
-    # load_and_authorize_resource param_method: :sign_up_params, find_by: :slug
+    
+    load_and_authorize_resource param_method: :sign_up_params
+    
     prepend_before_action :require_no_authentication, :only => [ :cancel]
 
 

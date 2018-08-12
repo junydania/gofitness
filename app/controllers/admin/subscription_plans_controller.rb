@@ -1,5 +1,7 @@
 class Admin::SubscriptionPlansController < ApplicationController
 
+    load_and_authorize_resource param_method: :plan_param
+
     helper ApplicationHelper
 
     before_action :authenticate_user!

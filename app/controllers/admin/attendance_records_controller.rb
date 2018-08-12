@@ -1,4 +1,5 @@
 class Admin::AttendanceRecordsController < ApplicationController
+    
     before_action :authenticate_user!
     before_action :find_member, only: [:member_check_in, :create_attendance_record]
 
