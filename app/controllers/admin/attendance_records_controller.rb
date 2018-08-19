@@ -5,8 +5,29 @@ class Admin::AttendanceRecordsController < ApplicationController
 
 
     def index
-        @members = Member.all
-    end
+        @filterrific = initialize_filterrific(
+          Member.with_account_details,
+            params[:filterrific],
+            select_options: {
+              with_subscription_plan_id: SubscriptionPlan.options_for_select,
+              with_fitness_goal_id: FitnessGoal.options_for_select,
+              with_payment_method_id: PaymentMethod.options_for_select,
+              sorted_by: Member.options_for_sorted_by
+            },
+            persistence_id: 'shared_key',
+            default_filter_params: {},
+        ) or return
+        @members = @filterrific.find.page(params[:page])
+            
+        respond_to do |format|
+          format.html
+          format.js
+        end
+    
+        rescue ActiveRecord::RecordNotFound => e
+          puts "Had to reset filterrific params: #{ e.message }"
+          redirect_to(reset_filterrific_url(format: :html)) && return
+      end
 
 
     def member_check_in

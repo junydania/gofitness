@@ -1,0 +1,6 @@
+<% js = escape_javascript(
+  render(partial: 'admin/attendance_records/list', locals: { members: @members })
+  )
+%>
+
+$("#filterrific_results_check_in").html("<%= js %>");

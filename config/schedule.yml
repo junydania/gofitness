@@ -1,5 +1,14 @@
 update_subscription_status:
-  cron: "* * * * *"
+  cron: "0 * * * *"
   class: "UpdateSubscriptionJob"
-  queue: update_sub_status
+  queue: default
 
+reset_check_in_status:
+  cron: "0 0 * * *"
+  class: "ResetCheckInStatusJob"
+  queue: reset_check_in
+
+validate_wallet_expiry:
+  cron: "0 3 * * *"
+  class: "ValidateWalletExpiryJob"
+  queue: validate_wallet

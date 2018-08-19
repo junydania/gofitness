@@ -1,6 +1,6 @@
 class Admin::WalletsController < ApplicationController
 
-    load_and_authorize_resource param_method: :wallet_member_params
+    # load_and_authorize_resource param_method: :wallet_member_params
 
     before_action :authenticate_user!
     before_action :find_member, only: [:fund_page, 
@@ -106,7 +106,7 @@ class Admin::WalletsController < ApplicationController
     def update_wallet_detail(amount, existing_balance, new_balance)
         total_funded = @member.wallet_detail.total_amount_funded ?  @member.wallet_detail.total_amount_funded : 0
         total_amount_used = @member.wallet_detail.total_amount_used ? @member.wallet_detail.total_amount_used : 0
-        current_wallet_expiry_date = @member.wallet_detail.wallet_expiry_date ||= DateTime.now
+        current_wallet_expiry_date = @member.wallet_detail.wallet_expiry_date.to_date ||= DateTime.now
         new_wallet_expiry_date = current_wallet_expiry_date + 180
         @member.wallet_detail.update(
             current_balance: new_balance,

@@ -1,5 +1,5 @@
 class UpdateSubscriptionJob < ApplicationJob
-  queue_as :update_sub_status
+  queue_as :default
 
   # rescue_from(ActiveRecord::RecordNotFound) do |exception|
   #   # Do something with the exception

@@ -34,6 +34,9 @@ gem "sidekiq-cron"
 gem 'sinatra', require: false
 gem 'slim'
 gem 'cancancan', '~> 2.0'
+gem 'ransack'
+gem 'filterrific'
+gem 'will_paginate', '~> 3.1.0'
 
 
 # Use Capistrano for deployment
