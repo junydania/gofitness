@@ -29,6 +29,7 @@
 //= require jasny-bootstrap
 //= require styleswitcher/jQuery.style.switcher
 //= require turbolinks
+//= require filterrific/filterrific-jquery
 //= require admin/subscription_plans
 //= require admin/general
 //= require admin/fitness_goals

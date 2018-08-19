@@ -3,6 +3,7 @@
 :pidfile: ./tmp/pids/sidekiq.pid
 :logfile: ./log/sidekiq.log
 :queues:
-  - update_sub_status
-  - process_web_hook
-# :daemon: true
+  - default
+  - reset_check_in
+  - validate_wallet
+:daemon: true
