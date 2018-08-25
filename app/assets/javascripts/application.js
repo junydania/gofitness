@@ -50,3 +50,4 @@
 //= require dashboard3
 //= require dashboard4
 //= require morris-data
+//= require jquery-ui/widgets/datepicker

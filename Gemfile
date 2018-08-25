@@ -37,6 +37,8 @@ gem 'cancancan', '~> 2.0'
 gem 'ransack'
 gem 'filterrific'
 gem 'will_paginate', '~> 3.1.0'
+gem 'plutus', :git => 'git://github.com/junydania/plutus.git'
+gem 'jquery-ui-rails'
 
 
 # Use Capistrano for deployment

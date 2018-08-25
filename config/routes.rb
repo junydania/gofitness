@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   authenticate :user do
     mount Sidekiq::Web => '/sidekiq'
   end
+
+  mount Plutus::Engine => "/plutus", :as => "plutus"
   
   devise_for :members, :controllers => {:registrations => "admin/members"}
   devise_for :users,  :controllers => {:registrations => "admin/users"}

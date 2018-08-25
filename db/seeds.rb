@@ -24,3 +24,9 @@ user = User.create!(
 )
 
 
+Plutus::Asset.create(:name => "Accounts Receivable")
+Plutus::Asset.create(:name => "Cash")
+Plutus::Asset.create(:name => "Card Payment")
+Plutus::Revenue.create(:name => "Sales Revenue")
+Plutus::Liability.create(:name => "Unearned Revenue")
+Plutus::Liability.create(:name => "Sales Tax Payable")
