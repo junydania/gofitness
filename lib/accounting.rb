@@ -23,7 +23,7 @@ module Accounting
             tax = @amount.to_f * 0.05
             profit = @amount.to_f - tax
             entry = Plutus::Entry.create(
-                :description => description,
+                :description => @description,
                 :debits => [
                   {account_name: "Cash", amount: @amount}],
                 :credits => [

@@ -21,12 +21,14 @@ class Admin::UsersController < Devise::RegistrationsController
     def create
         build_resource(sign_up_params)
         if resource.save
+          resource.audits
           redirect_to new_user_registration_path
           flash[:notice] = "User successfully created"
         else
           clean_up_passwords resource
           respond_with resource
         end
+        resource.audits.last.user
     end
 
     def edit

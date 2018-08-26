@@ -66,6 +66,7 @@ class Admin::MembersController < Devise::RegistrationsController
 
     def show
       @member = Member.find(params[:id])
+      @member_activities = @member.own_and_associated_audits.limit(10)
     end
 
 
@@ -76,13 +77,15 @@ class Admin::MembersController < Devise::RegistrationsController
         ## Implement feature to mail login address and password to new member
         build_resource(new_params)
         if resource.save
+          resource.audits.last.user
           session[:member_id] = resource.id
           member = Member.find(resource.id)
           account_update = @member.build_account_detail(
             subscribe_date: DateTime.now,
             expiry_date: DateTime.now,
             member_status: 1,
-            gym_attendance_status: 0)
+            gym_attendance_status: 0,
+            audit_comment: "New account created for member")
           account_update.save
           flash[:notice] = "Receive Payment & Complete the Registration Process"
           redirect_to admin_member_steps_path
@@ -177,6 +180,7 @@ class Admin::MembersController < Devise::RegistrationsController
         if @member.account_detail.expiry_date < DateTime.now 
            @member.account_detail.member_status = 1
            @member.account_detail.unsubscribe_date = DateTime.now
+           @member.account_detail.audit_comment = "membership de-activated"
            @member.save    
            create_subscription_history(subscribe_date, expiry_date, subscription_status)
            redirect_to member_profile_path(@member)
@@ -253,7 +257,8 @@ class Admin::MembersController < Devise::RegistrationsController
                   expiry_date: new_expiry_date,
                   member_status: 0,
                   pause_start_date: nil,
-                  pause_cancel_date: nil )
+                  pause_cancel_date: nil,
+                  audit_comment: 'membership pause cancelled' )
           render status: 200, json: {
             message: "success"
           }  
@@ -284,6 +289,7 @@ class Admin::MembersController < Devise::RegistrationsController
           wallet_expiry_date:  current_wallet_expiry_date,
           wallet_status: 0,
           date_last_funded: date_last_funded,
+          audit_comment: 'funded wallet'
       )
     end
 
@@ -318,7 +324,8 @@ class Admin::MembersController < Devise::RegistrationsController
       @member.pause_histories.create(
         pause_start_date: @member.account_detail.pause_start_date,
         pause_cancel_date: @member.account_detail.pause_cancel_date,
-        paused_by: current_user.fullname)
+        paused_by: current_user.fullname,
+        audit_comment: "membership paused")
     end
 
     def update_pause_account_detail
@@ -326,6 +333,7 @@ class Admin::MembersController < Devise::RegistrationsController
         @member.account_detail.pause_start_date = DateTime.now
         @member.account_detail.pause_cancel_date = DateTime.now + 7
         @member.account_detail.member_status = 2
+        @member.account_detail.audit_comment = 'membership paused'
         @member.save
     end
 
@@ -369,7 +377,8 @@ class Admin::MembersController < Devise::RegistrationsController
                                   loyalty_points_balance: update_loyalty_points(amount),
                                   loyalty_points_used: 0,
                                   gym_plan: retrieve_gym_plan,
-                                  recurring_billing: recurring)
+                                  recurring_billing: recurring,
+                                  audit_comment: "Membership renewed")
     end
 
     def create_subscription_history(subscribe_date, expiry_date, subscription_status)

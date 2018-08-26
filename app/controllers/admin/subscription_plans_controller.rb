@@ -45,8 +45,8 @@ class Admin::SubscriptionPlansController < ApplicationController
                 redirect_to new_admin_subscription_plan_path
             end
         end
+        @subscription_plan.audits.last_user
     end
-
 
 
     private

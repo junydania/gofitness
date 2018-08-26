@@ -7,7 +7,7 @@ class Ability
     if user.manager?
       can :manage, :all
     elsif user.supervisor?
-      can [:update, :create, :read], [  FitnessGoal, 
+      can [:update, :create, :read, :destroy ], [  FitnessGoal, 
                                         Feature,
                                         AttendanceRecord, 
                                         GeneralTransaction, 
@@ -29,27 +29,18 @@ class Ability
                                         SubscriptionPlanFeature,
                                         PaymentMethod,
                                       ]
-
+                              
       can [:update, :read], User, id: user.id
 
       cannot :destroy, [  FitnessGoal,
                           Feature, 
                           AttendanceRecord, 
                           GeneralTransaction, 
-                          AccountDetail,
-                          CashTransaction,
-                          HealthCondition,
-                          ImageUploader,
-                          LoyaltyHistory,
-                          Loyalty,
-                          PauseHistory,
-                          PosTransaction,
                           SubscriptionHistory,
                           WalletDetail,
                           WalletHistory,
                           SubscriptionPlan,
                           MemberHealthCondition,
-                          Member,
                           SubscriptionPlanFeature,
                           PaymentMethod,
                         ]

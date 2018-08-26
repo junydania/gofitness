@@ -82,36 +82,30 @@
                         <div class="card">
                             <!-- Nav tabs -->
                             <ul class="nav nav-tabs profile-tab" role="tablist">
-                                <li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#home" role="tab">Activity Tracker</a> </li>
+                                <li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#account-activity" role="tab">Activity Feed</a> </li>
                                 <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#profile" role="tab">Profile</a> </li>
                                 <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#settings" role="tab">Settings</a> </li>
+                                <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#historicals" role="tab">Historicals</a> </li>
                             </ul>
                             <!-- Tab panes -->
                             <div class="tab-content">
-                                <div class="tab-pane active" id="home" role="tabpanel">
+                                <div class="tab-pane active" id="account-activity" role="tabpanel">
                                     <div class="card-body">
-                                        <div class="profiletimeline">
-                                            <div class="sl-item">
-                                                <div class="sl-right">
-                                                    <div><a href="#" class="link">John Doe</a> <span class="sl-date">5 minutes ago</span>
-                                                        <p>assign a new task <a href="#"> Design weblayout</a></p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="sl-item">
-                                                <div class="sl-right">
-                                                    <div> <a href="#" class="link">John Doe</a> <span class="sl-date">5 minutes ago</span>
-                                                        <div class="m-t-20 row">
-                                                            <div class="col-md-9 col-xs-12">
-                                                                <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. </p></div>
+                                        <% @member_activities.each do |member_activity| %>
+                                            <div class="profiletimeline">
+                                                <div class="sl-item">
+                                                    <div class="sl-right">
+                                                        <div><a href="#" class="link"><%= @member.fullname %> </a> <span class="sl-date"><%= member_activity.created_at.to_datetime.to_datetime.strftime("%B %e, %Y at %I:%M %p") %></span>
+                                                            <p><%= member_activity.comment %> <a href="#"> </a></p>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <hr>
                                             </div>
-                                        </div>
+                                        <% end %>
                                     </div>
                                 </div>
+
                                 <!--second tab-->
                                 <div class="tab-pane" id="profile" role="tabpanel">
                                     <div class="card-body">
@@ -147,7 +141,7 @@
 
                                         </div>
                                         <% if @member.account_detail.member_status == 'active' && @member.payment_method.payment_system.titleize == "Debit Card" && @member.account_detail.unsubscribe_date.nil? %>
-                                             <%= link_to 'Unsubscribe', unsubscribe_member_path(@member), class:"btn btn-danger" %>
+                                                <%= link_to 'Unsubscribe', unsubscribe_member_path(@member), class:"btn btn-danger" %>
                                         <% elsif @member.account_detail.member_status == 'active' && @member.payment_method.payment_system.titleize == "Debit Card" && !@member.account_detail.unsubscribe_date.nil? %>
                                              <%= link_to 'Reactivate Membership', renew_member_path(@member), class:"btn btn-success" %>
                                         <% elsif @member.account_detail.member_status == 'deactivated' %>
@@ -209,6 +203,30 @@
                                         </form>
                                     </div>
                                 </div>
+
+                                <div class="tab-pane" id="historicals" role="tabpanel">
+                                    <div class="card-body">
+                                        <div class="row">               
+                                            <div class="col-md-3 col-xs-6 b-r"> <strong> Subscription</strong>
+                                                <br>
+                                                <%= link_to 'View', member_subscription_history_path(@member), class:"btn btn-info" %>
+                                            </div>
+                                            <div class="col-md-3 col-xs-6 b-r"> <strong>Loyalty History</strong>
+                                                <br>
+                                                 <%= link_to 'View', member_loyalty_history_path(@member), class:"btn btn-info" %>
+                                            </div>
+                                            <div class="col-md-3 col-xs-6 b-r"> <strong>Wallet History</strong>
+                                                <br>
+                                                <%= link_to 'View', member_wallet_history_path(@member), class:"btn btn-info" %>
+                                            </div>
+                                            <div class="col-md-3 col-xs-6"> <strong>Attendance</strong>
+                                                <br>
+                                                <%= link_to 'View', member_attendance_history_path(@member), class:"btn btn-info" %>
+                                            </div>
+                                        </div>                                       
+                                    </div>
+                                </div>
+
                                 
                             </div>
                         </div>
