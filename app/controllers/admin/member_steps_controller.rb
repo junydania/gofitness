@@ -194,7 +194,8 @@ class Admin::MemberStepsController < ApplicationController
                                     loyalty_points_used: 0,
                                     gym_plan: retrieve_gym_plan,
                                     recurring_billing: true,
-                                    gym_attendance_status: 1 )
+                                    gym_attendance_status: 1,
+                                    audit_comment: "paid for new membership plan" )
     end
 
     def intiate_wallet_account
@@ -240,7 +241,8 @@ class Admin::MemberStepsController < ApplicationController
             amount: retrieve_amount,
             payment_method: retrieve_payment_method,
             member_status: 0,
-            subscription_status: subscription_status )
+            subscription_status: subscription_status,
+        )
     end
 
 

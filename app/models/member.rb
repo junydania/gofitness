@@ -1,6 +1,10 @@
 class Member < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
+  audited
+  
+  has_associated_audits
+
   include ImageUploader[:image]
   
   devise :database_authenticatable, :registerable,

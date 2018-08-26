@@ -1,6 +1,10 @@
 class Admin::WalletsController < ApplicationController
 
+   require 'accounting'
+
     # load_and_authorize_resource param_method: :wallet_member_params
+
+    include Accounting
 
     before_action :authenticate_user!
     before_action :find_member, only: [:fund_page, 
@@ -104,6 +108,7 @@ class Admin::WalletsController < ApplicationController
                                         amount_received: cash_received,
                                         cash_received_by: current_user.fullname,
                                         service_paid_for: "Funded Wallet",
+                                        audit_comment: 'Funded wallet with cash'
         )
         return cash_transaction
     end
@@ -121,7 +126,8 @@ class Admin::WalletsController < ApplicationController
             total_amount_used: total_amount_used,
             wallet_expiry_date: new_wallet_expiry_date,
             wallet_status: 0,
-            date_last_funded: DateTime.now
+            date_last_funded: DateTime.now,
+            audit_comment: "Member wallet funded"
         )
     end
 
@@ -130,7 +136,8 @@ class Admin::WalletsController < ApplicationController
                                         amount_received: amount,
                                         transaction_success: transaction_success_param,
                                         transaction_reference: transaction_reference,
-                                        processed_by: current_user.fullname )
+                                        processed_by: current_user.fullname,
+                                        audit_comment: "Funded wallet via POS terminal" )
     end
 
 
@@ -141,7 +148,8 @@ class Admin::WalletsController < ApplicationController
              amount_used: 0,
              processed_by: current_user.fullname,
              wallet_new_balance: new_balance,
-             wallet_fund_method: fund_method )
+             wallet_fund_method: fund_method,
+        )
     end
 
 

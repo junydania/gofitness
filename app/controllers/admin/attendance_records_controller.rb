@@ -66,7 +66,8 @@ class Admin::AttendanceRecordsController < ApplicationController
             checkout_date: nil,
             membership_status: @member.account_detail.member_status,
             membership_plan: @member.subscription_plan.plan_name,
-            staff_on_duty: current_user.fullname )
+            staff_on_duty: current_user.fullname,
+            audit_comment: "checked into the gym" )
     end
 
 end

@@ -40,6 +40,7 @@ gem 'will_paginate', '~> 3.1.0'
 gem 'plutus', :git => 'git://github.com/junydania/plutus.git'
 gem 'jquery-ui-rails'
 gem 'kaminari'
+gem "audited", "~> 4.7"
 
 
 # Use Capistrano for deployment
