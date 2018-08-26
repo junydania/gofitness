@@ -1,5 +1,7 @@
 class SubscriptionHistory < ApplicationRecord
    
+    audited
+    
     belongs_to :member
     
     enum subscription_type: [:registration, :renewal, :deactivation]

@@ -20,8 +20,11 @@ class WebhooksController < ApplicationController
         customer_code = payload["data"]["customer"]["customer_code"]
         member = Member.find_by(paystack_cust_code: customer_code)
         payload["member_id"] = member.id
+        payload.merge!{description: 'Membership Renewal Paystack', amount: payload["data"]["amount"] }
         options = payload.to_hash
         Membership::SubscriptionActivity.new(options).call
+        Accounting::Entry.new(options).card_entry
+        options.merge!({description: })
         render status: 200, json: {
           message: "success"
         }
