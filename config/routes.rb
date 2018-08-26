@@ -39,7 +39,7 @@ Rails.application.routes.draw do
     get   'attendance_history/:id' => 'admin/historicals#attendance_history', as: :member_attendance_history
   end
 
-
+  
   namespace :admin do
     resources :attendance_records, only: [:index]
     resources :subscription_plans
