@@ -1,8 +1,11 @@
 class Admin::MemberStepsController < ApplicationController
 
-    load_and_authorize_resource param_method: :member_params
+    require 'accounting'
+
+    # load_and_authorize_resource param_method: :member_params
 
     include Wicked::Wizard
+    include Accounting
 
     before_action :authenticate_user!
     before_action :get_paystack_object, only: [:paystack_subscribe]
@@ -102,6 +105,8 @@ class Admin::MemberStepsController < ApplicationController
             create_subscription_history(subscribe_date, expiry_date, subscription_status)
             create_loyalty_history(amount)
             create_general_transaction(subscribe_date, amount, payment_method)
+            options = {description: 'New Subscription', amount: amount}
+            Accounting::Entry.new(options).cash_entry  
             intiate_wallet_account
         end
     end
@@ -116,6 +121,8 @@ class Admin::MemberStepsController < ApplicationController
             create_subscription_history(subscribe_date, expiry_date, subscription_status)
             create_loyalty_history(amount)
             create_general_transaction(subscribe_date, amount, payment_method)
+            options = {description: 'New Subscription', amount: amount}
+            Accounting::Entry.new(options).card_entry  
             intiate_wallet_account
         end
     end
@@ -152,7 +159,9 @@ class Admin::MemberStepsController < ApplicationController
                     if account_update.save
                         create_subscription_history(subscribe_date, expiry_date, subscription_status)
                         create_loyalty_history(amount)
-                        create_general_transaction(subscribe_date, amount, payment_method)   
+                        create_general_transaction(subscribe_date, amount, payment_method)
+                        options = {description: 'New Subscription', amount: amount}
+                        Accounting::Entry.new(options).card_entry  
                         intiate_wallet_account 
                     end
                 end

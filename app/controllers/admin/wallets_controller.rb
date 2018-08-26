@@ -31,6 +31,8 @@ class Admin::WalletsController < ApplicationController
             fund_method = 0
             update_wallet_detail(amount, existing_balance, new_balance)
             update_wallet_histories(amount, existing_balance, new_balance, fund_method)
+            options = {description: 'Wallet Funding', amount: amount}
+            Accounting::Entry.new(options).card_entry    
             render status: 200, json: {
                 message: "success"
             }
@@ -54,6 +56,8 @@ class Admin::WalletsController < ApplicationController
         update_wallet_detail(amount, existing_balance, new_balance)
         update_wallet_histories(amount, existing_balance, new_balance, fund_method)
         create_pos_transaction(transaction_reference, transaction_success_param, amount)
+        options = {description: 'Wallet Funding', amount: amount}
+        Accounting::Entry.new(options).card_entry
         redirect_to member_profile_path(@member)
       else
         flash[:notice] = "Check to ensure the right values are provided!"
@@ -70,6 +74,8 @@ class Admin::WalletsController < ApplicationController
             update_wallet_detail(amount, existing_balance, new_balance)
             update_wallet_histories(amount, existing_balance, new_balance, fund_method)
             create_cash_transaction(amount)
+            options = {description: 'Wallet Funding', amount: amount}
+            Accounting::Entry.new(options).cash_entry
             redirect_to member_profile_path(@member)
         else
             flash[:notice] = "Check to ensure the right values are provided!"

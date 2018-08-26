@@ -132,6 +132,8 @@ class Admin::MembersController < Devise::RegistrationsController
         subscription_status = 0
         create_cash_transaction(cash_received)
         update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
+        options = {description: 'Member Renewal', amount: amount}
+        Accounting::Entry.new(options).cash_entry
         redirect_to member_profile_path(@member)
       else
         flash[:notice] = "Sorry Wrong Amount Received! Enter correct amount or change customer plan"
@@ -150,6 +152,8 @@ class Admin::MembersController < Devise::RegistrationsController
         subscription_status = 0
         create_pos_transaction(transaction_reference, transaction_success_param)
         update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
+        options = {description: 'Member Renewal', amount: amount}
+        Accounting::Entry.new(options).card_entry
         redirect_to member_profile_path(@member)
       else
         flash[:notice] = "Sorry! Enter the POS Transaction Reference ID & Confirm if transaction was successful"
@@ -531,9 +535,10 @@ class Admin::MembersController < Devise::RegistrationsController
               expiry_date, amount = set_expiry_date(subscribe_date), retrieve_amount
               recurring, subscription_status = true, 0
               payment_method = retrieve_payment_method
-
               if enable_subscription["status"] == true
                   update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
+                  options = {description: 'Member Renewal', amount: amount}
+                  Accounting::Entry.new(options).card_entry          
                   render status: 200, json: {
                     message: "success"
                 }    
