@@ -15,12 +15,13 @@ class WebhooksController < ApplicationController
     digest = OpenSSL::Digest.new('sha512')
     hash = OpenSSL::HMAC.hexdigest(digest, SECRET_KEY, data)
     unless hash != request_headers["x-paystack-signature"]
-    # unless hash != "5e3390a5e2c75b6ad76e80f7a5069d5ee7eeb2a30520c74ce58db588f55011bb3bc42ac1db59f74e739b93edf35a936f03f3e615c1670cb9d5f7be9c963618b1"   
       if payload["event"] == "invoice.update" && payload["data"]["paid"] == true
         customer_code = payload["data"]["customer"]["customer_code"]
         member = Member.find_by(paystack_cust_code: customer_code)
+        amount = payload["data"]["amount"]
+        description = "Membership Renewal Paystack"
         payload["member_id"] = member.id
-        payload.merge!{'description': "Membership Renewal Paystack", 'amount': payload["data"]["amount"] }
+        payload.merge{"description" => description, "amount" => amount }
         options = payload.to_hash
         Membership::SubscriptionActivity.new(options).call
         Accounting::Entry.new(options).card_entry
