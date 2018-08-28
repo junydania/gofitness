@@ -1,6 +1,7 @@
 class Admin::MemberStepsController < ApplicationController
 
     require 'accounting'
+    require 'securerandom'
 
     # load_and_authorize_resource param_method: :member_params
 
@@ -99,6 +100,7 @@ class Admin::MemberStepsController < ApplicationController
     def cash_subscribe
         subscribe_date = set_subscribe_date
         expiry_date = set_expiry_date(subscribe_date)
+        create_charge
         account_update = update_account_detail(subscribe_date, expiry_date)
         amount, payment_method, subscription_status = retrieve_amount, retrieve_payment_method, 0
         if account_update.save
@@ -114,6 +116,7 @@ class Admin::MemberStepsController < ApplicationController
     def pos_subscribe
         subscribe_date = set_subscribe_date
         expiry_date = set_expiry_date(subscribe_date)
+        create_charge
         account_update = update_account_detail(subscribe_date, expiry_date)
         amount, payment_method = retrieve_amount, retrieve_payment_method
         subscription_status = 0
@@ -155,6 +158,7 @@ class Admin::MemberStepsController < ApplicationController
                 expiry_date, amount = set_expiry_date(subscribe_date), retrieve_amount
                 payment_method, subscription_status = retrieve_payment_method, 0
                 if enable_subscription["status"] == true
+                    create_charge
                     account_update = update_account_detail(subscribe_date, expiry_date)
                     if account_update.save
                         create_subscription_history(subscribe_date, expiry_date, subscription_status)
@@ -230,6 +234,18 @@ class Admin::MemberStepsController < ApplicationController
         
     def retrieve_payment_method
         @member.payment_method.payment_system
+    end
+    
+    def create_charge
+        charge = @member.charges.new(service_plan: retrieve_gym_plan,
+                                    amount: retrieve_amount,
+                                    payment_method: retrieve_payment_method,
+                                    duration: @member.subscription_plan.duration,
+                                    gofit_transaction_id: SecureRandom.hex(4) )
+        if charge.save
+            MemberMailer.new_subscription(@member).deliver_later
+        end
+        
     end
     
     def create_subscription_history(subscribe_date, expiry_date, subscription_status)

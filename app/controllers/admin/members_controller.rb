@@ -338,6 +338,7 @@ class Admin::MembersController < Devise::RegistrationsController
     end
 
     def update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
+      create_charge
       update_account_detail(subscribe_date, expiry_date, recurring)
       create_subscription_history(subscribe_date, expiry_date, subscription_status)
       create_loyalty_history(amount)
@@ -379,6 +380,17 @@ class Admin::MembersController < Devise::RegistrationsController
                                   gym_plan: retrieve_gym_plan,
                                   recurring_billing: recurring,
                                   audit_comment: "Membership renewed")
+    end
+
+    def create_charge
+      charge = @member.charges.new(service_plan: retrieve_gym_plan,
+                                  amount: retrieve_amount,
+                                  payment_method: retrieve_payment_method,
+                                  duration: @member.subscription_plan.duration,
+                                  gofit_transaction_id: SecureRandom.hex(4) )
+      if charge.save
+          MemberMailer.renewal(@member).deliver_later
+      end
     end
 
     def create_subscription_history(subscribe_date, expiry_date, subscription_status)
@@ -545,6 +557,7 @@ class Admin::MembersController < Devise::RegistrationsController
               recurring, subscription_status = true, 0
               payment_method = retrieve_payment_method
               if enable_subscription["status"] == true
+                  create_charge
                   update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
                   options = {description: 'Member Renewal', amount: amount}
                   Accounting::Entry.new(options).card_entry          
