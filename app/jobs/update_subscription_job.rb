@@ -7,7 +7,7 @@ class UpdateSubscriptionJob < ApplicationJob
   
   def perform 
     Member.joins(:account_detail).where(account_details: {member_status: 0}).find_each do |member|
-      if DateTime.now < member.account_detail.expiry_date.to_datetime 
+      if DateTime.now > member.account_detail.expiry_date.to_datetime 
         member.account_detail.member_status = 1
         member.save
       end

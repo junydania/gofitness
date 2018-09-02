@@ -92,7 +92,7 @@ class Admin::WalletsController < ApplicationController
         charge = @member.charges.new(service_plan: 'Funded Wallet',
                                     amount: amount,
                                     payment_method: fund_method,
-                                    duration: '6 Months Wallet Expiration Period'
+                                    duration: '6 Months Wallet Expiration Period',
                                     gofit_transaction_id: SecureRandom.hex(4) 
                                     )
         if charge.save

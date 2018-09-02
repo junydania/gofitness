@@ -33,10 +33,11 @@ Rails.application.routes.draw do
     post 'wallet_renewal' => 'admin/members#wallet_renewal', as: :wallet_renewal
     put  'pos_wallet_fund/:id' => 'admin/wallets#pos_wallet_fund', as: :pos_wallet_fund
     put  'cash_wallet_fund/:id' => 'admin/wallets#cash_wallet_fund', as: :cash_wallet_fund
-    get   'subscription_history/:id' => 'admin/historicals#subscription_history', as: :member_subscription_history
-    get   'loyalty_history/:id' => 'admin/historicals#loyalty_history', as: :member_loyalty_history
-    get   'wallet_history/:id' => 'admin/historicals#wallet_history', as: :member_wallet_history
-    get   'attendance_history/:id' => 'admin/historicals#attendance_history', as: :member_attendance_history
+    get  'subscription_history/:id' => 'admin/historicals#subscription_history', as: :member_subscription_history
+    get  'loyalty_history/:id' => 'admin/historicals#loyalty_history', as: :member_loyalty_history
+    get  'wallet_history/:id' => 'admin/historicals#wallet_history', as: :member_wallet_history
+    get  'attendance_history/:id' => 'admin/historicals#attendance_history', as: :member_attendance_history
+    #get  'subscription_history/:id' => 'admin/historicals#subscription_history', as: :member_attendance_history
   end
 
   

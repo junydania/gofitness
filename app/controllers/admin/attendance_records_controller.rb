@@ -61,6 +61,7 @@ class Admin::AttendanceRecordsController < ApplicationController
 
 
     def create_attendance_record
+        binding.pry
         @member.attendance_records.create(
             checkin_date: DateTime.now,
             checkout_date: nil,

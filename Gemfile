@@ -44,7 +44,6 @@ gem "audited", "~> 4.7"
 gem "receipts"
 gem 'mailjet'
 
-
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 group :development, :test do

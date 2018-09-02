@@ -1,0 +1,74 @@
+        
+        <div class="page-wrapper">
+                    <!-- ============================================================== -->
+                    <!-- Bread crumb and right sidebar toggle -->
+                    <!-- ============================================================== -->
+                    <div class="row page-titles">
+                        <div class="col-md-5 align-self-center">
+                            <h3 class="text-themecolor">Gym Members</h3>
+                        </div>
+                        <div class="col-md-7 align-self-center">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                                <li class="breadcrumb-item">Member</li>
+                                <li class="breadcrumb-item active">Loyalty History</li>
+                            </ol>
+                        </div>
+                        <div>
+                            <button class="right-side-toggle waves-effect waves-light btn-inverse btn btn-circle btn-sm pull-right m-l-10"><i class="ti-settings text-white"></i></button>
+                        </div>
+                    </div>
+                    <!-- ============================================================== -->
+                    <!-- End Bread crumb and right sidebar toggle -->
+                    <!-- ============================================================== -->
+                    <!-- ============================================================== -->
+                    <!-- Container fluid  -->
+                    <!-- ============================================================== -->
+                    <div class="container-fluid">
+                        <!-- ============================================================== -->
+                        <!-- Start Page Content -->
+                        <!-- ============================================================== -->                        
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="card-title"><%= @member.first_name %>'s Loyalty History</h4>
+                                        <h6 class="card-subtitle"></h6>
+                                        <div class="table-responsive">
+                                            <table class="table m-t-30 table-hover contact-list" data-page-size="10">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>Earned Points </th>
+                                                        <th>Points Redeemed </th>
+                                                        <th>Points Transaction Date</th>
+                                                        <th>Loyalty Balance</th>
+                                                        <th>Transaction Type</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                <% @loyalty_history_activities.each do |loyalty_history| %>
+                                                    <tr>
+                                                        <td><%= loyalty_history.id %></td>
+                                                        <td><%= loyalty_history.points_earned %></td>
+                                                        <td><span><%= loyalty_history.points_redeemed %><span></td> 
+                                                        <td><%= loyalty_history.created_at %></td>  
+                                                         <td><span class="label label-success">₦<%= loyalty_history.loyalty_balance %></span> </td> 
+                                                        <td><%= loyalty_history.loyalty_transaction_type %></td>
+                                                    </tr>
+                                                <% end %>
+                                                </tbody>
+                                                <tfoot>
+                                                    <td colspan="2">
+                                                        <%= link_to "Back", member_profile_path(@member), class:"btn btn-info btn-rounded" %>                                                   
+                                                    </td>                                               
+
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>

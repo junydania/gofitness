@@ -4,7 +4,7 @@ class SubscriptionPlan < ApplicationRecord
     has_many :features, through: :subscription_plan_features
     has_many :members
 
-    enum duration: [:daily, :monthly, :quarterly, :annually]
+    enum duration: [:daily, :weekly, :monthly, :quarterly, :annually]
     
     validates_presence_of   :plan_name, :cost, :duration, :description
     validates :group_plan, :inclusion => {:in => [true, false]}
