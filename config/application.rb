@@ -21,8 +21,7 @@ module Gofitness
     config.browserify_rails.commandline_options = "-t coffeeify --extension=\".js.coffee\""
 
     config.active_job.queue_adapter = :sidekiq
-    
-    config.action_mailer.delivery_method = :mailjet
-    
+
+
   end
 end

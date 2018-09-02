@@ -354,7 +354,8 @@ class Admin::MembersController < Devise::RegistrationsController
       pos_transaction = @member.pos_transactions.create(
                                       transaction_success: transaction_success_param,
                                       transaction_reference: transaction_reference,
-                                      processed_by: current_user.fullname )
+                                      processed_by: current_user.fullname,
+                                      audit_comment: "Membership renewal paid using POS" )
       return pos_transaction
     end
 
@@ -363,7 +364,7 @@ class Admin::MembersController < Devise::RegistrationsController
         cash_transaction = @member.cash_transactions.create(
                                         amount_received: cash_received,
                                         cash_received_by: current_user.fullname,
-                                        service_paid_for: "Membership Renewal",
+                                        service_paid_for: 'Membership renewal paid using cash',
         )
         return cash_transaction
     end
@@ -379,7 +380,7 @@ class Admin::MembersController < Devise::RegistrationsController
                                   loyalty_points_used: 0,
                                   gym_plan: retrieve_gym_plan,
                                   recurring_billing: recurring,
-                                  audit_comment: "Membership renewed")
+                                  audit_comment: 'Membership renewed')
     end
 
     def create_charge
@@ -403,7 +404,8 @@ class Admin::MembersController < Devise::RegistrationsController
           amount: retrieve_amount,
           payment_method: retrieve_payment_method,
           member_status: 0,
-          subscription_status: subscription_status )
+          subscription_status: subscription_status,
+          audit_comment: 'Membership renewed' )
     end
 
 
@@ -426,7 +428,8 @@ class Admin::MembersController < Devise::RegistrationsController
           points_earned: get_loyalty_points(amount),
           points_redeemed: 0,
           loyalty_transaction_type: 1,
-          loyalty_balance: update_loyalty_points(amount) )
+          loyalty_balance: update_loyalty_points(amount),
+          )
    end
 
 

@@ -108,13 +108,13 @@
                         <tr>
                             <td class="title">
                                 
-                                <%= image_tag( "gofitness_dashboard.png", style: 'width:100%;max-width:300px' )%>
+                                <%= image_tag(attachments['gofitness_dashboard.png'].url, style: 'width:100%;max-width:300px' ) %>
                                 <%#<img src="gofitness.png" style="width:100%; max-width:300px;"> %>
                             </td>
                             
                             <td>
-                                Invoice #: <%= @member.charge.id %> <br>
-                                Created: <%= @member.charge.create_at %> <br>
+                                Invoice #: <%= @member.charges.last.id %> <br>
+                                Created: <%= @member.charges.last.created_at %> <br>
                                 Due: <%= DateTime.now %>
                             </td>
                         </tr>
@@ -157,7 +157,7 @@
                 </td>
                 
                 <td>
-                    <%= @member.charge.gofit_transaction_id %>
+                    <%= @member.charges.last.gofit_transaction_id %>
                 </td>
             </tr>
             

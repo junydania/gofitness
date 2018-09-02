@@ -1,7 +1,5 @@
 class PaymentMethod < ApplicationRecord
     
-    audited
-    
     has_many :members
     validates_presence_of :payment_system, :discount
 

@@ -1,0 +1,2 @@
+module Admin::SubscriptionHistoriesHelper
+end

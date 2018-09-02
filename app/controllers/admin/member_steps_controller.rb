@@ -22,6 +22,7 @@ class Admin::MemberStepsController < ApplicationController
     end
 
     def update
+        binding.pry
         case step
         when :payment
             if @member.payment_method.payment_system.upcase == "CASH" 
@@ -42,7 +43,7 @@ class Admin::MemberStepsController < ApplicationController
                 
             elsif @member.payment_method.payment_system.upcase == "POS TERMINAL"
                 pos_transaction_status = member_params[:pos_transactions_attributes]["0"]["transaction_success"].to_sym
-                if  pos_transaction_status == true
+                if  pos_transaction_status === :true
                     @member.pos_transactions.build({
                             transaction_success: "success", 
                             transaction_reference: "Gym Membership",
@@ -210,6 +211,7 @@ class Admin::MemberStepsController < ApplicationController
             total_amount_used: 0,
             wallet_status: 1,
             wallet_expiry_date: DateTime.now,
+            audit_comment: "New wallet account created"
         )
         wallet_update.save
     end
@@ -220,7 +222,8 @@ class Admin::MemberStepsController < ApplicationController
             points_earned: points,
             points_redeemed: 0,
             loyalty_transaction_type: 0,
-            loyalty_balance: points )
+            loyalty_balance: points,
+            )
     end
 
     def get_loyalty_points(amount)
@@ -258,7 +261,7 @@ class Admin::MemberStepsController < ApplicationController
             amount: retrieve_amount,
             payment_method: retrieve_payment_method,
             member_status: 0,
-            subscription_status: subscription_status,
+            subscription_status: subscription_status
         )
     end
 

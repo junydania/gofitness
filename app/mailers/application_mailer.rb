@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: 'customerservice@gofitnessng.com'
+  default from: 'admin@gofitnessng.com'
   layout 'mailer'
 end
