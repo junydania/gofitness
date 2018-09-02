@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180826014308) do
+ActiveRecord::Schema.define(version: 20180827230545) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -84,6 +84,18 @@ ActiveRecord::Schema.define(version: 20180826014308) do
     t.datetime "updated_at", null: false
     t.bigint "member_id"
     t.index ["member_id"], name: "index_cash_transactions_on_member_id"
+  end
+
+  create_table "charges", force: :cascade do |t|
+    t.string "service_plan"
+    t.integer "amount"
+    t.string "payment_method"
+    t.string "duration"
+    t.string "gofit_transaction_id"
+    t.bigint "member_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["member_id"], name: "index_charges_on_member_id"
   end
 
   create_table "features", force: :cascade do |t|
@@ -340,6 +352,7 @@ ActiveRecord::Schema.define(version: 20180826014308) do
     t.integer "wallet_fund_method"
   end
 
+  add_foreign_key "charges", "members"
   add_foreign_key "member_health_conditions", "health_conditions"
   add_foreign_key "member_health_conditions", "members"
   add_foreign_key "members", "fitness_goals"

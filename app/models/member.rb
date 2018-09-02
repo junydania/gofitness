@@ -39,6 +39,8 @@ class Member < ApplicationRecord
     has_one  :wallet_detail, :dependent => :destroy
 
     has_many  :wallet_histories
+
+    has_many  :charges
     
     belongs_to :fitness_goal
     belongs_to :payment_method

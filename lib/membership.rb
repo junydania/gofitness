@@ -111,7 +111,11 @@ module Membership
     
         def set_expiry_date(subscribe_date)
             expiry_date = DateTime.new
-            if @member.subscription_plan.duration == "monthly"
+            if @member.subscription_plan.duration == "daily"
+                expiry_date =  (DateTime.parse(subscribe_date) + 1).strftime('%d-%m-%Y %H:%M:%S')
+            elsif @member.subscription_plan.duration == "weekly"
+                expiry_date =  (DateTime.parse(subscribe_date) + 7).strftime('%d-%m-%Y %H:%M:%S')
+            elsif @member.subscription_plan.duration == "monthly"
                 expiry_date =  (DateTime.parse(subscribe_date) + 30).strftime('%d-%m-%Y %H:%M:%S')
             elsif @member.subscription_plan.duration == "quarterly"
                 expiry_date =  (DateTime.parse(subscribe_date) + 90).strftime('%d-%m-%Y %H:%M:%S')

@@ -338,6 +338,7 @@ class Admin::MembersController < Devise::RegistrationsController
     end
 
     def update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
+      create_charge
       update_account_detail(subscribe_date, expiry_date, recurring)
       create_subscription_history(subscribe_date, expiry_date, subscription_status)
       create_loyalty_history(amount)
@@ -353,7 +354,8 @@ class Admin::MembersController < Devise::RegistrationsController
       pos_transaction = @member.pos_transactions.create(
                                       transaction_success: transaction_success_param,
                                       transaction_reference: transaction_reference,
-                                      processed_by: current_user.fullname )
+                                      processed_by: current_user.fullname,
+                                      audit_comment: "Membership renewal paid using POS" )
       return pos_transaction
     end
 
@@ -362,7 +364,7 @@ class Admin::MembersController < Devise::RegistrationsController
         cash_transaction = @member.cash_transactions.create(
                                         amount_received: cash_received,
                                         cash_received_by: current_user.fullname,
-                                        service_paid_for: "Membership Renewal",
+                                        service_paid_for: 'Membership renewal paid using cash',
         )
         return cash_transaction
     end
@@ -378,7 +380,19 @@ class Admin::MembersController < Devise::RegistrationsController
                                   loyalty_points_used: 0,
                                   gym_plan: retrieve_gym_plan,
                                   recurring_billing: recurring,
-                                  audit_comment: "Membership renewed")
+                                  audit_comment: 'Membership renewed')
+    end
+
+    def create_charge
+      charge = @member.charges.new(service_plan: retrieve_gym_plan,
+                                  amount: retrieve_amount,
+                                  payment_method: retrieve_payment_method,
+                                  duration: @member.subscription_plan.duration,
+                                  gofit_transaction_id: SecureRandom.hex(4) 
+                                  )
+      if charge.save
+          MemberMailer.renewal(@member).deliver_later
+      end
     end
 
     def create_subscription_history(subscribe_date, expiry_date, subscription_status)
@@ -390,7 +404,8 @@ class Admin::MembersController < Devise::RegistrationsController
           amount: retrieve_amount,
           payment_method: retrieve_payment_method,
           member_status: 0,
-          subscription_status: subscription_status )
+          subscription_status: subscription_status,
+          audit_comment: 'Membership renewed' )
     end
 
 
@@ -413,7 +428,8 @@ class Admin::MembersController < Devise::RegistrationsController
           points_earned: get_loyalty_points(amount),
           points_redeemed: 0,
           loyalty_transaction_type: 1,
-          loyalty_balance: update_loyalty_points(amount) )
+          loyalty_balance: update_loyalty_points(amount),
+          )
    end
 
 
@@ -433,7 +449,9 @@ class Admin::MembersController < Devise::RegistrationsController
     def set_expiry_date(subscribe_date)
       expiry_date = DateTime.new
       if @member.subscription_plan.duration == "daily"
-        expiry_date =  (DateTime.parse(subscribe_date) + 1).strftime('%d-%m-%Y %H:%M:%S')
+          expiry_date =  (DateTime.parse(subscribe_date) + 1).strftime('%d-%m-%Y %H:%M:%S')
+      elsif @member.subscription_plan.duration == "weekly"
+          expiry_date =  (DateTime.parse(subscribe_date) + 7).strftime('%d-%m-%Y %H:%M:%S')
       elsif @member.subscription_plan.duration == "monthly"
           expiry_date =  (DateTime.parse(subscribe_date) + 30).strftime('%d-%m-%Y %H:%M:%S')
       elsif @member.subscription_plan.duration == "quarterly"
@@ -442,7 +460,7 @@ class Admin::MembersController < Devise::RegistrationsController
           expiry_date = (DateTime.parse(subscribe_date).next_year).strftime('%d-%m-%Y %H:%M:%S')
       end
       expiry_date
-    end
+  end
 
     def find_member
       @member = Member.find(params[:id]) 
@@ -545,6 +563,7 @@ class Admin::MembersController < Devise::RegistrationsController
               recurring, subscription_status = true, 0
               payment_method = retrieve_payment_method
               if enable_subscription["status"] == true
+                  create_charge
                   update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
                   options = {description: 'Member Renewal', amount: amount}
                   Accounting::Entry.new(options).card_entry          

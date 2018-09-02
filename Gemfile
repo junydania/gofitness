@@ -41,7 +41,8 @@ gem 'plutus', :git => 'git://github.com/junydania/plutus.git'
 gem 'jquery-ui-rails'
 gem 'kaminari'
 gem "audited", "~> 4.7"
-
+gem "receipts"
+gem 'mailjet'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

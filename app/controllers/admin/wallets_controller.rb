@@ -7,13 +7,7 @@ class Admin::WalletsController < ApplicationController
     include Accounting
 
     before_action :authenticate_user!
-    before_action :find_member, only: [:fund_page, 
-                                       :update_wallet_detail, 
-                                       :update_wallet_histories, 
-                                       :paystack_wallet_fund, 
-                                       :check_existing_balance,
-                                       :pos_wallet_fund,
-                                       :cash_wallet_fund]
+    before_action :find_member
 
     before_action :get_paystack_object, only: [:paystack_wallet_fund]
 
@@ -35,6 +29,7 @@ class Admin::WalletsController < ApplicationController
             fund_method = 0
             update_wallet_detail(amount, existing_balance, new_balance)
             update_wallet_histories(amount, existing_balance, new_balance, fund_method)
+            create_charge(amount,fund_method)
             options = {description: 'Wallet Funding', amount: amount}
             Accounting::Entry.new(options).card_entry    
             render status: 200, json: {
@@ -60,6 +55,7 @@ class Admin::WalletsController < ApplicationController
         update_wallet_detail(amount, existing_balance, new_balance)
         update_wallet_histories(amount, existing_balance, new_balance, fund_method)
         create_pos_transaction(transaction_reference, transaction_success_param, amount)
+        create_charge(amount,fund_method)
         options = {description: 'Wallet Funding', amount: amount}
         Accounting::Entry.new(options).card_entry
         redirect_to member_profile_path(@member)
@@ -78,6 +74,7 @@ class Admin::WalletsController < ApplicationController
             update_wallet_detail(amount, existing_balance, new_balance)
             update_wallet_histories(amount, existing_balance, new_balance, fund_method)
             create_cash_transaction(amount)
+            create_charge(amount,fund_method)
             options = {description: 'Wallet Funding', amount: amount}
             Accounting::Entry.new(options).cash_entry
             redirect_to member_profile_path(@member)
@@ -90,6 +87,18 @@ class Admin::WalletsController < ApplicationController
 
 
     private
+
+    def create_charge(amount,fund_method)
+        charge = @member.charges.new(service_plan: 'Funded Wallet',
+                                    amount: amount,
+                                    payment_method: fund_method,
+                                    duration: '6 Months Wallet Expiration Period',
+                                    gofit_transaction_id: SecureRandom.hex(4) 
+                                    )
+        if charge.save
+            MemberMailer.wallet_funding(@member).deliver_later
+        end
+    end
    
     def true?(obj)
         obj.to_s == "true"
