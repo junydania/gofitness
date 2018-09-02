@@ -241,7 +241,8 @@ class Admin::MemberStepsController < ApplicationController
                                     amount: retrieve_amount,
                                     payment_method: retrieve_payment_method,
                                     duration: @member.subscription_plan.duration,
-                                    gofit_transaction_id: SecureRandom.hex(4) )
+                                    gofit_transaction_id: SecureRandom.hex(4) 
+                                    )
         if charge.save
             MemberMailer.new_subscription(@member).deliver_later
         end

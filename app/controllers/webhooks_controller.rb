@@ -23,13 +23,31 @@ class WebhooksController < ApplicationController
         payload["member_id"] = member.id
         payload.merge{"description" => description, "amount" => amount }
         options = payload.to_hash
+        fund_method = retrieve_payment_method(member)
         Membership::SubscriptionActivity.new(options).call
         Accounting::Entry.new(options).card_entry
-        options.merge!({description: })
+        create_charge(member, amount, fund_method)
         render status: 200, json: {
           message: "success"
         }
       end
+    end
+  end
+
+
+  def retrieve_payment_method(member)
+    member.payment_method.payment_system
+  end
+
+  def create_charge(member, amount, fund_method)
+    duration = member.subscription_plan.duration
+    charge = member.charges.new(service_plan: "Membership Renewal",
+                                amount: amount,
+                                payment_method: fund_method,
+                                duration: duration,
+                                gofit_transaction_id: SecureRandom.hex(4) )
+    if charge.save
+        MemberMailer.renewal(member).deliver_later
     end
   end
 end

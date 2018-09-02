@@ -387,7 +387,8 @@ class Admin::MembersController < Devise::RegistrationsController
                                   amount: retrieve_amount,
                                   payment_method: retrieve_payment_method,
                                   duration: @member.subscription_plan.duration,
-                                  gofit_transaction_id: SecureRandom.hex(4) )
+                                  gofit_transaction_id: SecureRandom.hex(4) 
+                                  )
       if charge.save
           MemberMailer.renewal(@member).deliver_later
       end

@@ -29,7 +29,7 @@ class Admin::WalletsController < ApplicationController
             fund_method = 0
             update_wallet_detail(amount, existing_balance, new_balance)
             update_wallet_histories(amount, existing_balance, new_balance, fund_method)
-            create_charge
+            create_charge(amount,fund_method)
             options = {description: 'Wallet Funding', amount: amount}
             Accounting::Entry.new(options).card_entry    
             render status: 200, json: {
@@ -55,7 +55,7 @@ class Admin::WalletsController < ApplicationController
         update_wallet_detail(amount, existing_balance, new_balance)
         update_wallet_histories(amount, existing_balance, new_balance, fund_method)
         create_pos_transaction(transaction_reference, transaction_success_param, amount)
-        create_charge
+        create_charge(amount,fund_method)
         options = {description: 'Wallet Funding', amount: amount}
         Accounting::Entry.new(options).card_entry
         redirect_to member_profile_path(@member)
@@ -74,7 +74,7 @@ class Admin::WalletsController < ApplicationController
             update_wallet_detail(amount, existing_balance, new_balance)
             update_wallet_histories(amount, existing_balance, new_balance, fund_method)
             create_cash_transaction(amount)
-            create_charge
+            create_charge(amount,fund_method)
             options = {description: 'Wallet Funding', amount: amount}
             Accounting::Entry.new(options).cash_entry
             redirect_to member_profile_path(@member)
@@ -88,12 +88,13 @@ class Admin::WalletsController < ApplicationController
 
     private
 
-    def create_charge
+    def create_charge(amount,fund_method)
         charge = @member.charges.new(service_plan: 'Funded Wallet',
-                                    amount: @member.wallet_histories.last.amount_paid_in,
-                                    payment_method: @member.wallet_histories.last.wallet_fund.method,
+                                    amount: amount,
+                                    payment_method: fund_method,
                                     duration: '6 Months Wallet Expiration Period'
-                                    gofit_transaction_id: SecureRandom.hex(4) )
+                                    gofit_transaction_id: SecureRandom.hex(4) 
+                                    )
         if charge.save
             MemberMailer.wallet_funding(@member).deliver_later
         end

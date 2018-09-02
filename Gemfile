@@ -42,6 +42,7 @@ gem 'jquery-ui-rails'
 gem 'kaminari'
 gem "audited", "~> 4.7"
 gem "receipts"
+gem 'mailjet'
 
 
 # Use Capistrano for deployment
