@@ -43,6 +43,9 @@ gem 'kaminari'
 gem "audited", "~> 4.7"
 gem "receipts"
 gem 'mailjet'
+gem "sentry-raven"
+gem "exception_handler", '~> 0.8.0.0'
+
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

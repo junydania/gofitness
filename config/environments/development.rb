@@ -68,6 +68,16 @@ Rails.application.configure do
     enable_starttls_auto: true,
     user_name: ENV['GMAIL_USERNAME'],
     password: ENV['GMAIL_PASSWORD']
-}
+  }
+
+  config.exception_handler = {
+    dev:        true, # allows you to turn ExceptionHandler "on" in development
+    db:         nil, # allocates a "table name" into which exceptions are saved (defaults to nil)
+    email:      nil, # sends exception emails to a listed email (string // "you@email.com")
+
+    custom_exceptions: {
+      #'ActionController::RoutingError' => :not_found # => example
+    },
+  }
 
 end
