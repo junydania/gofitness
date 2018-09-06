@@ -1,6 +1,7 @@
 require_relative 'boot'
 
 require 'rails/all'
+require_relative 'version'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -13,6 +14,8 @@ module Gofitness
 
     config.active_record.default_timezone = :local
 
+    config.filter_parameters << :password
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -22,6 +25,9 @@ module Gofitness
 
     config.active_job.queue_adapter = :sidekiq
 
-
+    Raven.configure do |config|
+      
+    end
+    
   end
 end
