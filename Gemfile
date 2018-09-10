@@ -45,7 +45,11 @@ gem "receipts"
 gem 'mailjet'
 gem "sentry-raven"
 gem "exception_handler", '~> 0.8.0.0'
-
+gem 'redis'
+gem 'redis-namespace'
+gem 'redis-rails'
+gem 'redis-rack-cache'
+gem 'groupdate'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
