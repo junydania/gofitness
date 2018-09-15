@@ -79,18 +79,18 @@ class Admin::UsersController < Devise::RegistrationsController
                     :password,
                     :password_confirmation,
                    )
-      end
+    end
     
-      def update_with_password_params
-        params.require(:user)
-              .permit(:email,
-                      :password,
-                      :password_confirmation,
-                      :first_name,
-                      :last_name,
-                      :current_password
-              )
-      end
+    def update_with_password_params
+      params.require(:user)
+            .permit(:email,
+                    :password,
+                    :password_confirmation,
+                    :first_name,
+                    :last_name,
+                    :current_password
+            )
+    end
       
 
 

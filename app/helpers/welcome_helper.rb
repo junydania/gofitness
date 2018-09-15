@@ -55,15 +55,14 @@ module WelcomeHelper
     end
 
     def earnings_chart
-        (Date.today.beginning_of_year.to_date..Date.today).map do |date|
-            {
-                created_at: date,
+        # (Date.today.beginning_of_year.to_date..Date.today).map do |date|
+        #     {
+        #         created_at: date,
                 
-            }
+        #     }
             
-        end
-
-
+        # end
     end
+
 end
 
