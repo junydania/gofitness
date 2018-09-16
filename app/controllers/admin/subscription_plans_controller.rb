@@ -32,7 +32,7 @@ class Admin::SubscriptionPlansController < ApplicationController
                     flash[:notice] = "New Plan Successfully Created in System & Paystack"
                     redirect_to new_admin_subscription_plan_path
             else 
-                flash[:notice] = "Check to ensure the form is properly filled"
+                flash[:error] = "Check to ensure the form is properly filled"
                 redirect_to new_admin_subscription_plan_path
             end
         else
@@ -41,7 +41,7 @@ class Admin::SubscriptionPlansController < ApplicationController
                 flash[:notice] = "New Plan Successfully Created in the System"
                 redirect_to new_admin_subscription_plan_path
             else
-                flash[:notice] = "Error creating new record! Check to ensure all fields are filled"
+                flash[:error] = "Error creating new record! Check to ensure all fields are filled"
                 redirect_to new_admin_subscription_plan_path
             end
         end
@@ -54,7 +54,12 @@ class Admin::SubscriptionPlansController < ApplicationController
 
     def update
         if @plan.paystack_plan_code.nil?
-            @plan.update_attributes(plan_param)
+            if @plan.update(plan_param) 
+                redirect_to admin_subscription_plan_path(@plan) 
+            else
+                flash[:error] = "#{@plan.errors.full_messages.first}"
+                redirect_to edit_admin_subscription_plan_path
+            end         
         else
             plan_id = @plan.paystack_plan_code
             paystackObj = instantiate_paystack
@@ -99,7 +104,6 @@ class Admin::SubscriptionPlansController < ApplicationController
             redirect_to edit_admin_subscription_plan_path
         end
     end
-
     
     def failed_plan_fetch
         flash[:notice] = "Couldn't retrieve plan from Paystack"
