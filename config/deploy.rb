@@ -92,6 +92,14 @@ namespace :deploy do
       end
     end
 
+
+    desc 'Restart application'
+    task :restart do
+      on roles(:app), in: :sequence, wait: 5 do
+        invoke! 'puma:restart'
+      end
+    end
+
     desc 'Run npm:install'
     task :npm_install do
       on roles(:app) do
@@ -111,7 +119,6 @@ namespace :deploy do
         end
       end
     end
-
 
     # before :starting,   :check_revision
     before :compile_assets, :npm_install
