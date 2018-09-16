@@ -21,7 +21,8 @@ class WebhooksController < ApplicationController
         amount = payload["data"]["amount"]
         description = "Membership Renewal Paystack"
         payload["member_id"] = member.id
-        payload.merge{"description" => description, "amount" => amount }
+        payload["description"] = description
+        payload["amount"] = amount
         options = payload.to_hash
         fund_method = retrieve_payment_method(member)
         Membership::SubscriptionActivity.new(options).call
