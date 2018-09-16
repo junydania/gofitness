@@ -33,13 +33,22 @@
                     </div>
 
                     <div>
-                      <% if flash[:notice] %>
-                        <p class="alert"><%= flash[:notice] %></p>
-                      <% end %>
-
-                      <% if flash[:alert] %>
-                                <p class="alert"><%= flash[:alert] %></p>
-                      <% end %>
+                         <% if flash[:notice] %>
+                            <div class="alert alert-success">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <%= flash[:notice] %>
+                            </div>
+                        <% elsif flash[:error] %>
+                            <div class="alert alert-error">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <%= flash[:error] %>
+                            </div>
+                        <% elsif flash[:alert] %>
+                            <div class="alert">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <%= flash[:alert] %>
+                            </div>
+                        <% end %>
                     </div>
 
                 <% end %>
