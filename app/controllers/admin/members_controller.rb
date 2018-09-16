@@ -2,8 +2,9 @@ class Admin::MembersController < Devise::RegistrationsController
 
     load_and_authorize_resource param_method: :member_params
     
-    prepend_before_action :require_no_authentication, only: [:new, :create, :cancel]
+    prepend_before_action :require_no_authentication, only: [:new, :create, :edit, :update, :cancel]
     before_action :authenticate_user!
+    
     before_action :find_member, only: [:renew_membership, 
                                        :pos_renewal, 
                                        :cash_renewal, 
@@ -61,7 +62,7 @@ class Admin::MembersController < Devise::RegistrationsController
       @subscription_plans = SubscriptionPlan.all  
       @payment_methods = PaymentMethod.all
       @fitness_goals = FitnessGoal.all
-      render :edit
+      render
     end
 
     def show
@@ -580,6 +581,10 @@ class Admin::MembersController < Devise::RegistrationsController
     end
 
 
+    def update_resource(resource, params)
+      resource.update_without_password(params)
+    end
+
     def member_params
         params.require(:member)
             .permit( :id,
@@ -596,5 +601,25 @@ class Admin::MembersController < Devise::RegistrationsController
                     pos_transactions_attributes:[:transaction_reference, :transaction_success, :_destroy] )
     end
 
+    def update_without_password_params
+      params.require(:member)
+            .permit(:email,
+                  :first_name,
+                  :last_name,
+                  :password,
+                  :password_confirmation,
+                 )
+  end
+  
+  def update_with_password_params
+    params.require(:member)
+          .permit(:email,
+                  :password,
+                  :password_confirmation,
+                  :first_name,
+                  :last_name,
+                  :current_password
+          )
+  end
 
 end

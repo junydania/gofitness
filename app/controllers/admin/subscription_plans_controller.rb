@@ -5,6 +5,7 @@ class Admin::SubscriptionPlansController < ApplicationController
     helper ApplicationHelper
 
     before_action :authenticate_user!
+    before_action   :find_plan, only: [:edit, :update, :show, :update_plan_record]
     
     
     def index
@@ -21,7 +22,6 @@ class Admin::SubscriptionPlansController < ApplicationController
         @subscription_plan = SubscriptionPlan.find(params[:id])
     end
 
-
     def create
         if plan_param[:recurring] == "true"
             result = create_paystack_plan(plan_param)
@@ -32,7 +32,7 @@ class Admin::SubscriptionPlansController < ApplicationController
                     flash[:notice] = "New Plan Successfully Created in System & Paystack"
                     redirect_to new_admin_subscription_plan_path
             else 
-                flash[:notice] = "Check to ensure the form is properly filled"
+                flash[:error] = "Check to ensure the form is properly filled"
                 redirect_to new_admin_subscription_plan_path
             end
         else
@@ -41,9 +41,31 @@ class Admin::SubscriptionPlansController < ApplicationController
                 flash[:notice] = "New Plan Successfully Created in the System"
                 redirect_to new_admin_subscription_plan_path
             else
-                flash[:notice] = "Error creating new record! Check to ensure all fields are filled"
+                flash[:error] = "Error creating new record! Check to ensure all fields are filled"
                 redirect_to new_admin_subscription_plan_path
             end
+        end
+    end
+
+    def edit
+        render
+    end
+
+
+    def update
+        if @plan.paystack_plan_code.nil?
+            if @plan.update(plan_param) 
+                redirect_to admin_subscription_plan_path(@plan) 
+            else
+                flash[:error] = "#{@plan.errors.full_messages.first}"
+                redirect_to edit_admin_subscription_plan_path
+            end         
+        else
+            plan_id = @plan.paystack_plan_code
+            paystackObj = instantiate_paystack
+            plan_present = fetch_paystack_plan(plan_id, paystackObj)
+            update_paystack_plan = plan_present["status"] == true ? update_paystack(plan_id, paystackObj) : failed_plan_fetch
+            update_paystack_plan["status"] == true ? update_plan_record : failed_paystack_update
         end
     end
 
@@ -54,6 +76,44 @@ class Admin::SubscriptionPlansController < ApplicationController
         paystackObj = Paystack.new
         return paystackObj
     end  
+
+    def fetch_paystack_plan(plan_id, paystackObj)        
+        plans = PaystackPlans.new(paystackObj)
+        result = plans.get(plan_id)
+    end
+
+    def update_paystack(plan_id, paystackObj)
+        amount = plan_param[:cost].to_i * 100
+        duration = plan_param[:duration].to_s
+        plan_name = plan_param[:plan_name]
+        plans = PaystackPlans.new(paystackObj)
+        result = plans.update(
+                plan_id,
+                :name => plan_name,
+                :amount => amount,
+			    :interval => duration,
+			)
+    end
+
+    def update_plan_record
+        if @plan.update(plan_param)
+            flash[:notice] = "Plan Updated"
+            redirect_to admin_subscription_plan_path(@plan)
+        else
+            flash[:notice] = "#{@plan.errors.full_messages.first}"
+            redirect_to edit_admin_subscription_plan_path
+        end
+    end
+    
+    def failed_plan_fetch
+        flash[:notice] = "Couldn't retrieve plan from Paystack"
+        redirect_to edit_admin_subscription_plan_path
+    end
+
+    def failed_paystack_update
+        flash[:notice] = "Plan was not succesfully updated on Paystack"
+        redirect_to edit_admin_subscription_plan_path
+    end
 
     def create_paystack_plan(plan_param)
         paystackObj = instantiate_paystack
@@ -69,6 +129,11 @@ class Admin::SubscriptionPlansController < ApplicationController
         return result
     end
 
+    def find_plan
+        @plan = SubscriptionPlan.find(params[:id])
+    end
+
+    
     def plan_param
         params.require(:subscription_plan) 
             .permit(:plan_name,
@@ -81,5 +146,6 @@ class Admin::SubscriptionPlansController < ApplicationController
                     :paystack_plan_code,
                     feature_ids: [] )
     end
+
 
 end

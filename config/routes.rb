@@ -17,7 +17,7 @@ Rails.application.routes.draw do
     get 'user/:id' => 'admin/users#show', as: :user_profile
   end
 
-  
+
   devise_scope :member do
     get 'members' => 'admin/members#index', as: :members
     get 'member/:id' => 'admin/members#show', as: :member_profile
@@ -37,7 +37,6 @@ Rails.application.routes.draw do
     get  'loyalty_history/:id' => 'admin/historicals#loyalty_history', as: :member_loyalty_history
     get  'wallet_history/:id' => 'admin/historicals#wallet_history', as: :member_wallet_history
     get  'attendance_history/:id' => 'admin/historicals#attendance_history', as: :member_attendance_history
-    #get  'subscription_history/:id' => 'admin/historicals#subscription_history', as: :member_attendance_history
   end
 
   
