@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
 
   def after_sign_in_path_for(resource)
     flash[:notice] = "Signed in successfully."
-    root_path
+    admin_attendance_records_path
   end
 
   rescue_from CanCan::AccessDenied do |exception|

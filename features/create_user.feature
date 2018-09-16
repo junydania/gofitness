@@ -17,7 +17,7 @@ Feature: As an administrator
     And I fill in field "login_user_email" with "o.dania@aol.com"
     And I fill in field "user_password" with "12345678"
     And I click on "Log In"
-    And I should see "GoFitness Dashboard"
+    And I should see "Signed in successfully."
     And I click on "Staff"
     And I click on "Create Staff"
     And I fill in field "user_email" with "juniordania@hotmail.com"
