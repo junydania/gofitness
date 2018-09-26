@@ -7,7 +7,7 @@ set :use_sudo, true
 set :user,            'gofitnessadmin'
 set :puma_threads,    [4, 16]
 set :puma_workers,    0
-set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system node_modules}
+set :linked_dirs, %w{log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system node_modules}
 set :linked_files, %w{ config/application.yml }
 set :pty, true
 
