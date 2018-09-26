@@ -7,22 +7,21 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 user = User.create!(
     [{
-         email: 'odania@gofitness.com',
-         password: '12345678',
-         password_confirmation: '12345678',
+         email: 'dominic@gofitnessng.com',
+         password: 'dominic',
+         password_confirmation: 'dominic',
          first_name: 'Ose',
          last_name: 'Dan',
          role: 0
      }, {
          email: 'o.dania@icloud.com',
-         password: '12345678',
-         password_confirmation: '12345678',
+         password: 'osegbemoh',
+         password_confirmation: 'osegbemoh',
          first_name: 'Osegbemoh',
          last_name: 'Dania',
-         role: 1
+         role: 0
      }]
 )
-
 
 Plutus::Asset.create(:name => "Accounts Receivable")
 Plutus::Asset.create(:name => "Cash")
