@@ -65,7 +65,6 @@ group :development, :test do
   gem 'database_cleaner'
   gem 'launchy'
   gem 'foreman'
-  gem 'faker', :git => 'git://github.com/stympy/faker.git', :branch => 'master'
   gem 'rspec-rails'
   gem 'shoulda-matchers'
   gem "factory_bot_rails", "~> 4.0"
