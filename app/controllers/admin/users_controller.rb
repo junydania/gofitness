@@ -45,7 +45,7 @@ class Admin::UsersController < Devise::RegistrationsController
             render :edit
           end
         elsif !update_with_password_params[:password].blank?
-          resource_updated = resource.update_with_password(update_with_password_params)
+          resource_updated = resource.update_without_password(update_without_password_params)
           if resource_updated
             bypass_sign_in(resource)
             redirect_to user_profile_path(current_user)
