@@ -4,6 +4,7 @@ class WebhooksController < ApplicationController
   protect_from_forgery :except => :receive
 
   require 'membership'
+  
   include Membership
 
   SECRET_KEY = ENV["PAYSTACK_PRIVATE_KEY"]
