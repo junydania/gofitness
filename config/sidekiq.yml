@@ -7,4 +7,3 @@
   - reset_check_in
   - validate_wallet
   - mailers
-:daemon: true
