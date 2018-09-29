@@ -124,7 +124,7 @@ namespace :rails do
   desc "script/console on a remote server"
   task :console do
     rails_env = fetch(:rails_env, "production")
-    server = { server: fetch(:host), port: fetch(:port) }
+    server = { host: fetch(:host), port: fetch(:port) }
     run_with_tty server, %W( script/console #{rails_env} )
   end
 
@@ -154,6 +154,7 @@ namespace :rails do
   def run_with_tty server, cmd
     # looks like total pizdets
     user = fetch(:user)
-    exec "ssh -i #{user} #{server.host} -p #{server.port} -t 'cd #{release_path}/current && #{command}'"
+    exec "cd #{release_path}/current && #{command}"
+    # exec "ssh -i #{user} #{server.host} -p #{server.port} -t 'cd #{release_path}/current && #{command}'"
   end
 end
