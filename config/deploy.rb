@@ -139,4 +139,4 @@ end
 #     info "Running `#{command}` as #{user}@#{host}"
 #     exec "bash --login -c 'cd #{fetch(:deploy_to)}/current && #{command}'"
 #   end
-# end 
+# end
