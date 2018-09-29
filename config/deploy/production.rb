@@ -4,6 +4,8 @@ set :rails_env, "production"  # tell cap to run migrations using production env
 # role :web, %w{gofitnessadmin@209.97.186.174}
 # role :db,  %w{gofitnessadmin@209.97.186.174}
 set :host, '209.97.186.174'
+set :key, %w(~/.ssh/gofitness-prod-ci-key)
+
 set :migration_role, :app
 set :ssh_options, {
     forward_agent: true,

@@ -38,8 +38,6 @@ set :puma_preload_app, true
 set :puma_worker_timeout, nil
 set :puma_init_active_record, true  # Change to true if using ActiveRecord
 set :puma_restart_command, 'bundle exec puma'
-set :key, %w(~/.ssh/gofitness-dev-key)
-
 
 
 # SSH Options
