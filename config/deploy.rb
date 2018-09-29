@@ -3,6 +3,7 @@ lock "~> 3.11.0"
 
 load 'lib/tasks/seed'
 
+
 set :application, "gofitness"
 set :repo_url, 'https://github.com/junydania/gofitness.git'
 set :use_sudo, true
