@@ -38,6 +38,7 @@ set :puma_preload_app, true
 set :puma_worker_timeout, nil
 set :puma_init_active_record, true  # Change to true if using ActiveRecord
 set :puma_restart_command, 'bundle exec puma'
+set :key, %w(~/.ssh/gofitness-dev-key)
 
 
 
@@ -141,7 +142,8 @@ namespace :rails do
   def execute_interactively(command)
     user = fetch(:user)
     port = fetch(:port) || 7872
-    exec "ssh -l #{user} #{host} -p #{port} -t 'cd #{deploy_to}/current && #{command}'"
+    key  = fetch(:key)
+    exec "ssh -l #{key} #{user} #{host} -p #{port} -t 'cd #{deploy_to}/current && #{command}'"
   end
 
 end
