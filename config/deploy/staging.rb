@@ -3,7 +3,7 @@ set :rails_env, "staging"  # tell cap to run migrations using staging env
 # role :app, %w{gofitnessadmin@35.196.34.34}
 # role :web, %w{gofitnessadmin@35.196.34.34}
 # role :db,  %w{gofitnessadmin@35.196.34.34}
-
+set :host, '35.196.34.34'
 set :migration_role, :app
 set :ssh_options, {
     forward_agent: true,

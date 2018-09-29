@@ -3,7 +3,7 @@ set :rails_env, "production"  # tell cap to run migrations using production env
 # role :app, %w{gofitnessadmin@209.97.186.174}
 # role :web, %w{gofitnessadmin@209.97.186.174}
 # role :db,  %w{gofitnessadmin@209.97.186.174}
-
+set :host, '209.97.186.174'
 set :migration_role, :app
 set :ssh_options, {
     forward_agent: true,
