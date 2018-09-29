@@ -125,7 +125,7 @@ namespace :rails do
   task :console do
     on roles(:app) do |host| #does it for each host, bad.
       rails_env = fetch(:stage)
-      execute_interactively "ruby #{current_path}/script/rails console #{rails_env}"  
+      exec ("ruby #{current_path}/script/rails console #{rails_env}")
     end
   end
 
@@ -133,16 +133,16 @@ namespace :rails do
   task :dbconsole do
     on roles(:db) do |host| #does it for each host, bad.
       rails_env = fetch(:stage)
-      execute_interactively "ruby #{current_path}/script/rails dbconsole #{rails_env}"  
+      exec("ruby #{current_path}/script/rails dbconsole #{rails_env}" )
     end
   end
 
-  def execute_interactively(command)
-    user = fetch(:user)
-    port = fetch(:port) || 7872
-    key  = fetch(:key)
-    host = fetch(:host)
-    exec "ssh -i #{key} #{user}@#{host} -p #{port} -t 'cd #{deploy_to}/current && #{command}'"
-  end
+  # def execute_interactively(command)
+  #   user = fetch(:user)
+  #   port = fetch(:port) || 7872
+  #   key  = fetch(:key)
+  #   host = fetch(:host)
+  #   exec "ssh -i #{key} #{user}@#{host} -p #{port} -t 'cd #{deploy_to}/current && #{command}'"
+  # end
 
 end
