@@ -50,6 +50,7 @@ gem 'redis-namespace'
 gem 'redis-rails'
 gem 'redis-rack-cache'
 gem 'groupdate'
+gem 'authtrail'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
