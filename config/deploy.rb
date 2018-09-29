@@ -1,8 +1,6 @@
 # config valid for current version and patch releases of Capistrano
 lock "~> 3.11.0"
 
-load 'tasks/seed'
-
 set :application, "gofitness"
 set :repo_url, 'https://github.com/junydania/gofitness.git'
 set :use_sudo, true
@@ -123,3 +121,15 @@ namespace :deploy do
     
 end
   
+namespace :rails do
+  desc "Run Rails console"
+  task :console do
+    run_interactively primary(:app) do
+      within current_path do
+        as user: :gofitnessadmin do
+          execute(:rails, :console)
+        end
+      end
+    end
+  end
+end

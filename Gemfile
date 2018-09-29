@@ -51,6 +51,8 @@ gem 'redis-rails'
 gem 'redis-rack-cache'
 gem 'groupdate'
 gem 'authtrail'
+gem 'sshkit-interactive', require: false
+
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
