@@ -126,9 +126,7 @@ namespace :rails do
   task :console do
     run_interactively primary(:app) do
       within current_path do
-        as user: :gofitnessadmin do
-          execute(:rails, :console)
-        end
+        execute(:rails, :console)
       end
     end
   end
