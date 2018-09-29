@@ -142,7 +142,7 @@ namespace :rails do
 
   # FIXME run on only one server?
   desc "task=command runs rake 'command' on application servers"
-  task :rake, do
+  task :rake do
     if ENV['task']
       run "#{rake_cmd} #{ENV['task']}"
     else
