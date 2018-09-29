@@ -154,7 +154,7 @@ namespace :rails do
   def run_with_tty server, cmd
     # looks like total pizdets
     user = fetch(:user)
-    exec "cd #{release_path}/current && #{command}"
+    exec "cd #{release_path}/current && #{cmd}"
     # exec "ssh -i #{user} #{server.host} -p #{server.port} -t 'cd #{release_path}/current && #{command}'"
   end
 end
