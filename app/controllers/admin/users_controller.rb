@@ -58,6 +58,11 @@ class Admin::UsersController < Devise::RegistrationsController
         end
       end
 
+      def staff_tracking
+        @user = User.new
+        @users = User.all
+      end
+
 
     private
 

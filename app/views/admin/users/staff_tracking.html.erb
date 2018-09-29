@@ -1,0 +1,54 @@
+        
+        <div class="page-wrapper">
+                    <!-- ============================================================== -->
+                    <!-- Bread crumb and right sidebar toggle -->
+                    <!-- ============================================================== -->
+                    <div class="row page-titles">
+                        <div class="col-md-5 align-self-center">
+                            <h3 class="text-themecolor">Staff Tracking</h3>
+                        </div>
+                        <div class="col-md-7 align-self-center">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                                <li class="breadcrumb-item">Staff</li>
+                                <li class="breadcrumb-item active">Login Tracking</li>
+                            </ol>
+                        </div>
+                        <div>
+                            <button class="right-side-toggle waves-effect waves-light btn-inverse btn btn-circle btn-sm pull-right m-l-10"><i class="ti-settings text-white"></i></button>
+                        </div>
+                    </div>
+                    <!-- ============================================================== -->
+                    <!-- End Bread crumb and right sidebar toggle -->
+                    <!-- ============================================================== -->
+                    <!-- ============================================================== -->
+                    <!-- Container fluid  -->
+                    <!-- ============================================================== -->
+                    <div class="container-fluid">
+                        <!-- ============================================================== -->
+                        <!-- Start Page Content -->
+                        <!-- ============================================================== -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="alert alert-success">
+                                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                            <%= flash[:notice] %>
+                                        </div>
+                                        <h4 class="card-title">View Staff Login Activities</h4>
+                                        <div id=""></div>
+                                        <%= form_for @user do |f| %>
+                                            <div class="row">
+                                                <div class="col-sm-3 nopadding">
+                                                    <div class="form-group">
+                                                            <%= f.collection_select(:id, @users, :id, :first_name, { :include_blank => "Please select Staff" }, {class: "form-control" }) %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% end %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>

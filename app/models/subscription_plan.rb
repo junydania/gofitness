@@ -14,8 +14,7 @@ class SubscriptionPlan < ApplicationRecord
     def self.options_for_select
         order('LOWER(plan_name)').map { |e| [e.plan_name, e.id]}
     end
-    
-    
+        
 end
 
 
