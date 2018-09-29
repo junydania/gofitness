@@ -154,15 +154,6 @@ namespace :rails do
   def run_with_tty server, cmd
     # looks like total pizdets
     user = fetch(:user)
-    command = []
-    command += %W( ssh -t #{gateway} -l #{self[:gateway_user] || self[:user]} ) if self[:gateway]
-    command += %W( ssh -t )
-    command += %W( -p #{server.port}) if server.port
-    command += %W( -l #{user} #{server.host} )
-    command += %W( cd #{current_path} )
-    # have to escape this once if running via double ssh
-    command += [self[:gateway] ? '\&\&' : '&&']
-    command += Array(cmd)
-    system *command
+    exec "ssh -i #{user} #{server.host} -p #{server.port} -t 'cd #{release_path}/current && #{command}'"
   end
 end
