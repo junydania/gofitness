@@ -125,14 +125,14 @@ namespace :rails do
   task :console do
     rails_env = fetch(:rails_env, "production")
     server = { host: fetch(:host), port: fetch(:port) }
-    run_with_tty server, %W( script/console #{rails_env} )
+    run_with_tty server, %W( ruby #{current_path}/script/rails console #{rails_env} )
   end
 
   desc "script/dbconsole on a remote server"
   task :dbconsole do 
     rails_env = fetch(:rails_env, "production")
     server = { host: fetch(:host), port: fetch(:port) }
-    run_with_tty server, %W( script/dbconsole #{rails_env} )
+    run_with_tty server, %W( ruby #{current_path}/script/rails dbconsole #{rails_env} )
   end
 
   set :rake_cmd do
@@ -154,7 +154,7 @@ namespace :rails do
   def run_with_tty server, cmd
     # looks like total pizdets
     user = fetch(:user)
-    exec "cd #{release_path}/current && #{cmd}"
+    exec "cd #{current_path}/current && #{cmd}"
     # exec "ssh -i #{user} #{server.host} -p #{server.port} -t 'cd #{release_path}/current && #{command}'"
   end
 end
