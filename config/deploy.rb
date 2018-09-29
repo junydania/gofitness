@@ -121,40 +121,22 @@ namespace :deploy do
 end
   
 namespace :rails do
-  desc "script/console on a remote server"
+  desc "Remote console"
   task :console do
-    rails_env = fetch(:rails_env, "production")
-    server = { host: fetch(:host), port: fetch(:port) }
-    run_with_tty server, %W( ruby #{current_path}/script/rails console #{rails_env} )
-  end
-
-  desc "script/dbconsole on a remote server"
-  task :dbconsole do 
-    rails_env = fetch(:rails_env, "production")
-    server = { host: fetch(:host), port: fetch(:port) }
-    run_with_tty server, %W( ruby #{current_path}/script/rails dbconsole #{rails_env} )
-  end
-
-  set :rake_cmd do
-    rails_env = fetch(:rails_env, "production")
-    "cd #{current_path} && rake RAILS_ENV=#{rails_env}"
-  end
-
-  # FIXME run on only one server?
-  desc "task=command runs rake 'command' on application servers"
-  task :rake do
-    if ENV['task']
-      run "#{rake_cmd} #{ENV['task']}"
-    else
-      # FIXME use logger instead of warn?
-      warn "USAGE: cap rails:rake task=..."
+    on roles(:app) do |h|
+      run_interactively "bundle exec rails console #{fetch(:rails_env)}", h.user
     end
   end
 
-  def run_with_tty server, cmd
-    # looks like total pizdets
-    user = fetch(:user)
-    exec "cd #{current_path} && #{cmd}"
-    # exec "ssh -i #{user} #{server.host} -p #{server.port} -t 'cd #{release_path}/current && #{command}'"
+  desc "Remote dbconsole"
+  task :dbconsole do
+    on roles(:app) do |h|
+      run_interactively "bundle exec rails dbconsole #{fetch(:rails_env)}", h.user
+    end
+  end
+
+  def run_interactively(command, user)
+    info "Running `#{command}` as #{user}@#{host}"
+    exec "bash --login -c 'cd #{fetch(:deploy_to)}/current && #{command}'")
   end
 end
