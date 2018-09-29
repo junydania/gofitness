@@ -144,7 +144,7 @@ namespace :rails do
     port = fetch(:port) || 7872
     key  = fetch(:key)
     host = fetch(:host)
-    exec "ssh -l #{key} #{user} #{host} -p #{port} -t 'cd #{deploy_to}/current && #{command}'"
+    exec "ssh -i #{key} #{user}@#{host} -p #{port} -t 'cd #{deploy_to}/current && #{command}'"
   end
 
 end
