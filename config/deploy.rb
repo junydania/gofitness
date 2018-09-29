@@ -40,7 +40,6 @@ set :puma_init_active_record, true  # Change to true if using ActiveRecord
 set :puma_restart_command, 'bundle exec puma'
 
 
-
 # SSH Options
 # See the example commented out section in the file
 # for more options.
@@ -121,15 +120,23 @@ namespace :deploy do
     
 end
   
-namespace :rails do
-  desc "Run Rails console"
-  task :console do
-    run_interactively primary(:app) do
-      within current_path do
-        as user: :gofitnessadmin do
-          execute(:rails, :console)
-        end
-      end
-    end
-  end
+# namespace :rails do
+#   desc "Remote console"
+#   task :console do
+#     on roles(:app) do |h|
+#       run_interactively "bundle exec rails console #{fetch(:rails_env)}", h.user
+#     end
+#   end
+
+#   desc "Remote dbconsole"
+#   task :dbconsole do
+#     on roles(:app) do |h|
+#       run_interactively "bundle exec rails dbconsole #{fetch(:rails_env)}", h.user
+#     end
+#   end
+
+#   def run_interactively(command, user)
+#     info "Running `#{command}` as #{user}@#{host}"
+#     exec "bash --login -c 'cd #{fetch(:deploy_to)}/current && #{command}'"
+#   end
 end

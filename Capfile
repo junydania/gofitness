@@ -20,7 +20,6 @@ require 'capistrano/rails'
 require 'capistrano/bundler'
 require 'capistrano/rvm'
 require 'capistrano/puma'
-require 'sshkit/interactive'
 
 install_plugin Capistrano::Puma
 install_plugin Capistrano::Puma, load_hooks: true  # Default puma tasks without hooks
