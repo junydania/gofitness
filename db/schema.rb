@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180927213508) do
+ActiveRecord::Schema.define(version: 20181006213903) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -192,6 +192,7 @@ ActiveRecord::Schema.define(version: 20180927213508) do
     t.string "next_of_kin_name"
     t.string "next_of_kin_email"
     t.string "address"
+    t.string "email"
     t.date "date_of_birth"
     t.string "referal_name"
     t.string "voucher_code"
@@ -200,7 +201,6 @@ ActiveRecord::Schema.define(version: 20180927213508) do
     t.bigint "fitness_goal_id"
     t.bigint "payment_method_id"
     t.bigint "subscription_plan_id"
-    t.string "email", default: "", null: false
     t.text "image_data"
     t.bigint "customer_code"
     t.bigint "phone_number"
@@ -211,7 +211,7 @@ ActiveRecord::Schema.define(version: 20180927213508) do
     t.string "paystack_auth_code"
     t.string "paystack_cust_code"
     t.index ["customer_code"], name: "index_members_on_customer_code", unique: true
-    t.index ["email"], name: "index_members_on_email", unique: true
+    t.index ["email"], name: "index_members_on_email"
     t.index ["fitness_goal_id"], name: "index_members_on_fitness_goal_id"
     t.index ["payment_method_id"], name: "index_members_on_payment_method_id"
     t.index ["phone_number"], name: "index_members_on_phone_number", unique: true
