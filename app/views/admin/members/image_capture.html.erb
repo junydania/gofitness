@@ -4,13 +4,13 @@
             <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
-                    <h3 class="text-themecolor">New Member</h3>
+                    <h3 class="text-themecolor">Member Profile Edit</h3>
                 </div>
                 <div class="col-md-7 align-self-center">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
                         <li class="breadcrumb-item">Member</li>
-                        <li class="breadcrumb-item active">Create Member</li>
+                        <li class="breadcrumb-item active">Image Capture</li>
                     </ol>
                 </div>
                 <div class="">
@@ -26,26 +26,26 @@
                 <div>
                 <div class="row">
                     <div class="col-12">
-                        </br>
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title">Image Capture</h4>
-                                <div class form-group id="image_upload-status">
+                                <div class form-group id="member_upload_status">
                                 </div>
-                                <div id="my_camera">
+                                <div id="member_edit_camera">
                                 </div>
                                 <br/>
                                 <div class="card-body">
-                                    <input type=button value="Take Snapshot" onClick="take_snapshot()" class="btn btn-danger m-r-10">
+                                    <input type=button value="Take Snapshot" onClick="image_snapshot()" class="btn btn-danger m-r-10">
+                                    <%= link_to 'Skip if already taken', member_profile_path, class: 'btn btn-info m-r-10' %>
                                 </div>
-                                <div id="results">
+                                <div id="image_result">
                         
                                 </div>
                             </div>
                         </div>
-                         <div class="card hide" id="image_capture-next">
+                         <div class="card hide" id="complete_upload">
                             <div class="card-body">
-                                <%= link_to "Complete Registration", next_wizard_path , class: 'btn btn-danger m-r-10'%>
+                                <%= link_to "Complete Registration", member_profile_path, class: 'btn btn-danger m-r-10'%>
                             </div>
                         </div>
                         <div class="loader hide modal"></div>

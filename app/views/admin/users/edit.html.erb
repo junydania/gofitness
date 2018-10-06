@@ -23,7 +23,7 @@
                 <!-- ============================================================== -->
                 <!-- Start Page Content -->
                 <!-- ============================================================== -->
-                <div
+                <div>
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
@@ -33,7 +33,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title">Edit Profile</h4>
-                                <%= form_for(resource, as: resource_name, url: user_registration_path(resource_name), html: {class: 'form-material m-t-40' }) do |f| %>
+                                <%= form_for( @user, url: { controller: :users, action: :update },  html: {class: 'form-group m-t-40' }) do |f| %>
                                     <div class="form-group">
                                         <%= f.label :first_name, 'First Name' %>
                                         <%= f.text_field :first_name, class: 'form-control form-control-line' %>
@@ -55,7 +55,8 @@
                                         <%= f.password_field :password_confirmation,  class: "form-control", autocomplete: "off" %>
                                     </div>
                                     <div>
-                                        <%= f.submit 'Update', class: 'btn btn-danger m-r-10' %>
+                                        <%= f.submit 'Update', class: 'btn btn-success m-r-10' %>
+                                        <%= link_to 'Back', users_path, class: 'btn btn-danger m-r-10' %>
                                     </div>
                                 <% end %>
                             </div>

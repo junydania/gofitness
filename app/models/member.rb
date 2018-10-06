@@ -7,9 +7,6 @@ class Member < ApplicationRecord
 
   include ImageUploader[:image]
   
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
-
     has_one  :account_detail, :dependent => :destroy
     accepts_nested_attributes_for :account_detail, update_only: true
 
@@ -46,7 +43,7 @@ class Member < ApplicationRecord
     belongs_to :payment_method
     belongs_to :subscription_plan
 
-    validates_presence_of  :first_name, :last_name, :email, :encrypted_password
+    validates_presence_of  :first_name, :last_name, :email
 
     def fullname
       "#{first_name} #{last_name}"

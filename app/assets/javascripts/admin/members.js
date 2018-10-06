@@ -200,3 +200,51 @@ $(document).on("turbolinks:load", function() {
         });
     });
 });
+
+function image_snapshot(){
+    Webcam.snap(function(data_uri) {
+
+        $('.loader').modal('show');
+
+        id = $('[id*="_image"]');
+
+        if (id.length) {
+            id.val(data_uri);
+        }
+        data = { image: data_uri}   
+        $.ajax({
+            url: '/members/upload_image',
+            type: 'POST',
+            data: data,
+            success: function(data, textStatus, xhr) {
+                         $('.loader').modal('hide');
+                         content = `<div class="card-body">
+                                         <button class="tst2 btn btn-success">${data.message}</button>
+                                    </div>`
+                         $('#member_upload_status').append(content)
+                         $("#complete_upload").fadeIn('fast')
+                     },
+            error: function(data) {
+                $('.loader').modal('hide');
+                content = `<div class="card-body">
+                                    <button class="tst2 btn btn-danger">${data.message}</button>
+                            </div>`
+                $('#member_upload_status').append(content)
+
+            }
+        })
+
+        document.getElementById('image_result').innerHTML = '<img src="' + data_uri + '"/>';
+    });
+}
+$(document).ready(function() {
+    if ($("#member_edit_camera").length) {
+        Webcam.set({
+            width: 320,
+            height: 240,
+            image_format: 'jpeg',
+            jpeg_quality: 90
+        });
+        Webcam.attach('#member_edit_camera');
+    }
+});

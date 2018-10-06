@@ -1,0 +1,99 @@
+        <div class="page-wrapper">
+            <!-- ============================================================== -->
+            <!-- Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <div class="row page-titles">
+                <div class="col-md-5 align-self-center">
+                    <h3 class="text-themecolor">Membership</h3>
+                </div>
+                <div class="col-md-7 align-self-center">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                        <li class="breadcrumb-item">Member</li>
+                        <li class="breadcrumb-item active">Create Member</li>
+                    </ol>
+                </div>
+                <div class="">
+                    <button class="right-side-toggle waves-effect waves-light btn-inverse btn btn-circle btn-sm pull-right m-l-10"><i class="ti-settings text-white"></i></button>
+                </div>
+            </div>
+
+
+            <div class="container-fluid">
+                <!-- ============================================================== -->
+                <!-- Start Page Content -->
+                <!-- ============================================================== -->
+                <div>
+                <div class="row">
+                    <div class="col-12">
+                        <% flash.each do |key, value| %>
+                            <div class="<%= flash_class(key) %>">
+                                    <%= value %>
+                            </div>
+                        <% end %>
+                        </br>
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Edit Member Member</h4>
+                               <%= form_for(@member, url: { controller: :members, action: :update },  html: {class: 'form-group m-t-40' }) do |f| %>
+                                    <div class="form-group">
+                                        <%= f.label :first_name, 'First Name' %>
+                                        <%= f.text_field :first_name, class: 'form-control form-control-line' %>
+                                    </div>
+                                     <div class="form-group">
+                                        <%= f.label :last_name, 'Last Name' %>
+                                        <%= f.text_field :last_name, class: 'form-control form-control-line' %>
+                                    </div>
+                                    <div class="form-group">
+                                        <%= f.label :email, 'Email' %>
+                                        <%= f.email_field :email, autofocus: true, class: 'form-control' %>
+                                    </div>
+                                    <div class="form-group">
+                                        <%= f.label :phone_number, 'Phone Number' %>
+                                        <%= f.number_field :phone_number, class: 'form-control form-control-line' %>
+                                    </div>
+                                    <div class="form-group">
+                                        <%= f.label :address, 'Address' %>
+                                        <%= f.text_field :address, class: 'form-control form-control-line' %>
+                                    </div>
+                                    <div class="input-group">
+                                        <%= f.text_field :date_of_birth, class:"form-control datepicker", "data-provide" => 'datepicker', placeholder:"Select Date of Birth" %>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><i class="icon-calender"></i></span>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <div class="form-group">
+                                        <%= f.label :health_condition_ids, 'Health Conditions' %>
+                                        <%= f.select(:health_condition_ids, HealthCondition.all.pluck(:condition_name, :id), {}, { multiple: true, class: "health_selectize" }) %>
+                                    </div>
+                                    <div class="form-group">
+                                        <%= f.label :next_of_kin_name, 'Next of Kin Name' %>
+                                        <%= f.text_field :next_of_kin_name, class: 'form-control form-control-line' %>
+                                    </div>
+                                     <div class="form-group">
+                                        <%= f.label :next_of_kin_phone, 'Next of Kin Mobile' %>
+                                        <%= f.number_field :next_of_kin_phone, class: 'form-control form-control-line' %>
+                                    </div>
+                                    <div class="form-group">
+                                        <%= f.label :next_of_kin_email, 'Next of Kin Email' %>
+                                        <%= f.text_field :next_of_kin_email, class: 'form-control form-control-line' %>
+                                    </div>
+                                    <div class="form-group">
+                                         <%= f.label :fitness_goal_id, 'Fitness Goal' %>
+                                        <%= f.select(:fitness_goal_id, FitnessGoal.all.pluck(:goal_name, :id), { include_blank: "Select a Fitness Goal" }, {class: "form-control" }) %>
+                                    </div>
+                                    <div class="form-group">
+                                        <%= f.label :customer_code, 'Customer Code' %>
+                                        <%= f.text_field :customer_code, class: 'form-control form-control-line' %>
+                                    </div>
+                                    <div>
+                                        <%= f.submit 'Next', class: 'btn btn-danger m-r-10' %>
+                                    </div>
+                                <% end %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
