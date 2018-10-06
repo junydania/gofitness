@@ -46,7 +46,9 @@
                                 <h6><%= @user.email %></h6> <small class="text-muted p-t-30 db">Phone</small>
                                 <h6>+91 654 784 547</h6> <small class="text-muted p-t-30 db">Address</small>
                                 <h6>71 Pilgrim Avenue Chevy Chase, MD 20815</h6>
-                                 <%= link_to 'Edit Profile', edit_user_path(@user), class: 'btn btn-danger m-r-10' %>
+                                <hr/>
+                                 <%= link_to 'Edit Profile', edit_user_path(@user), class: 'btn btn-info m-r-10' %>
+                                 <%= link_to 'Change Role', update_staff_role_path(@user), class: 'btn btn-info m-r-10' %>
                                 <br/>
                             </div>
                         </div>

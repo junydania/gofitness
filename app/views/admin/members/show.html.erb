@@ -71,7 +71,7 @@
                                 <% @member.health_conditions.each do|condition| %>
                                     <p><%= condition.condition_name %></p>
                                 <% end %>
-                                <%= link_to 'Edit Profile', edit_member_registration_path, class:"btn btn-info btn-rounded" %>
+                                <%= link_to 'Edit Profile', edit_member_path(@member), class:"btn btn-info btn-rounded" %>
                             </div>
                             
                         </div>

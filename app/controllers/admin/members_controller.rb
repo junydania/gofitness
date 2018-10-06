@@ -1,8 +1,7 @@
-class Admin::MembersController < Devise::RegistrationsController
+class Admin::MembersController < ApplicationController
 
     load_and_authorize_resource param_method: :member_params
-    
-    prepend_before_action :require_no_authentication, only: [:new, :create, :edit, :update, :cancel]
+      
     before_action :authenticate_user!
     
     before_action :find_member, only: [:renew_membership, 
@@ -12,7 +11,8 @@ class Admin::MembersController < Devise::RegistrationsController
                                        :unsubscribe_membership, 
                                        :pause_subscription, 
                                        :cancel_pause,
-                                       :wallet_renewal ]
+                                       :wallet_renewal,
+                                       :update ]
                                        
     before_action :get_paystack_object, only: [:check_paystack_subscription, 
                                                :paystack_renewal,
@@ -22,7 +22,6 @@ class Admin::MembersController < Devise::RegistrationsController
                                                :cancel_pause]
 
     require 'securerandom'
-
 
     def index
       @filterrific = initialize_filterrific(
@@ -43,7 +42,7 @@ class Admin::MembersController < Devise::RegistrationsController
         format.html
         format.js
       end
-  
+
       rescue ActiveRecord::RecordNotFound => e
         puts "Had to reset filterrific params: #{ e.message }"
         redirect_to(reset_filterrific_url(format: :html)) && return
@@ -53,17 +52,45 @@ class Admin::MembersController < Devise::RegistrationsController
       @subscription_plans = SubscriptionPlan.all  
       @payment_methods = PaymentMethod.all
       @fitness_goals = FitnessGoal.all
-      build_resource
-      yield resource if block_given?
-      respond_with resource
+      @member = Member.new
     end
 
     def edit
       @subscription_plans = SubscriptionPlan.all  
       @payment_methods = PaymentMethod.all
       @fitness_goals = FitnessGoal.all
+      @member = Member.find(params[:id])
+    end
+
+    def update
+      if @member.update(member_params)
+        redirect_to image_page_path(@member)
+        flash[:notice] = "#{@member.first_name}'s profile updated"
+      else
+        render :edit
+      end
+    end
+
+    def image_capture
+      session[:member_id] = params[:id]
       render
     end
+
+    def upload_image
+      member_image = Shrine.data_uri(params[:image])
+      member = Member.find(session[:member_id])
+      member.image = member_image
+      if member.save
+          render json: {
+              message: "Image Uploaded"
+          } 
+      else
+          render status: 500, json: {
+              message: "Failed to Upload"
+          }
+      end
+    end
+
 
     def show
       @member = Member.find(params[:id])
@@ -72,16 +99,12 @@ class Admin::MembersController < Devise::RegistrationsController
 
 
     def create
-        new_params = member_params.clone
-        new_params[:password] = SecureRandom.hex(7)
-        new_params[:password_confirmation] = new_params[:password]
-        ## Implement feature to mail login address and password to new member
-        build_resource(new_params)
-        if resource.save
-          resource.audits.last.user
-          session[:member_id] = resource.id
-          member = Member.find(resource.id)
-          account_update = @member.build_account_detail(
+        new_member = Member.new(member_params)
+        if new_member.save
+          new_member.audits.last.user
+          session[:member_id] = new_member.id
+          member = Member.find(new_member.id)
+          account_update = member.build_account_detail(
             subscribe_date: DateTime.now,
             expiry_date: DateTime.now,
             member_status: 1,
@@ -91,11 +114,12 @@ class Admin::MembersController < Devise::RegistrationsController
           flash[:notice] = "Receive Payment & Complete the Registration Process"
           redirect_to admin_member_steps_path
         else
-          clean_up_passwords resource
-          respond_with resource
+          flash[:error] = "Couldn't create member account"
+          render :edit
         end
     end
 
+    
     def renew_membership
       gon.amount, gon.email, gon.firstName = @member.subscription_plan.cost * 100, @member.email, @member.first_name
       gon.lastName, gon.displayValue = @member.last_name, @member.phone_number
@@ -581,10 +605,6 @@ class Admin::MembersController < Devise::RegistrationsController
     end
 
 
-    def update_resource(resource, params)
-      resource.update_without_password(params)
-    end
-
     def member_params
         params.require(:member)
             .permit( :id,
@@ -600,26 +620,5 @@ class Admin::MembersController < Devise::RegistrationsController
                     cash_transactions_attributes: [:amount_received, :_destroy],
                     pos_transactions_attributes:[:transaction_reference, :transaction_success, :_destroy] )
     end
-
-    def update_without_password_params
-      params.require(:member)
-            .permit(:email,
-                  :first_name,
-                  :last_name,
-                  :password,
-                  :password_confirmation,
-                 )
-  end
-  
-  def update_with_password_params
-    params.require(:member)
-          .permit(:email,
-                  :password,
-                  :password_confirmation,
-                  :first_name,
-                  :last_name,
-                  :current_password
-          )
-  end
 
 end

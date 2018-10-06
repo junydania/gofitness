@@ -35,8 +35,21 @@ class Admin::UsersController < Devise::RegistrationsController
         @user = User.find(params[:id])
     end
 
+    def change_role
+      @user = User.find(params[:id])
+    end
+
+    def update_role
+      @user = User.find(params[:id])
+      if @user.update(update_without_password_params)
+        redirect_to user_profile_path(current_user)
+        flash[:notice] = "User role successfully updated"     
+      else
+        render :change_role
+      end
+    end
+
     def update
-      binding.pry
         if update_without_password_params[:password].blank?
           resource_updated = resource.update_without_password(update_without_password_params)
           if resource_updated
