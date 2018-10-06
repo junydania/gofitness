@@ -16,6 +16,8 @@ Rails.application.routes.draw do
     get 'users' => 'admin/users#index', as: :users
     get 'user/:id' => 'admin/users#show', as: :user_profile
     get 'staff_tracking' => 'admin/users#staff_tracking', as: :staff_tracking
+    get 'users/:id/edit' => 'admin/users#edit', as: :edit_user
+    patch  'users/:id' => 'admin/users#update'
   end
 
 
