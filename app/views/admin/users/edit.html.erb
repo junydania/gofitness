@@ -54,11 +54,6 @@
                                          <%= f.label :password_confirmation, "Password Confirmation" %>
                                         <%= f.password_field :password_confirmation,  class: "form-control", autocomplete: "off" %>
                                     </div>
-                                    <div class="form-group">
-                                        <%= f.label :role, 'Staff Role' %>
-                                        <%= f.select(:role, options_for_select(User.roles.keys.map { |role| [role.titleize, role]}), {include_blank: true}, { :class =>  "form-control" } ) %>
-                                    </div>
-
                                     <div>
                                         <%= f.submit 'Update', class: 'btn btn-success m-r-10' %>
                                         <%= link_to 'Back', users_path, class: 'btn btn-danger m-r-10' %>
