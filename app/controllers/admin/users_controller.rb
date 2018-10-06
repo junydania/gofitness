@@ -32,10 +32,11 @@ class Admin::UsersController < Devise::RegistrationsController
     end
 
     def edit
-        render
+        @user = User.find(params[:id])
     end
 
     def update
+      binding.pry
         if update_without_password_params[:password].blank?
           resource_updated = resource.update_without_password(update_without_password_params)
           if resource_updated
@@ -45,12 +46,13 @@ class Admin::UsersController < Devise::RegistrationsController
             render :edit
           end
         elsif !update_with_password_params[:password].blank?
-          resource_updated = resource.update_without_password(update_without_password_params)
+          resource_updated = User.update(update_without_password_params)
           if resource_updated
             bypass_sign_in(resource)
             redirect_to user_profile_path(current_user)
             flash[:notice] = "Account successfully updated"
           else
+            flash[:error] = "Failed to Update record"
             render :edit
           end
         else
@@ -72,7 +74,8 @@ class Admin::UsersController < Devise::RegistrationsController
                     :password,
                     :password_confirmation,
                     :first_name,
-                    :last_name
+                    :last_name,
+                    :role
             )
     end
 
@@ -83,6 +86,7 @@ class Admin::UsersController < Devise::RegistrationsController
                     :last_name,
                     :password,
                     :password_confirmation,
+                    :role
                    )
     end
     
@@ -93,7 +97,8 @@ class Admin::UsersController < Devise::RegistrationsController
                     :password_confirmation,
                     :first_name,
                     :last_name,
-                    :current_password
+                    :current_password,
+                    :role
             )
     end
       
