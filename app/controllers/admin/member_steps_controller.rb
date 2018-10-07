@@ -22,7 +22,6 @@ class Admin::MemberStepsController < ApplicationController
     end
 
     def update
-        binding.pry
         case step
         when :payment
             if @member.payment_method.payment_system.upcase == "CASH" && @member.account_detail.member_status != 'active'
@@ -68,7 +67,7 @@ class Admin::MemberStepsController < ApplicationController
             check_code = Member.find_by(customer_code: customer_code)
             if check_code.nil? == true && @member.customer_code.nil?
                 updated_member_params = member_params
-                updated_member_params["date_of_birth"] = Date.strptime(updated_member_params["date_of_birth"], '%m/%d/%Y').to_datetime
+                updated_member_params["date_of_birth"] = updated_member_params["date_of_birth"].empty? ? nil: Date.strptime(updated_member_params["date_of_birth"], '%m/%d/%Y').to_datetime
                 @member.update_attributes(updated_member_params)
                 render_wizard @member
             elsif !@member.customer_code.nil?
@@ -215,16 +214,18 @@ class Admin::MemberStepsController < ApplicationController
     end
 
     def intiate_wallet_account
-        wallet_update  = @member.build_wallet_detail(
-            current_balance: 0,
-            total_amount_funded: 0,
-            amount_last_funded: 0, 
-            total_amount_used: 0,
-            wallet_status: 1,
-            wallet_expiry_date: DateTime.now,
-            audit_comment: "New wallet account created"
-        )
-        wallet_update.save
+        if @member.wallet_detail.nil?
+            wallet_update  = @member.build_wallet_detail(
+                current_balance: 0,
+                total_amount_funded: 0,
+                amount_last_funded: 0, 
+                total_amount_used: 0,
+                wallet_status: 1,
+                wallet_expiry_date: DateTime.now,
+                audit_comment: "New wallet account created"
+            )
+            wallet_update.save
+        end
     end
 
     def create_loyalty_history(amount)

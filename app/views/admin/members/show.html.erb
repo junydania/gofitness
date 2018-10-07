@@ -161,8 +161,8 @@
 
                                         <% if @member.account_detail.member_status != 'paused' %>
                                             <button class="btn btn-warning" id="pause-subscriber" href="#" value="<%= @member.id %>">Pause Membership</button>
-                                            <button class="btn btn-success" href="#">Change Plan</button>                                            
                                         <% end %>
+                                         <%= link_to 'Change Plan', change_plan_path(@member), class:"btn btn-success" %>
                                     </div>
                                     <div class="loader hide modal"></div>
                                 </div>
