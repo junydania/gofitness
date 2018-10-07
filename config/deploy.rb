@@ -119,7 +119,7 @@ namespace :deploy do
     after  :finishing,  :restartsidekiq
     
 end
-  
+
 # namespace :rails do
 #   desc "Remote console"
 #   task :console do
