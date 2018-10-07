@@ -137,12 +137,12 @@
                                     <div class="m-r-20 align-self-center">
                                         <h1 class="text-white"><i class="ti-light-bulb"></i></h1></div>
                                     <div>
-                                        <h3 class="card-title">Sales Analytics</h3>
-                                        <h6 class="card-subtitle">March  2017</h6> </div>
+                                        <h3 class="card-title">Total Active Customers</h3>
+                                        <h6 class="card-subtitle"><%= DateTime.now.strftime('%v') %></h6> </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-6 align-self-center">
-                                        <h2 class="font-light text-white"><sup><small><i class="ti-arrow-up"></i></small></sup>35487</h2>
+                                        <h2 class="font-light text-white"><sup><small><i class="ti-arrow-up"></i></small></sup><%= number_with_delimiter(@active_customers, :delimiter => ',') %></h2>
                                     </div>
                                     <div class="col-6 p-t-10 p-b-20 text-right">
                                         <div class="spark-count" style="height:65px"></div>

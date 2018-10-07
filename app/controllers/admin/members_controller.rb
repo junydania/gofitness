@@ -12,7 +12,8 @@ class Admin::MembersController < ApplicationController
                                        :pause_subscription, 
                                        :cancel_pause,
                                        :wallet_renewal,
-                                       :update ]
+                                       :update,
+                                       :complete_activation ]
                                        
     before_action :get_paystack_object, only: [:check_paystack_subscription, 
                                                :paystack_renewal,
@@ -63,10 +64,18 @@ class Admin::MembersController < ApplicationController
     end
 
     def update
-      if @member.update(member_params)
-        redirect_to image_page_path(@member)
-        flash[:notice] = "#{@member.first_name}'s profile updated"
+      binding.pry
+      existing_code = Member.find_by(customer_code: member_params[:customer_Code])
+      if existing_code.customer_code.nil?
+        if @member.update(member_params)
+          @member.save
+          redirect_to image_page_path(@member)
+          flash[:notice] = "#{@member.first_name}'s profile updated"
+        else
+          render :edit
+        end
       else
+        flash[:notice] = "Customer Code already exists in the system"
         render :edit
       end
     end
@@ -99,27 +108,44 @@ class Admin::MembersController < ApplicationController
 
 
     def create
-        new_member = Member.new(member_params)
-        if new_member.save
-          new_member.audits.last.user
-          session[:member_id] = new_member.id
-          member = Member.find(new_member.id)
-          account_update = member.build_account_detail(
-            subscribe_date: DateTime.now,
-            expiry_date: DateTime.now,
-            member_status: 1,
-            gym_attendance_status: 0,
-            audit_comment: "New account created for member")
-          account_update.save
-          flash[:notice] = "Receive Payment & Complete the Registration Process"
+        member_exists = Member.find_by(email: member_params[:email])
+        if !member_exists.nil?
+          flash[:error] = "Customer Already Exists!"
           redirect_to admin_member_steps_path
+        elsif member_exists.nil?
+          new_member = Member.new(member_params)
+          if new_member.save
+            new_member.audits.last.user
+            session[:member_id] = new_member.id
+            member = Member.find(new_member.id)
+            account_update = member.build_account_detail(
+              subscribe_date: DateTime.now,
+              expiry_date: DateTime.now,
+              member_status: 1,
+              gym_attendance_status: 0,
+              audit_comment: "New account created for member")
+            account_update.save
+            flash[:notice] = "Receive Payment & Complete the Registration Process"
+            redirect_to admin_member_steps_path
+          end
         else
           flash[:error] = "Couldn't create member account"
           render :edit
         end
     end
 
-    
+    def activate_account
+        @member = Member.find(params[:id])
+    end
+
+    def complete_activation
+      if @member.update(member_params)
+        flash[:notice] = "Proceed with payment!"
+        redirect_to admin_member_steps_path
+      end
+    end
+
+
     def renew_membership
       gon.amount, gon.email, gon.firstName = @member.subscription_plan.cost * 100, @member.email, @member.first_name
       gon.lastName, gon.displayValue = @member.last_name, @member.phone_number
@@ -614,6 +640,14 @@ class Admin::MembersController < ApplicationController
                     :first_name,
                     :last_name,
                     :image,
+                    :phone_number, 
+                    :address, 
+                    :date_of_birth, 
+                    :health_condition_ids, 
+                    :next_of_kin_name, 
+                    :next_of_kin_phone, 
+                    :next_of_kin_email, 
+                    :customer_code,
                     :subscription_plan_id,
                     :payment_method_id,
                     :fitness_goal_id,

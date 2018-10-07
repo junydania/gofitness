@@ -1,0 +1,56 @@
+        <div class="page-wrapper">
+            <!-- ============================================================== -->
+            <!-- Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <div class="row page-titles">
+                <div class="col-md-5 align-self-center">
+                    <h3 class="text-themecolor">Membership</h3>
+                </div>
+                <div class="col-md-7 align-self-center">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                        <li class="breadcrumb-item">Member</li>
+                        <li class="breadcrumb-item active">Activate Account</li>
+                    </ol>
+                </div>
+                <div class="">
+                    <button class="right-side-toggle waves-effect waves-light btn-inverse btn btn-circle btn-sm pull-right m-l-10"><i class="ti-settings text-white"></i></button>
+                </div>
+            </div>
+
+
+            <div class="container-fluid">
+                <!-- ============================================================== -->
+                <!-- Start Page Content -->
+                <!-- ============================================================== -->
+                <div>
+                <div class="row">
+                    <div class="col-12">
+                        <% flash.each do |key, value| %>
+                            <div class="<%= flash_class(key) %>">
+                                    <%= value %>
+                            </div>
+                        <% end %>
+                        </br>
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Complete Membership Activation</h4>
+                                <%= form_for(@member, url: { controller: :members, action: :complete_activation },  html: {class: 'form-group m-t-40' }) do |f| %>
+                                    <div class="form-group">
+                                         <%= f.label :subscription_plan_id, 'Subscription Plan' %>
+                                         <%= f.select(:subscription_plan_id, SubscriptionPlan.all.pluck(:plan_name, :id), { include_blank: "Select a Subscription Plan" }, {class: "form-control" }) %>
+                                    </div>
+                                    <div class="form-group">
+                                         <%= f.label :payment_method_id, 'Payment Method' %>
+                                         <%= f.select(:payment_method_id, PaymentMethod.all.pluck(:payment_system, :id), { include_blank: "Select a Payment Method" }, {class: "form-control" }) %>
+                                    </div>
+                                    <div>
+                                        <%= f.submit 'Next', class: 'btn btn-danger m-r-10' %>
+                                    </div>
+                                <% end %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>

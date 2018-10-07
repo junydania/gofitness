@@ -23,9 +23,15 @@
                         <tr>
                             <td><%= member.id %></td>
                             <td><%= member.customer_code %></td>
-                            <td>
-                                <%= image_tag( "#{member.image_url}", alt: "member", size:'40', class:"img-circle" ) %><%= link_to "#{member.first_name}" %>
-                            </td>
+                             <% if member.image_data.nil? %>
+                                <td>
+                                    <%= image_tag( "users/5.png", alt: "member", size:"40", class:"img-circle" ) %><%= link_to "#{member.first_name}" %>
+                                </td>
+                            <% else %>
+                                <td>
+                                    <%= image_tag( "#{member.image_url}", alt: "member", size:'40', class:"img-circle" ) %><%= link_to "#{member.first_name}" %>
+                                </td>
+                            <% end %>
                             <td><%= member.last_name %></td>
                             <td><span><%= member.subscription_plan.plan_name %><span></td>
                             <% if member.account_detail.member_status == "active" %>

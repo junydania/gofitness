@@ -33,7 +33,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title">Edit Profile</h4>
-                                <%= form_for( @user, url: { controller: :users, action: :update },  html: {class: 'form-group m-t-40' }) do |f| %>
+                                <%= form_for(@user, url: { controller: :users, action: :update },  html: {class: 'form-group m-t-40' }) do |f| %>
                                     <div class="form-group">
                                         <%= f.label :first_name, 'First Name' %>
                                         <%= f.text_field :first_name, class: 'form-control form-control-line' %>
