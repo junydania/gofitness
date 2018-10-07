@@ -7,7 +7,6 @@ class Admin::DeveloperTestController < ApplicationController
     end
 
     def send_mail
-        binding.pry
         @user = current_user
         @user.email = test_params["email"]
         DeveloperTestMailer.send_test_email(@user).deliver_now
