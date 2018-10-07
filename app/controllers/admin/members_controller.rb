@@ -221,6 +221,7 @@ class Admin::MembersController < ApplicationController
         subscription_status = 0
         create_cash_transaction(cash_received)
         update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
+        create_attendance_record
         options = {description: 'Member Renewal', amount: amount}
         Accounting::Entry.new(options).cash_entry
         redirect_to member_profile_path(@member)
@@ -241,6 +242,7 @@ class Admin::MembersController < ApplicationController
         subscription_status = 0
         create_pos_transaction(transaction_reference, transaction_success_param)
         update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
+        create_attendance_record
         options = {description: 'Member Renewal', amount: amount}
         Accounting::Entry.new(options).card_entry
         redirect_to member_profile_path(@member)
@@ -345,6 +347,7 @@ class Admin::MembersController < ApplicationController
                   pause_start_date: nil,
                   pause_cancel_date: nil,
                   audit_comment: 'membership pause cancelled' )
+          create_attendance_record
           render status: 200, json: {
             message: "success"
           }  
@@ -601,6 +604,18 @@ class Admin::MembersController < ApplicationController
           loyalty_type: 1,
           amount: amount )
     end
+
+    def create_attendance_record
+      @member.attendance_records.create(
+          checkin_date: DateTime.now,
+          checkout_date: nil,
+          membership_status: @member.account_detail.member_status,
+          membership_plan: @member.subscription_plan.plan_name,
+          staff_on_duty: current_user.fullname,
+           audit_comment: "checked into the gym" )
+    end
+
+
 
     def set_paystack_start_date
       start_date = ""
