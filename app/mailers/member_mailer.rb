@@ -30,5 +30,12 @@ class MemberMailer < ApplicationMailer
         mail(to: @member.email, subject: 'Wallet Funding Invoice')
     end
 
+    def send_test_email(email)
+        attachments.inline["gofitness_dashboard.png"] = File.read("#{Rails.root}/app/assets/images/gofitness_dashboard.png")
+        @email = email
+        @url  = 'http://www.gofitnessng.com'
+        mail(to: @email, subject: 'Test Mail from Gofitness')
+    end
+
 end
 

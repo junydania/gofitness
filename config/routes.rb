@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   
   # devise_for :members, :controllers => {:registrations => "admin/members"}
   devise_for :users,  :controllers => {:registrations => "admin/users"}
+  
 
   devise_scope :user do
     get    'users' => 'admin/users#index', as: :users
@@ -63,6 +64,8 @@ Rails.application.routes.draw do
     post 'paystack_subscribe' => 'member_steps#paystack_subscribe', as: :paystack_subscription
     post 'upload_image' => 'member_steps#upload_image', as: :image_upload
     post 'member_check_in' => 'attendance_records#member_check_in', as: :member_check_in
+    get   'developer_test_mail_form' => 'developer_test#get_mail_form', as: :get_mail_form
+    patch 'developer_test_email' => 'developer_test#send_mail', as: :developer_send_mail
     resources :loyalties
   end
 
