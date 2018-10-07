@@ -30,6 +30,17 @@
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title">Create Personal Profile</h4>
+                                <% if flash[:notice] %>
+                                    <div class="alert alert-success">
+                                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                        <%= flash[:notice] %>
+                                    </div>
+                                <% else %>
+                                    <div class="alert alert-danger">
+                                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                        <%= flash[:error] %>
+                                    </div>
+                                <% end %>
                                 <%= form_for([:admin, @member], url: wizard_path, html: {class: 'form-group m-t-40' }, method: :put) do |f| %> 
                                      <div class="form-group">
                                         <%= f.label :phone_number, 'Phone Number' %>
