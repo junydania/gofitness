@@ -121,6 +121,7 @@ class Admin::MemberStepsController < ApplicationController
             options = {description: 'New Subscription', amount: amount}
             Accounting::Entry.new(options).cash_entry  
             intiate_wallet_account
+            create_attendance_record
         end
     end
 
@@ -138,6 +139,7 @@ class Admin::MemberStepsController < ApplicationController
             options = {description: 'New Subscription', amount: amount}
             Accounting::Entry.new(options).card_entry  
             intiate_wallet_account
+            create_attendance_record
         end
     end
 
@@ -177,7 +179,8 @@ class Admin::MemberStepsController < ApplicationController
                         create_general_transaction(subscribe_date, amount, payment_method)
                         options = {description: 'New Subscription', amount: amount}
                         Accounting::Entry.new(options).card_entry  
-                        intiate_wallet_account 
+                        intiate_wallet_account
+                        create_attendance_record
                     end
                 end
             end
@@ -276,6 +279,17 @@ class Admin::MemberStepsController < ApplicationController
             subscription_status: subscription_status
         )
     end
+
+    def create_attendance_record
+        @member.attendance_records.create(
+            checkin_date: DateTime.now,
+            checkout_date: nil,
+            membership_status: @member.account_detail.member_status,
+            membership_plan: @member.subscription_plan.plan_name,
+            staff_on_duty: current_user.fullname,
+            audit_comment: "checked into the gym" )
+    end
+
 
 
     def retrieve_amount
