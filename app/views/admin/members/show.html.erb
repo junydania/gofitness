@@ -38,7 +38,16 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <center class="m-t-30"> <%= image_tag("#{@member.image_url}", class:"img-circle", size:'150') %>
+                                <center class="m-t-30"> 
+                                    <% if @member.image_data.nil? %>
+                                        <td>
+                                            <%= image_tag( "users/5.png", alt: "member", size:"150", class:"img-circle" ) %>
+                                        </td>
+                                    <% else %>
+                                        <td>
+                                            <%= image_tag( "#{@member.image_url}", alt: "member", size:'150', class:"img-circle" ) %>
+                                        </td>
+                                    <% end %>
                                     <h4 class="card-title m-t-10"><%= @member.fullname %></h4>
                                     <h6 class="card-subtitle"><%= @member.subscription_plan.plan_name %> Member</h6>
                                     <h6><span>Customer Code: <%= @member.customer_code %> </span></h6>
@@ -144,14 +153,16 @@
                                                 <%= link_to 'Unsubscribe', unsubscribe_member_path(@member), class:"btn btn-danger" %>
                                         <% elsif @member.account_detail.member_status == 'active' && @member.payment_method.payment_system.titleize == "Debit Card" && !@member.account_detail.unsubscribe_date.nil? %>
                                              <%= link_to 'Reactivate Membership', renew_member_path(@member), class:"btn btn-success" %>
+                                        <% elsif @member.customer_code.nil? && @member.account_detail.member_status == 'deactivated' %>
+                                             <%= link_to 'Make Payment', activate_account_path(@member), class:"btn btn-danger" %>
                                         <% elsif @member.account_detail.member_status == 'deactivated' %>
                                              <%= link_to 'Renew Membership', renew_member_path(@member), class:"btn btn-success" %>
                                         <% end %>
 
                                         <% if @member.account_detail.member_status != 'paused' %>
                                             <button class="btn btn-warning" id="pause-subscriber" href="#" value="<%= @member.id %>">Pause Membership</button>
-                                            <button class="btn btn-success" href="#">Change Plan</button>                                            
                                         <% end %>
+                                         <%= link_to 'Change Plan', change_plan_path(@member), class:"btn btn-success" %>
                                     </div>
                                     <div class="loader hide modal"></div>
                                 </div>
@@ -240,11 +251,11 @@
                                         <h1 class="text-white"><i class="ti-light-bulb"></i></h1></div>
                                     <div>
                                         <h3 class="card-title">Wallet Balance</h3>
-                                        <h6 class="card-subtitle">Wallet Expiry Date: <%= @member.wallet_detail.wallet_expiry_date ? @member.wallet_detail.wallet_expiry_date.strftime('%v') : DateTime.now %></h6> </div>
+                                        <h6 class="card-subtitle">Wallet Expiry Date: <%= !@member.wallet_detail.nil? ? @member.wallet_detail.wallet_expiry_date.strftime('%v') : DateTime.now %></h6> </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-6 align-self-center">
-                                        <h2 class="font-light text-white"><sup><small>₦</small></sup><%= number_with_delimiter(@member.wallet_detail.current_balance, :delimiter => ',') %></h2>
+                                        <h2 class="font-light text-white"><sup><small>₦</small></sup><%= number_with_delimiter(!@member.wallet_detail.nil? ? @member.wallet_detail.current_balance : 0, :delimiter => ',') %></h2>
                                     </div>
                                     <div class="col-6 p-t-10 p-b-20 text-right">
                                         <div class="spark-count" style="height:65px"></div>
@@ -266,7 +277,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-6 align-self-center">
-                                        <h2 class="font-light text-white">₦<%= number_with_delimiter(@member.account_detail.loyalty_points_balance, :delimiter => ',') %> Points</h2>
+                                        <h2 class="font-light text-white">₦<%= number_with_delimiter(!@member.account_detail.loyalty_points_balance.nil? ? @member.account_detail.loyalty_points_balance : 0, :delimiter => ',') %></h2>
                                     </div>
                                     <div class="col-6 p-t-10 p-b-20 text-right align-self-center">
                                         <div class="spark-count2" style="height:65px"></div>

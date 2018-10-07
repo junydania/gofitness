@@ -46,8 +46,12 @@ Rails.application.routes.draw do
   post   'members'     => 'admin/members#create'
   get    'members/:id'  => 'admin/members#image_capture', as: :image_page
   post   'members/upload_image' => 'admin/members#upload_image', as: :image_upload
-   
+  get    'members/activate_account/:id' => 'admin/members#activate_account', as: :activate_account
+  patch  'members/activate_account/:id' => 'admin/members#complete_activation'
+  get    'members/change_plan/:id' => 'admin/members#change_plan', as: :change_plan
+  patch  'members/change_plan/:id' => 'admin/members#change_plan_update'
 
+  
   namespace :admin do
     resources :attendance_records, only: [:index]
     resources :subscription_plans

@@ -24,7 +24,7 @@ class Admin::MemberStepsController < ApplicationController
     def update
         case step
         when :payment
-            if @member.payment_method.payment_system.upcase == "CASH" 
+            if @member.payment_method.payment_system.upcase == "CASH" && @member.account_detail.member_status != 'active'
                 amount_received = member_params[:cash_transactions_attributes]["0"][:amount_received].to_i
                 expected_amount = retrieve_amount
                 if  amount_received ==  expected_amount 
@@ -40,7 +40,7 @@ class Admin::MemberStepsController < ApplicationController
                     redirect_back(fallback_location:  admin_member_step_path)
                 end
                 
-            elsif @member.payment_method.payment_system.upcase == "POS TERMINAL"
+            elsif @member.payment_method.payment_system.upcase == "POS TERMINAL" && @member.account_detail.member_status != 'active'
                 pos_transaction_status = member_params[:pos_transactions_attributes]["0"]["transaction_success"].to_sym
                 if  pos_transaction_status === :true
                     @member.pos_transactions.build({
@@ -55,21 +55,32 @@ class Admin::MemberStepsController < ApplicationController
                     flash[:notice] = "Ensure POS transaction is successful before proceeding"
                     redirect_back(fallback_location:  admin_member_step_path)
                 end
-            else
+            elsif @member.account_detail.member_status == 'active'
+                flash[:notice] = "Member already has an active membership"
+                skip_step
                 render_wizard(@member)
             end
 
             
-
         when :personal_profile
             customer_code = member_params[:customer_code]
             check_code = Member.find_by(customer_code: customer_code)
-            if check_code.nil? == true
-                @member.update_attributes(member_params)
+            if check_code.nil? == true && @member.customer_code.nil?
+                updated_member_params = member_params
+                updated_member_params["date_of_birth"] = updated_member_params["date_of_birth"].empty? ? nil: Date.strptime(updated_member_params["date_of_birth"], '%m/%d/%Y').to_datetime
+                @member.update_attributes(updated_member_params)
                 render_wizard @member
+            elsif !@member.customer_code.nil?
+                flash[:notice] = "Member already has a registered code! Update other records"
+                skip_step
+                render_wizard(@member)
             else 
-                previous_step
+                flash[:notice] = "Customer Code already exists in the system"
+                render_wizard
+
             end
+
+
         when :next_of_kin
             @member.update_attributes(member_params)
             render_wizard @member
@@ -203,16 +214,18 @@ class Admin::MemberStepsController < ApplicationController
     end
 
     def intiate_wallet_account
-        wallet_update  = @member.build_wallet_detail(
-            current_balance: 0,
-            total_amount_funded: 0,
-            amount_last_funded: 0, 
-            total_amount_used: 0,
-            wallet_status: 1,
-            wallet_expiry_date: DateTime.now,
-            audit_comment: "New wallet account created"
-        )
-        wallet_update.save
+        if @member.wallet_detail.nil?
+            wallet_update  = @member.build_wallet_detail(
+                current_balance: 0,
+                total_amount_funded: 0,
+                amount_last_funded: 0, 
+                total_amount_used: 0,
+                wallet_status: 1,
+                wallet_expiry_date: DateTime.now,
+                audit_comment: "New wallet account created"
+            )
+            wallet_update.save
+        end
     end
 
     def create_loyalty_history(amount)
