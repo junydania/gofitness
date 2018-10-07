@@ -40,7 +40,6 @@ class Admin::UsersController < Devise::RegistrationsController
     end
 
     def update_role
-      @user = User.find(params[:id])
       if @user.update(update_without_password_params)
         redirect_to user_profile_path(current_user)
         flash[:notice] = "User role successfully updated"     
@@ -53,7 +52,7 @@ class Admin::UsersController < Devise::RegistrationsController
         if update_without_password_params[:password].blank?
           resource_updated = resource.update_without_password(update_without_password_params)
           if resource_updated
-            redirect_to user_profile_path(current_user)
+            redirect_to users_path
             flash[:notice] = "Account successfully updated"
           else
             render :edit
@@ -62,7 +61,7 @@ class Admin::UsersController < Devise::RegistrationsController
           resource_updated = User.update(update_without_password_params)
           if resource_updated
             bypass_sign_in(resource)
-            redirect_to user_profile_path(current_user)
+            redirect_to users_path
             flash[:notice] = "Account successfully updated"
           else
             flash[:error] = "Failed to Update record"
@@ -80,15 +79,12 @@ class Admin::UsersController < Devise::RegistrationsController
 
 
 
-
-
-
-      
     private
 
     def sign_up_params
         params.require(:user)
-            .permit(:email,
+            .permit(
+                    :email,
                     :password,
                     :password_confirmation,
                     :first_name,
@@ -99,7 +95,8 @@ class Admin::UsersController < Devise::RegistrationsController
 
     def update_without_password_params
         params.require(:user)
-              .permit(:email,
+              .permit(
+                    :email,
                     :first_name,
                     :last_name,
                     :password,
@@ -110,7 +107,8 @@ class Admin::UsersController < Devise::RegistrationsController
     
     def update_with_password_params
       params.require(:user)
-            .permit(:email,
+            .permit(
+                    :email,
                     :password,
                     :password_confirmation,
                     :first_name,
