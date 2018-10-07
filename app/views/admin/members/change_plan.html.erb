@@ -4,13 +4,13 @@
             <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
-                    <h3 class="text-themecolor">Staff</h3>
+                    <h3 class="text-themecolor">Membership</h3>
                 </div>
                 <div class="col-md-7 align-self-center">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
-                        <li class="breadcrumb-item">Staff</li>
-                        <li class="breadcrumb-item active">Edit Profile</li>
+                        <li class="breadcrumb-item">Member</li>
+                        <li class="breadcrumb-item active">Change Subscription Plan</li>
                     </ol>
                 </div>
                 <div class="">
@@ -26,29 +26,25 @@
                 <div>
                 <div class="row">
                     <div class="col-12">
-                        <div class="card">
+                        <div class="alert alert-success">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
                             <%= flash[:notice] %>
                         </div>
                         <br/>
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title">Change Role</h4>
-                                <%= form_for( @user, url: { controller: :users, action: :update_role },  html: {class: 'form-group m-t-40' }) do |f| %>
+                                <h4 class="card-title">Change Subscription Plan</h4>
+                                <%= form_for(@member, url: { controller: :members, action: :change_plan_update },  html: {class: 'form-group m-t-40' }) do |f| %>
                                     <div class="form-group">
-                                        <%= f.label :first_name, 'First Name' %>
-                                        <%= f.text_field :first_name, class: 'form-control form-control-line' %>
-                                    </div>
-                                     <div class="form-group">
-                                        <%= f.label :last_name, 'Last Name' %>
-                                        <%= f.text_field :last_name, class: 'form-control form-control-line' %>
+                                         <%= f.label :subscription_plan_id, 'Subscription Plan' %>
+                                         <%= f.select(:subscription_plan_id, SubscriptionPlan.all.pluck(:plan_name, :id), { include_blank: "Select a Subscription Plan" }, {class: "form-control" }) %>
                                     </div>
                                     <div class="form-group">
-                                        <%= f.label :role, 'Staff Role' %>
-                                        <%= f.select(:role, options_for_select(User.roles.keys.map { |role| [role.titleize, role]}), {include_blank: true}, { :class =>  "form-control" } ) %>
+                                         <%= f.label :payment_method_id, 'Payment Method' %>
+                                         <%= f.select(:payment_method_id, PaymentMethod.all.pluck(:payment_system, :id), { include_blank: "Select a Payment Method" }, {class: "form-control" }) %>
                                     </div>
                                     <div>
-                                        <%= f.submit 'Update', class: 'btn btn-success m-r-10' %>
-                                        <%= link_to 'Back', users_path, class: 'btn btn-danger m-r-10' %>
+                                        <%= f.submit 'Next', class: 'btn btn-danger m-r-10' %>
                                     </div>
                                 <% end %>
                             </div>

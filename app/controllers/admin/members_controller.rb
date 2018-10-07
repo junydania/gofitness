@@ -13,14 +13,16 @@ class Admin::MembersController < ApplicationController
                                        :cancel_pause,
                                        :wallet_renewal,
                                        :update,
-                                       :complete_activation ]
+                                       :complete_activation,
+                                       :change_plan ]
                                        
     before_action :get_paystack_object, only: [:check_paystack_subscription, 
                                                :paystack_renewal,
                                                :initiate_paystack_sub, 
                                                :unsubscribe_membership,
                                                :pause_subscription,
-                                               :cancel_pause]
+                                               :cancel_pause,
+                                               :change_plan_update]
 
     require 'securerandom'
 
@@ -64,7 +66,6 @@ class Admin::MembersController < ApplicationController
     end
 
     def update
-      binding.pry
       existing_code = Member.find_by(customer_code: member_params[:customer_Code])
       if existing_code.customer_code.nil?
         if @member.update(member_params)
@@ -145,6 +146,41 @@ class Admin::MembersController < ApplicationController
       end
     end
 
+    def change_plan
+      @subscription_plans = SubscriptionPlan.all  
+      @payment_methods = PaymentMethod.all
+    end
+
+    def change_plan_update
+      if DateTime.now > @member.account_detail.expiry_date && @member.paystack_cust_code.nil?
+        if @member.update(member_params)
+          redirect_to admin_member_steps_path
+        else
+          render :change_plan
+          flash[:notice] = "Check entry, couldn't save!"
+        end
+      elsif DateTime.now > @member.account_detail.expiry_date && !@member.paystack_subscription_code.nil?
+        unsubscribe = disable_current_paystack_subscription
+        if unsubscribe["status"] == true
+          subscription_status = 1
+          subscribe_date = @member.account_detail.subscribe_date
+          expiry_date = @member.account_detail.expiry_date
+          @member.account_detail.member_status = 1
+          @member.account_detail.unsubscribe_date = DateTime.now
+          @member.account_detail.audit_comment = "membership de-activated"
+          @member.paystack_subscription_code = nil
+          @member.paystack_email_token = nil
+          @member.paystack_auth_code = nil
+          @member.save    
+          create_subscription_history(subscribe_date, expiry_date, subscription_status)
+          @member.update(member_params)    
+          redirect_to admin_member_steps_path
+        end
+      else
+        flash[:notice] = "Customer Still Has an Active Plan! Wait till it expires"
+        redirect_to member_profile_path(@member)
+      end
+    end
 
     def renew_membership
       gon.amount, gon.email, gon.firstName = @member.subscription_plan.cost * 100, @member.email, @member.first_name
@@ -175,7 +211,6 @@ class Admin::MembersController < ApplicationController
       }
       end
     end
-    
     
     def cash_renewal
       cash_received = member_params["cash_transactions_attributes"]["0"]["amount_received"].to_i
@@ -427,11 +462,12 @@ class Admin::MembersController < ApplicationController
                                   expiry_date: expiry_date,
                                   member_status: 0,
                                   amount: amount,
+                                  unsubscribe_date: nil,
                                   loyalty_points_balance: update_loyalty_points(amount),
                                   loyalty_points_used: 0,
                                   gym_plan: retrieve_gym_plan,
                                   recurring_billing: recurring,
-                                  audit_comment: 'Membership renewed')
+                                  audit_comment: 'Membership renewed',)
     end
 
     def create_charge
@@ -456,9 +492,8 @@ class Admin::MembersController < ApplicationController
           payment_method: retrieve_payment_method,
           member_status: 0,
           subscription_status: subscription_status,
-          audit_comment: 'Membership renewed' )
+          )
     end
-
 
     def update_loyalty_points(amount)
       point = Loyalty.find_by(loyalty_type: "renewal").loyalty_points_percentage
