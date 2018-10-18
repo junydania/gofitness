@@ -69,9 +69,7 @@ Rails.application.routes.draw do
     resources :loyalties
   end
 
-  constraints subdomain: 'hooks' do
-    post '/:paystack_webhook' => 'webhooks#receive', as: :receive_webhooks
-  end
+  post '/:paystack_webhook' => 'webhooks#receive', as: :receive_webhooks
   
   root 'welcome#index'
 

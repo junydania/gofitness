@@ -6,7 +6,11 @@ Rails.application.configure do
   # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
 
+  #turn off web_console restriction
+  config.web_console.whiny_requests = false
+
   # Do not eager load code on boot.
+  config.web_console.whiny_requests = false
   config.eager_load = false
 
   # Show full error reports.

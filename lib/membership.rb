@@ -40,10 +40,8 @@ module Membership
                                         member_status: 0,
                                         amount: @amount,
                                         loyalty_points_balance: loyalty_balance,
-                                        loyalty_points_used: 0,
                                         gym_plan: gym_plan,
-                                        recurring_billing: true,
-                                        gym_attendance_status: 1 )
+                                        recurring_billing: true )
         end
     
         
