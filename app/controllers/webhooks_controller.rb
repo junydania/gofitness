@@ -40,7 +40,6 @@ class WebhooksController < ApplicationController
       render status: 401, json: {
         message: "Unauthorized"
       }
-
     end
   end
 
@@ -64,7 +63,7 @@ class WebhooksController < ApplicationController
   private
 
   def check_allowed_ip
-    whitelisted = ['41.215.245.188', '52.31.139.75', '52.49.173.169', '52.214.14.220']
+    whitelisted = ['41.215.245.188', '52.31.139.75', '52.49.173.169', '52.214.14.220', '127.0.0.1']
     if whitelisted.include? request.remote_ip
       return true
     else

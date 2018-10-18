@@ -13,7 +13,6 @@ class Ability
                                         GeneralTransaction, 
                                         AccountDetail,
                                         CashTransaction,
-                                        FitnessGoal,
                                         HealthCondition,
                                         ImageUploader,
                                         LoyaltyHistory,
@@ -21,13 +20,10 @@ class Ability
                                         PauseHistory,
                                         PosTransaction,
                                         SubscriptionHistory,
-                                        SubscriptionPlan,
                                         WalletDetail,
                                         WalletHistory,
                                         MemberHealthCondition,
-                                        Member,
-                                        SubscriptionPlanFeature,
-                                        PaymentMethod,
+                                        Member
                                       ]
                               
       can [:update, :read], User, id: user.id
