@@ -113,8 +113,13 @@ class Admin::MembersController < ApplicationController
         if !member_exists.nil?
           flash[:error] = "Customer Already Exists!"
           redirect_to admin_member_steps_path
-        elsif member_exists.nil?
+        elsif member_exists.nil? && !member_params[:subscription_plan_id].empty?
           new_member = Member.new(member_params)
+          plan = SubscriptionPlan.find(new_member.subscription_plan_id) 
+          if plan.recurring == true
+            payment = PaymentMethod.find_by(payment_system: 'Debit Card').id
+            new_member.payment_method_id = payment
+          end
           if new_member.save
             new_member.audits.last.user
             session[:member_id] = new_member.id
@@ -130,8 +135,8 @@ class Admin::MembersController < ApplicationController
             redirect_to admin_member_steps_path
           end
         else
-          flash[:error] = "Couldn't create member account"
-          render :edit
+          flash[:error] = "Couldn't create member account! Ensure all fields are filled"
+          render :new
         end
     end
 

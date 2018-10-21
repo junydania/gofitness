@@ -5,6 +5,7 @@ class SubscriptionPlan < ApplicationRecord
     has_many :members
 
     enum duration: [:daily, :weekly, :monthly, :quarterly, :annually]
+    enum organization_package: [:regular, :corporate, :insurance]
     
     validates_presence_of   :plan_name, :cost, :duration, :description
     validates :group_plan, :inclusion => {:in => [true, false]}

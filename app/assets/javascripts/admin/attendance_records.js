@@ -72,6 +72,9 @@ $(document).on("turbolinks:load", function() {
     
                     }  else if(data.message == "checkedin" ) {
                         el.removeClass('btn-info').addClass('btn-danger').text("Already Checked In");
+
+                    } else if(data.message == "exhausted" ) {
+                        el.removeClass('btn-info').addClass('btn-danger').text("Visitation Exhausted");
                     }
                 },
                 error: function() {

@@ -46,11 +46,19 @@
                   
                             <div class="card-body">
                                 <h4 class="card-title" id="receive-payment">Receive Payment</h4>
-                                <% if @member.payment_method.payment_system == "Debit Card" %>
+                                <% if @member.payment_method.payment_system == "Debit Card" && @member.subscription_plan.recurring == true %>
                                     <div class="button-box m-t-20" id="remove-paystack-link">
                                         <button id="paystack-button" class="btn btn-info" href="#">Pay with Card Online</button>
                                     </div>
                                 <% elsif @member.payment_method.payment_system == "POS Terminal" %>
+                                    <div><h5>Amount to Charge: </h5><button class="btn btn-success" href="#">₦<%= @member.subscription_plan.cost %></button></div>
+                                    <%= form_for([:admin, @member], url: wizard_path, method: :put) do |f| %>
+                                        <%= f.fields_for :pos_transactions, PosTransaction.new do |transaction| %>
+                                            <br/>
+                                            <%= render 'postransaction_fields', f: transaction %>
+                                        <% end %>
+                                    <% end %>
+                                <% elsif @member.payment_method.payment_system == "Debit Card" && @member.subscription_plan.recurring == false %>
                                     <div><h5>Amount to Charge: </h5><button class="btn btn-success" href="#">₦<%= @member.subscription_plan.cost %></button></div>
                                     <%= form_for([:admin, @member], url: wizard_path, method: :put) do |f| %>
                                         <%= f.fields_for :pos_transactions, PosTransaction.new do |transaction| %>

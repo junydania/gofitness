@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181006213903) do
+ActiveRecord::Schema.define(version: 20181021140634) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,7 @@ ActiveRecord::Schema.define(version: 20181006213903) do
     t.datetime "unsubscribe_date"
     t.integer "pause_permit_count", default: 0
     t.integer "gym_attendance_status", default: 0
+    t.integer "visitation_count", default: 0
     t.index ["member_id"], name: "index_account_details_on_member_id"
   end
 
@@ -313,6 +314,8 @@ ActiveRecord::Schema.define(version: 20181006213903) do
     t.integer "no_of_group_members"
     t.boolean "recurring"
     t.string "paystack_plan_code"
+    t.string "allowed_visitation_count", default: "unlimited"
+    t.integer "organization_package", default: 0
   end
 
   create_table "users", force: :cascade do |t|
