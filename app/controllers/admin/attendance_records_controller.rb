@@ -1,7 +1,7 @@
 class Admin::AttendanceRecordsController < ApplicationController
     
     before_action :authenticate_user!
-    before_action :find_member, only: [:member_check_in, :create_attendance_record]
+    before_action :find_member, only: [:member_check_in, :create_attendance_record, :check_visitation_count, :check_in_process]
 
 
     def index
@@ -32,12 +32,15 @@ class Admin::AttendanceRecordsController < ApplicationController
 
     def member_check_in
         if @member.account_detail.gym_attendance_status != 'checkedin'
-            if @member.account_detail.member_status == 'active'
-                create_attendance_record
-                @member.account_detail.gym_attendance_status = 1
-                @member.save
+            member_visitation_count = @member.account_detail.visitation_count
+            plan_allowed_visitation = @member.subscription_plan.allowed_visitation_count
+            if @member.account_detail.member_status == 'active' && plan_allowed_visitation == 'unlimited'
+                check_in_process
+            elsif @member.account_detail.member_status == 'active' &&  plan_allowed_visitation != 'unlimited' && member_visitation_count.to_i < plan_allowed_visitation.to_i
+                check_in_process
+            elsif @member.account_detail.member_status == 'active' &&  plan_allowed_visitation != 'unlimited' && member_visitation_count.to_i >= plan_allowed_visitation.to_i
                 render status: 200, json: {
-                    message: "success"
+                    message: "exhausted"
                 }
             else
                 render status: 200, json: {
@@ -69,5 +72,20 @@ class Admin::AttendanceRecordsController < ApplicationController
             staff_on_duty: current_user.fullname,
             audit_comment: "checked into the gym" )
     end
+    
+    def check_visitation_count
+        @member.visitation_count
+    end
+
+    def check_in_process
+        create_attendance_record
+        @member.account_detail.gym_attendance_status = 1
+        @member.visitation_count +=1
+        @member.save
+        render status: 201, json: {
+            message: "success"
+        }
+    end
+
 
 end

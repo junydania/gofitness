@@ -28,12 +28,37 @@ $(document).on("turbolinks:load", function() {
 
 $(document).on("turbolinks:load", function() {
 
+    
+    // Check if subscription plan is recurring
+    $("#member_subscription_plan_id").change(function() {
+        sub_plan = $("#member_subscription_plan_id").val();
+        $('.loader').modal('show');
+        $.ajax({
+            url: '/admin/check_recurring',
+            type: 'POST',
+            data: { plan: sub_plan},
+            success: function(data, textStatus, xhr) {
+                            $('.loader').modal('hide');
+                            if ( data.message == "non-recurring" ) {
+                                $('.payment_method_field').fadeIn('slow');
+
+                            } else {
+                                $('.payment_method_field').hide();
+                            }
+                        },
+            error: function() {
+                         alert('You failed to select a plan');
+                    }
+        });
+
+    });
+    
+    
+    
     $("#renew-wallet-button").click(function(event){ 
 
         $('.loader').modal('show');
-
         member = $("#renew-wallet-button").val();
-        console.log(member);
         $.ajax({
             url: '/wallet_renewal',
             type: 'POST',

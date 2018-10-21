@@ -8,6 +8,15 @@ $(document).on("turbolinks:load", function() {
         }
     });
 
+    // Display allowed visitation count on subscription package select
+    $("#subscription_plan_organization_package").change(function() {
+        if($("#subscription_plan_organization_package").val().toLowerCase() != 'regular') {
+            $(".visitation_count").fadeIn('fast');
+        }else {
+            $(".visitation_count").fadeOut('fast'); 
+        }
+    });
+
     //code for selectize on subscription plan page
     var selectizeCallback = null;
 

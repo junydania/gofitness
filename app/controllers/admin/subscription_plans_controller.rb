@@ -69,6 +69,20 @@ class Admin::SubscriptionPlansController < ApplicationController
         end
     end
 
+    def check_recurring
+        selected_plan = params[:plan]
+        sub_plan = SubscriptionPlan.find(selected_plan)
+        if sub_plan.recurring == false
+            render status: 200, json: {
+                message: "non-recurring"
+            }
+        else
+            render status: 200, json: {
+                message: "recurring"
+            }
+        end
+    end
+
 
     private
 
@@ -144,6 +158,8 @@ class Admin::SubscriptionPlansController < ApplicationController
                     :recurring,
                     :no_of_group_members,
                     :paystack_plan_code,
+                    :organization_package,
+                    :allowed_visitation_count,
                     feature_ids: [] )
     end
 

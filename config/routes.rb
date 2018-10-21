@@ -61,11 +61,12 @@ Rails.application.routes.draw do
     resources :payment_methods
     resources :member_steps
     resources :health_conditions
-    post 'paystack_subscribe' => 'member_steps#paystack_subscribe', as: :paystack_subscription
-    post 'upload_image' => 'member_steps#upload_image', as: :image_upload
-    post 'member_check_in' => 'attendance_records#member_check_in', as: :member_check_in
+    post  'paystack_subscribe' => 'member_steps#paystack_subscribe', as: :paystack_subscription
+    post  'upload_image' => 'member_steps#upload_image', as: :image_upload
+    post  'member_check_in' => 'attendance_records#member_check_in', as: :member_check_in
     get   'developer_test_mail_form' => 'developer_test#get_mail_form', as: :get_mail_form
     patch 'developer_test_email' => 'developer_test#send_mail', as: :developer_send_mail
+    post  'check_recurring' => 'subscription_plans#check_recurring', as: :check_recurring
     resources :loyalties
   end
 
