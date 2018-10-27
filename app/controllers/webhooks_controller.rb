@@ -11,6 +11,7 @@ class WebhooksController < ApplicationController
   SECRET_KEY = ENV["PAYSTACK_PRIVATE_KEY"]
 
   def receive
+    binding.pry
     if check_allowed_ip == true
       request_headers = request.headers
       payload = JSON.parse(request.body.read)
@@ -18,23 +19,15 @@ class WebhooksController < ApplicationController
       digest = OpenSSL::Digest.new('sha512')
       hash = OpenSSL::HMAC.hexdigest(digest, SECRET_KEY, data)
       unless hash != request_headers["x-paystack-signature"]
-        if payload["event"] == "invoice.update" && payload["data"]["paid"] == true
-          customer_code = payload["data"]["customer"]["customer_code"]
-          member = Member.find_by(paystack_cust_code: customer_code)
+        if payload['data']['status'] == 'success'
+          member = get_member(payload)
           amount = payload["data"]["amount"]
-          description = "Membership Renewal Paystack"
-          payload["member_id"] = member.id
-          payload["description"] = description
-          payload["amount"] = amount
-          options = payload.to_hash
-          fund_method = retrieve_payment_method(member)
-          Membership::SubscriptionActivity.new(options).call
-          Accounting::Entry.new(options).card_entry
-          create_charge(member, amount, fund_method)
-          render status: 201, json: {
+          options = process_payload(payload, member)
+          ProcessWebhookJob.perform_now(options)
+          render status: 200, json: {
             message: "success"
           }
-        end
+        end 
       end
     else
       render status: 401, json: {
@@ -44,26 +37,31 @@ class WebhooksController < ApplicationController
   end
 
 
+  def process_payload(payload, member)
+    amount = payload["data"]["amount"]
+    description = "Membership Renewal Paystack"
+    payload["member_id"] = member.id
+    payload["description"] = description
+    payload["amount"] = amount
+    options = payload.to_hash
+    return options
+  end
+
+  def get_member(payload)
+    customer_code = payload["data"]["customer"]["customer_code"]
+    member = Member.find_by(paystack_cust_code: customer_code)
+    return member
+  end
+
   def retrieve_payment_method(member)
     member.payment_method.payment_system
   end
 
-  def create_charge(member, amount, fund_method)
-    duration = member.subscription_plan.duration
-    charge = member.charges.new(service_plan: "Membership Renewal",
-                                amount: amount,
-                                payment_method: fund_method,
-                                duration: duration,
-                                gofit_transaction_id: SecureRandom.hex(4) )
-    if charge.save
-        MemberMailer.renewal(member).deliver_later
-    end
-  end
 
   private
 
   def check_allowed_ip
-    whitelisted = ['41.215.245.188', '52.31.139.75', '52.49.173.169', '52.214.14.220', '127.0.0.1']
+    whitelisted = ['41.58.95.200', '52.31.139.75', '52.49.173.169', '52.214.14.220', '127.0.0.1']
     if whitelisted.include? request.remote_ip
       return true
     else

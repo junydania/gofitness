@@ -38,6 +38,7 @@ class Member < ApplicationRecord
     has_many  :wallet_histories
 
     has_many  :charges
+    has_many  :paystack_charges
     
     belongs_to :fitness_goal
     belongs_to :payment_method

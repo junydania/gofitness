@@ -4,13 +4,16 @@ module Membership
 
         def initialize(options)
             @member = Member.find(options['member_id'])
-            @subscribe_date = options['data']['period_start'].to_datetime
-            @expiry_date = options['data']['period_end'].to_datetime
-            @amount = options['data']['amount'].to_i
-            @paid_date = options['data']['paid_at'].to_datetime
+            @subscribe_date = options['data']['period_start'] ? options['data']['period_start'].to_datetime : nil
+            @paid_at = options['data']['paid_at'] ? options['data']['paid_at'].to_datetime : nil
+            @charge_plan = options['data']['plan']['plan_code'] ? options['data']['plan']['plan_code'] : nil
+            @channel = options['data']['authorization']['channel'] ? options['data']['authorization']['channel'] : nil
+            @expiry_date = options['data']['period_end'] ? options['data']['period_end'].to_datetime : nil
+            @amount = options['data']['amount'].to_i / 100
+            @paid_date = options['data']['paid_at'] ? options['data']['paid_at'].to_datetime : nil
             @auth_code = options['data']['authorization']['authorization_code']
-            @subscription_code = options['data']['subscription']['subscription_code']
-            @transaction_reference = options['data']['transaction']['reference']
+            @subscription_code = options['data']['subscription'] ?  options['data']['subscription']['subscription_code'] : nil
+            @transaction_reference = options['data']['transaction'] ? options['data']['transaction']['reference'] : nil
             @subscription_status = 0
         end
 
@@ -19,10 +22,33 @@ module Membership
             update_account_detail(amount)
             create_loyalty_history(amount)
             create_subscription_history
+            create_charge
             create_general_transaction(amount)
             update_member_paystack_auths
         end
 
+        def process_charge_success
+            binding.pry
+            @member.paystack_charges.create(
+                paid_at: @paid_at,
+                plan: @charge_plan,
+                amount: @amount,
+                channel: @channel,
+            )
+        end
+
+        def create_charge
+            fund_method = retrieve_payment_method
+            duration = @member.subscription_plan.duration
+            charge = @member.charges.new(service_plan: "Membership Renewal",
+                                        amount: @amount,
+                                        payment_method: fund_method,
+                                        duration: duration,
+                                        gofit_transaction_id: SecureRandom.hex(4) )
+            if charge.save
+                MemberMailer.renewal(@member).deliver_later
+            end
+        end
 
         def update_member_paystack_auths
             @member.paystack_subscription_code = @subscription_code
@@ -90,7 +116,6 @@ module Membership
                 subscription_status: @subscription_status,
             )
         end
-    
     
         def retrieve_amount
             amount = @member.subscription_plan.cost
