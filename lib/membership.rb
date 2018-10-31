@@ -28,7 +28,6 @@ module Membership
         end
 
         def process_charge_success
-            binding.pry
             @member.paystack_charges.create(
                 paid_at: @paid_at,
                 plan: @charge_plan,
@@ -121,7 +120,7 @@ module Membership
             amount = @member.subscription_plan.cost
         end
     
-    
+
         def retrieve_gym_plan
             plan = @member.subscription_plan.plan_name
             return plan
@@ -132,6 +131,7 @@ module Membership
             date = DateTime.now.strftime('%d-%m-%Y %H:%M:%S')
         end
     
+
         def set_expiry_date(subscribe_date)
             expiry_date = DateTime.new
             if @member.subscription_plan.duration == "daily"

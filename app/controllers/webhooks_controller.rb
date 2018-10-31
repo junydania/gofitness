@@ -11,7 +11,6 @@ class WebhooksController < ApplicationController
   SECRET_KEY = ENV["PAYSTACK_PRIVATE_KEY"]
 
   def receive
-    binding.pry
     if check_allowed_ip == true
       request_headers = request.headers
       payload = JSON.parse(request.body.read)
@@ -23,7 +22,7 @@ class WebhooksController < ApplicationController
           member = get_member(payload)
           amount = payload["data"]["amount"]
           options = process_payload(payload, member)
-          ProcessWebhookJob.perform_now(options)
+          ProcessWebhookJob.perform_later(options)
           render status: 200, json: {
             message: "success"
           }
@@ -61,7 +60,7 @@ class WebhooksController < ApplicationController
   private
 
   def check_allowed_ip
-    whitelisted = ['41.58.95.200', '52.31.139.75', '52.49.173.169', '52.214.14.220', '127.0.0.1']
+    whitelisted = ['154.118.9.89', '52.31.139.75', '52.49.173.169', '52.214.14.220', '127.0.0.1']
     if whitelisted.include? request.remote_ip
       return true
     else
