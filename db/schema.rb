@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181021140634) do
+ActiveRecord::Schema.define(version: 20181027085022) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -238,6 +238,17 @@ ActiveRecord::Schema.define(version: 20181021140634) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "paystack_charges", force: :cascade do |t|
+    t.datetime "paid_at"
+    t.string "plan"
+    t.integer "amount"
+    t.string "channel"
+    t.bigint "member_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["member_id"], name: "index_paystack_charges_on_member_id"
+  end
+
   create_table "plutus_accounts", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "type"
@@ -372,6 +383,7 @@ ActiveRecord::Schema.define(version: 20181021140634) do
   add_foreign_key "members", "fitness_goals"
   add_foreign_key "members", "payment_methods"
   add_foreign_key "members", "subscription_plans"
+  add_foreign_key "paystack_charges", "members"
   add_foreign_key "subscription_plan_features", "features"
   add_foreign_key "subscription_plan_features", "subscription_plans"
 end
