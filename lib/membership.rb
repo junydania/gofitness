@@ -25,14 +25,14 @@ module Membership
             create_charge
             create_general_transaction(amount)
             update_member_paystack_auths
-            event_payload = {
-                event_name: 'Membership renewal - invoice update',
-                message: 'success',
-                member: @member.fullname,
-                amount: @amount,
-                uuid: SecureRandom.uuid
-            }
-            logger.info(event_payload.to_json)
+            # event_payload = {
+            #     event_name: 'Membership renewal - invoice update',
+            #     message: 'success',
+            #     member: @member.fullname,
+            #     amount: @amount,
+            #     uuid: SecureRandom.uuid
+            # }
+            # logger.info(event_payload.to_json)
         end
 
         def process_charge_success
@@ -42,13 +42,13 @@ module Membership
                 amount: @amount,
                 channel: @channel,
             )
-            event_payload = {
-                event_name: 'Membership renewal - charge success',
-                member: @member.fullname,
-                amount: @amount,
-                uuid: SecureRandom.uuid
-            }
-            logger.info(event_payload.to_json)
+            # event_payload = {
+            #     event_name: 'Membership renewal - charge success',
+            #     member: @member.fullname,
+            #     amount: @amount,
+            #     uuid: SecureRandom.uuid
+            # }
+            # logger.info(event_payload.to_json)
         end
 
         def create_charge
