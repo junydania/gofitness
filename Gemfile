@@ -51,6 +51,8 @@ gem 'redis-rails'
 gem 'redis-rack-cache'
 gem 'groupdate'
 gem 'authtrail'
+gem 'syslogger', '~> 1.6.0'
+gem 'lograge', '~> 0.3.1'
 
 
 # Use Capistrano for deployment
