@@ -6,7 +6,7 @@ module Membership
             @member = Member.find(options['member_id'])
             @subscribe_date = options['data']['period_start'] ? options['data']['period_start'].to_datetime : nil
             @paid_at = options['data']['paid_at'] ? options['data']['paid_at'].to_datetime : nil
-            @charge_plan = options['data']['plan']['plan_code'] ? options['data']['plan']['plan_code'] : nil
+            @charge_plan =  options['data']['plan']['plan_code'] || nil
             @channel = options['data']['authorization']['channel'] ? options['data']['authorization']['channel'] : nil
             @expiry_date = options['data']['period_end'] ? options['data']['period_end'].to_datetime : nil
             @amount = options['data']['amount'].to_i / 100
