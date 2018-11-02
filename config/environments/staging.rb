@@ -117,6 +117,11 @@ Rails.application.configure do
         #'ActionController::RoutingError' => :not_found # => example
       },
     }
+
+    require 'syslogger'
+    config.logger = ActiveSupport::TaggedLogging.new(Syslogger.new("gofitness",Syslog::LOG_PID, Syslog::LOG_LOCAL7))
+    config.lograge.enabled = true
+    config.lograge.formatter = Lograge::Formatters::Json.new
     
   end
   
