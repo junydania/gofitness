@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181027085022) do
+ActiveRecord::Schema.define(version: 20181111144949) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -246,6 +246,7 @@ ActiveRecord::Schema.define(version: 20181027085022) do
     t.bigint "member_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_paystack_charges_on_created_at"
     t.index ["member_id"], name: "index_paystack_charges_on_member_id"
   end
 
@@ -327,6 +328,7 @@ ActiveRecord::Schema.define(version: 20181027085022) do
     t.string "paystack_plan_code"
     t.string "allowed_visitation_count", default: "unlimited"
     t.integer "organization_package", default: 0
+    t.index ["paystack_plan_code"], name: "index_subscription_plans_on_paystack_plan_code"
   end
 
   create_table "users", force: :cascade do |t|

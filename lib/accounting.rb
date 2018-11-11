@@ -3,10 +3,10 @@ module Accounting
     class Entry
 
         def initialize(options)
-            @amount = options[:amount]
-            @description = options[:description]
+            @amount = options["amount"] / 100
+            @description = options["description"]
         end
-  
+
         def card_entry
             tax = @amount.to_f * 0.05
             profit = @amount.to_f - tax
