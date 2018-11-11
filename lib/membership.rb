@@ -4,51 +4,34 @@ module Membership
 
         def initialize(options)
             @member = Member.find(options['member_id'])
-            @subscribe_date = options['data']['period_start'] ? options['data']['period_start'].to_datetime : nil
-            @paid_at = options['data']['paid_at'] ? options['data']['paid_at'].to_datetime : nil
-            @charge_plan =  options['data']['plan']['plan_code'] || nil
-            @channel = options['data']['authorization']['channel'] ? options['data']['authorization']['channel'] : nil
-            @expiry_date = options['data']['period_end'] ? options['data']['period_end'].to_datetime : nil
+            @paid_date = options['data']['paid_at']
+            @subscribe_date = @paid_date
+            @charge_plan =  options['data']['plan']['plan_code']
+            @channel = options['data']['authorization']['channel']
+            @expiry_date = set_expiry_date
             @amount = options['data']['amount'].to_i / 100
-            @paid_date = options['data']['paid_at'] ? options['data']['paid_at'].to_datetime : nil
             @auth_code = options['data']['authorization']['authorization_code']
-            @subscription_code = options['data']['subscription'] ?  options['data']['subscription']['subscription_code'] : nil
-            @transaction_reference = options['data']['transaction'] ? options['data']['transaction']['reference'] : nil
+            @transaction_reference = options['data']['reference']
             @subscription_status = 0
         end
 
-        def call
-            amount = @amount
-            update_account_detail(amount)
-            create_loyalty_history(amount)
+        def call         
+            update_account_detail
+            create_loyalty_history
             create_subscription_history
             create_charge
-            create_general_transaction(amount)
+            create_general_transaction
             update_member_paystack_auths
-            # event_payload = {
-            #     event_name: 'Membership renewal - invoice update',
-            #     message: 'success',
-            #     member: @member.fullname,
-            #     amount: @amount,
-            #     uuid: SecureRandom.uuid
-            # }
-            # logger.info(event_payload.to_json)
+            process_charge_success
         end
 
         def process_charge_success
             @member.paystack_charges.create(
-                paid_at: @paid_at,
+                paid_at: @paid_date,
                 plan: @charge_plan,
                 amount: @amount,
                 channel: @channel,
             )
-            # event_payload = {
-            #     event_name: 'Membership renewal - charge success',
-            #     member: @member.fullname,
-            #     amount: @amount,
-            #     uuid: SecureRandom.uuid
-            # }
-            # logger.info(event_payload.to_json)
         end
 
         def create_charge
@@ -65,16 +48,15 @@ module Membership
         end
 
         def update_member_paystack_auths
-            @member.paystack_subscription_code = @subscription_code
             @member.paystack_auth_code = @auth_code
             @member.save
         end
         
 
-        def update_account_detail(amount)
-            loyalty_balance = loyalty_new_balance(amount)
+        def update_account_detail
+            loyalty_balance = loyalty_new_balance
             gym_plan = retrieve_gym_plan
-            account_update = @member.build_account_detail(
+            account_update = @member.account_detail.update!(
                                         subscribe_date: @subscribe_date,
                                         expiry_date: @expiry_date,
                                         member_status: 0,
@@ -85,17 +67,17 @@ module Membership
         end
     
         
-       def loyalty_new_balance(amount)
-         loyalty_earned = get_loyalty_points(amount)
+       def loyalty_new_balance
+         loyalty_earned = get_loyalty_points
          current_loyalty_balance = loyalty_current_balance
          new_loyalty_balance = loyalty_earned + current_loyalty_balance
          return new_loyalty_balance
        end
        
     
-       def create_loyalty_history(amount)
-            points = get_loyalty_points(amount)
-            new_loyalty_balance = loyalty_new_balance(amount) 
+       def create_loyalty_history
+            points = get_loyalty_points
+            new_loyalty_balance = loyalty_new_balance
             loyalty_history = @member.loyalty_histories.create(
                 points_earned: points,
                 points_redeemed: 0,
@@ -105,9 +87,9 @@ module Membership
         end
 
     
-        def get_loyalty_points(amount)
+        def get_loyalty_points
             point = Loyalty.find_by(loyalty_type: 1).loyalty_points_percentage ||= 10
-            point = ((point.to_f * 0.01) * amount).to_i
+            point = ((point.to_f * 0.01) * @amount).to_i
         end
     
         def loyalty_current_balance
@@ -147,18 +129,19 @@ module Membership
         end
     
 
-        def set_expiry_date(subscribe_date)
+        def set_expiry_date
             expiry_date = DateTime.new
-            if @member.subscription_plan.duration == "daily"
-                expiry_date =  (DateTime.parse(subscribe_date) + 1).strftime('%d-%m-%Y %H:%M:%S')
-            elsif @member.subscription_plan.duration == "weekly"
-                expiry_date =  (DateTime.parse(subscribe_date) + 7).strftime('%d-%m-%Y %H:%M:%S')
-            elsif @member.subscription_plan.duration == "monthly"
-                expiry_date =  (DateTime.parse(subscribe_date) + 30).strftime('%d-%m-%Y %H:%M:%S')
-            elsif @member.subscription_plan.duration == "quarterly"
-                expiry_date =  (DateTime.parse(subscribe_date) + 90).strftime('%d-%m-%Y %H:%M:%S')
-            elsif @member.subscription_plan.duration == "annually"
-                expiry_date = (DateTime.parse(subscribe_date).next_year).strftime('%d-%m-%Y %H:%M:%S')
+            plan_duration = SubscriptionPlan.find_by(paystack_plan_code: @charge_plan).duration
+            if plan_duration == "daily"
+                expiry_date =  (DateTime.parse(@subscribe_date) + 1).strftime('%d-%m-%Y %H:%M:%S')
+            elsif plan_duration == "weekly"
+                expiry_date =  (DateTime.parse(@subscribe_date) + 7).strftime('%d-%m-%Y %H:%M:%S')
+            elsif plan_duration == "monthly"
+                expiry_date =  (DateTime.parse(@subscribe_date) + 30).strftime('%d-%m-%Y %H:%M:%S')
+            elsif plan_duration == "quarterly"
+                expiry_date =  (DateTime.parse(@subscribe_date) + 90).strftime('%d-%m-%Y %H:%M:%S')
+            elsif plan_duration == "annually"
+                expiry_date = (DateTime.parse(@subscribe_date).next_year).strftime('%d-%m-%Y %H:%M:%S')
             end
             expiry_date
         end
@@ -169,7 +152,7 @@ module Membership
         end
 
         
-        def create_general_transaction(amount)
+        def create_general_transaction
             GeneralTransaction.create(
                 member_fullname: @member.fullname,
                 transaction_type: 0,
@@ -177,7 +160,7 @@ module Membership
                 expiry_date: @expiry_date,
                 staff_responsible: "Administrator",
                 payment_method: retrieve_payment_method,
-                loyalty_earned: get_loyalty_points(amount),
+                loyalty_earned: get_loyalty_points,
                 loyalty_redeemed: 0,
                 membership_plan: retrieve_gym_plan,
                 membership_status: 0,

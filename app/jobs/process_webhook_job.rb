@@ -8,11 +8,8 @@ class ProcessWebhookJob < ApplicationJob
   include Accounting
   
   def perform(options)
-    if options['event'] == 'invoice.update'
+    if options['event'] == 'charge.success'
       Membership::SubscriptionActivity.new(options).call
-      Accounting::Entry.new(options).card_entry
-    elsif options['event'] == 'charge.success'
-      Membership::SubscriptionActivity.new(options).process_charge_success
       Accounting::Entry.new(options).card_entry
     end
   end

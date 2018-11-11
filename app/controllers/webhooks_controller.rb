@@ -20,15 +20,14 @@ class WebhooksController < ApplicationController
       unless hash != request_headers["x-paystack-signature"]
         if payload['data']['status'] == 'success'
           member = get_member(payload)
-          if member
+          if member && member.paystack_charges.last.created_at.today? == false
             amount = payload["data"]["amount"]
             options = process_payload(payload, member)
-            ProcessWebhookJob.perform_later(options)
-            logger.info(payload.to_json)
+            ProcessWebhookJob.perform_now(options)
             head :ok
           else
             render status: 404, json: {
-              message: "record not found"
+              message: "record not found or member's account record already updated!"
             }
           end
         end 
@@ -64,7 +63,7 @@ class WebhooksController < ApplicationController
   private
 
   def check_allowed_ip
-    whitelisted = ['41.215.245.188', '52.31.139.75', '52.49.173.169', '52.214.14.220', '127.0.0.1']
+    whitelisted = ['41.58.96.208', '52.31.139.75', '52.49.173.169', '52.214.14.220', '127.0.0.1']
     if whitelisted.include? request.remote_ip
       return true
     else
