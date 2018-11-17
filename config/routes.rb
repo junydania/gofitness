@@ -67,6 +67,7 @@ Rails.application.routes.draw do
     get   'developer_test_mail_form' => 'developer_test#get_mail_form', as: :get_mail_form
     patch 'developer_test_email' => 'developer_test#send_mail', as: :developer_send_mail
     post  'check_recurring' => 'subscription_plans#check_recurring', as: :check_recurring
+    post  'check_selected_plan' => 'subscription_plans#check_selected_plan', as: :check_selected_plan
     resources :loyalties
   end
 

@@ -61,7 +61,6 @@ class Admin::MemberStepsController < ApplicationController
                 render_wizard(@member)
             end
 
-            
         when :personal_profile
             customer_code = member_params[:customer_code]
             check_code = Member.find_by(customer_code: customer_code)
@@ -85,11 +84,13 @@ class Admin::MemberStepsController < ApplicationController
             @member.update_attributes(member_params)
             render_wizard @member
         end
+        
     end
 
     
     def finish_wizard_path
         member_profile_path(@member)
+        session.delete(:member_id)
     end
 
 
@@ -118,7 +119,7 @@ class Admin::MemberStepsController < ApplicationController
             create_subscription_history(subscribe_date, expiry_date, subscription_status)
             create_loyalty_history(amount)
             create_general_transaction(subscribe_date, amount, payment_method)
-            options = {description: 'New Subscription', amount: amount}
+            options = {"description": 'New Subscription', "amount": amount}
             Accounting::Entry.new(options).cash_entry  
             intiate_wallet_account
             create_attendance_record
@@ -136,7 +137,7 @@ class Admin::MemberStepsController < ApplicationController
             create_subscription_history(subscribe_date, expiry_date, subscription_status)
             create_loyalty_history(amount)
             create_general_transaction(subscribe_date, amount, payment_method)
-            options = {description: 'New Subscription', amount: amount}
+            options = {"description": 'New Subscription', "amount": amount}
             Accounting::Entry.new(options).card_entry  
             intiate_wallet_account
             create_attendance_record
@@ -177,7 +178,7 @@ class Admin::MemberStepsController < ApplicationController
                         create_subscription_history(subscribe_date, expiry_date, subscription_status)
                         create_loyalty_history(amount)
                         create_general_transaction(subscribe_date, amount, payment_method)
-                        options = {description: 'New Subscription', amount: amount}
+                        options = {"description": 'New Subscription', "amount": amount}
                         Accounting::Entry.new(options).card_entry  
                         intiate_wallet_account
                         create_attendance_record

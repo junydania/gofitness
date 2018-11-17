@@ -35,6 +35,7 @@
 //= require admin/fitness_goals
 //= require admin/members
 //= require admin/member_steps
+//= require admin/change_plan
 //= require bootstrap-datepicker/bootstrap-datepicker.min
 //= require bootstrap-daterangepicker/daterangepicker
 //= require webcam.min
