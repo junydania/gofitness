@@ -110,7 +110,6 @@ class Admin::MemberStepsController < ApplicationController
 
 
     def cash_subscribe
-        binding.pry
         subscribe_date = set_subscribe_date
         expiry_date = set_expiry_date(subscribe_date)
         create_charge
@@ -147,7 +146,6 @@ class Admin::MemberStepsController < ApplicationController
 
     
     def paystack_subscribe
-        binding.pry
         reference = params[:reference_code]
         transactions = PaystackTransactions.new(@paystackObj)
         result = transactions.verify(reference)

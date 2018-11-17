@@ -7,11 +7,9 @@ class Admin::SubscriptionPlansController < ApplicationController
     before_action :authenticate_user!
     before_action   :find_plan, only: [:edit, :update, :show, :update_plan_record]
     
-    
     def index
         @subscription_plans = SubscriptionPlan.all
     end
-
 
     def new
         @subscription_plan = SubscriptionPlan.new
