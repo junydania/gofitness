@@ -83,7 +83,6 @@ class Admin::SubscriptionPlansController < ApplicationController
         end
     end
 
-
     private
 
     def instantiate_paystack

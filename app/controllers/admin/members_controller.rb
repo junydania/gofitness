@@ -158,7 +158,11 @@ class Admin::MembersController < ApplicationController
 
     def change_plan_update
       if DateTime.now > @member.account_detail.expiry_date && @member.paystack_cust_code.nil?
-        if @member.update(member_params)
+        payment_method_id = PaymentMethod.where(payment_system: "Debit Card").first.id
+        updated_params = member_params.clone
+        updated_params["payment_method_id"] = payment_method_id
+        if @member.update(updated_params)
+          session[:member_id] = params["id"]
           redirect_to admin_member_steps_path
         else
           render :change_plan
@@ -182,7 +186,7 @@ class Admin::MembersController < ApplicationController
           redirect_to admin_member_steps_path
         end
       else
-        flash[:notice] = "Customer Still Has an Active Plan! Wait till it expires"
+        flash[:notice] = "Customer still has an active plan! Wait till it expires"
         redirect_to member_profile_path(@member)
       end
     end
