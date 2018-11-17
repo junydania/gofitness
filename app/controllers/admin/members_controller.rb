@@ -157,7 +157,7 @@ class Admin::MembersController < ApplicationController
     end
 
     def change_plan_update
-      if DateTime.now > @member.account_detail.expiry_date && @member.paystack_cust_code.nil?
+      if DateTime.now > @member.account_detail.expiry_date && @member.paystack_subscription_code.nil?
         payment_method_id = PaymentMethod.where(payment_system: "Debit Card").first.id
         updated_params = member_params.clone
         updated_params["payment_method_id"] = payment_method_id

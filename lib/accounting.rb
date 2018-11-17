@@ -3,7 +3,7 @@ module Accounting
     class Entry
 
         def initialize(options)
-            @amount = options["amount"] / 100
+            @amount = options["amount"].to_i / 100
             @description = options["description"]
         end
 
