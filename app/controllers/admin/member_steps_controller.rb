@@ -90,7 +90,7 @@ class Admin::MemberStepsController < ApplicationController
     
     def finish_wizard_path
         member_profile_path(@member)
-        session.delete(:member_id)
+        # session.delete(:member_id)
     end
 
 
@@ -152,42 +152,60 @@ class Admin::MemberStepsController < ApplicationController
         if result["status"] == true     
             auth_code = (result["data"]["authorization"]["authorization_code"]).to_s
             paystack_customer_code = (result["data"]["customer"]["customer_code"]).to_s
-            start_date, plan_code = set_paystack_start_date.to_s, get_subscription_plan_code.to_s, 
-            create_subscription = PaystackSubscriptions.new(@paystackObj)
-            subscribe = create_subscription.create(customer: paystack_customer_code,
-                                                    plan: plan_code,
-                                                    authorization: auth_code,
-                                                    start_date: start_date,
-                                                    )
+            start_date = set_paystack_start_date.to_s
+            plan_code  = get_subscription_plan_code.to_s 
+            payload = {
+                :customer => paystack_customer_code,
+                :plan => plan_code,
+                :authorization => auth_code,
+                :start_date => start_date,
+            }
+            subscribe = nil            
+            begin
+                uri = URI('https://api.paystack.co/subscription')
+                http = Net::HTTP.new(uri.host, uri.port)
+                http.use_ssl = true
+                http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+                req = Net::HTTP::Post.new(uri.path, {'Content-Type' =>'application/json',  
+                  'Authorization' => "Bearer #{ENV["PAYSTACK_PRIVATE_KEY"]}"})
+                req.body = payload.to_json
+                res = http.request(req)
+                subscribe = JSON.parse(res.body)
+            rescue => e
+                puts "failed #{e}"
+            end
+
             if subscribe["status"] == true
-                subscription_code = subscribe["data"]["subscription_code"]
-                email_token = subscribe["data"]["email_token"]
+                subscription_code = subscribe["data"]["subscription_code"].to_s
+                email_token = subscribe["data"]["email_token"].to_s
                 @member.update(paystack_subscription_code: subscription_code,
                                paystack_email_token: email_token,
                                paystack_auth_code: auth_code,
                                paystack_cust_code: paystack_customer_code)
                 paystack_created_date = subscribe["data"]["createdAt"]
-                enable_subscription = create_subscription.enable(code: subscription_code, token: email_token)
                 subscribe_date = Time.iso8601(paystack_created_date).strftime('%d-%m-%Y %H:%M:%S')
                 expiry_date, amount = set_expiry_date(subscribe_date), retrieve_amount
-                payment_method, subscription_status = retrieve_payment_method, 0
-                if enable_subscription["status"] == true
-                    create_charge
-                    account_update = update_account_detail(subscribe_date, expiry_date)
-                    if account_update.save
-                        create_subscription_history(subscribe_date, expiry_date, subscription_status)
-                        create_loyalty_history(amount)
-                        create_general_transaction(subscribe_date, amount, payment_method)
-                        options = {"description": 'New Subscription', "amount": amount}
-                        Accounting::Entry.new(options).card_entry  
-                        intiate_wallet_account
-                        create_attendance_record
-                    end
+                payment_method = retrieve_payment_method
+                subscription_status = 0
+                create_charge
+                account_update = update_account_detail(subscribe_date, expiry_date)
+                if account_update.save
+                    create_subscription_history(subscribe_date, expiry_date, subscription_status)
+                    create_loyalty_history(amount)
+                    create_general_transaction(subscribe_date, amount, payment_method)
+                    options = {"description": 'New Subscription', "amount": amount}
+                    Accounting::Entry.new(options).card_entry  
+                    intiate_wallet_account
+                    create_attendance_record
                 end
+                render status: 200, json: {
+                    message: "success"
+                }
+            else
+                render status: 400, json: {
+                    message: "failed to enable subscription"
+                }
             end
-            render status: 200, json: {
-                message: "success"
-            }
         else
             render  status: 400, json: { 
                 success: false 

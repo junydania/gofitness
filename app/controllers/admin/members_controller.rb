@@ -580,9 +580,12 @@ class Admin::MembersController < ApplicationController
         paystack_subscription_code = @member.paystack_subscription_code
         subscription = initiate_paystack_sub
         result = subscription.get(paystack_subscription_code)
-        subscription_present =  result['status']
-        subscription = true?(subscription_present)
-        return subscription
+        if !result.dig('data', 'plan','subscriptions').empty?
+          subscription_present =  true
+        else
+          subscription_present = false
+        end
+          return subscription_present
       end
     end
 
@@ -643,7 +646,6 @@ class Admin::MembersController < ApplicationController
     end
 
     def paystack_subscribe
-
       reference = params[:reference_code]
       transactions = PaystackTransactions.new(@paystackObj)
       result = transactions.verify(reference)
@@ -651,13 +653,29 @@ class Admin::MembersController < ApplicationController
       if result["status"] == true     
           auth_code = (result["data"]["authorization"]["authorization_code"]).to_s
           paystack_customer_code = (result["data"]["customer"]["customer_code"]).to_s
-          start_date, plan_code = set_paystack_start_date.to_s, get_subscription_plan_code.to_s, 
-          create_subscription = PaystackSubscriptions.new(@paystackObj)
-          subscribe = create_subscription.create(customer: paystack_customer_code,
-                                                  plan: plan_code,
-                                                  authorization: auth_code,
-                                                  start_date: start_date,
-                                                 )
+          start_date = set_paystack_start_date
+          plan_code =  get_subscription_plan_code 
+          payload = {
+              :customer => paystack_customer_code,
+              :plan => plan_code.to_s,
+              :authorization => auth_code,
+              :start_date => start_date,
+          }
+          subscribe = nil            
+          begin
+              uri = URI('https://api.paystack.co/subscription')
+              http = Net::HTTP.new(uri.host, uri.port)
+              http.use_ssl = true
+              http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+              req = Net::HTTP::Post.new(uri.path, {'Content-Type' =>'application/json',  
+                'Authorization' => "Bearer #{ENV["PAYSTACK_PRIVATE_KEY"]}"})
+              req.body = payload.to_json
+              res = http.request(req)
+              subscribe = JSON.parse(res.body)
+          rescue => e
+              puts "failed #{e}"
+          end
+                                                                        
           if subscribe["status"] == true
               subscription_code = subscribe["data"]["subscription_code"]
               email_token = subscribe["data"]["email_token"]
@@ -667,20 +685,18 @@ class Admin::MembersController < ApplicationController
                              paystack_cust_code: paystack_customer_code)
 
               paystack_created_date = subscribe["data"]["createdAt"]
-              enable_subscription = create_subscription.enable(code: subscription_code, token: email_token)
               subscribe_date = Time.iso8601(paystack_created_date).strftime('%d-%m-%Y %H:%M:%S')
               expiry_date, amount = set_expiry_date(subscribe_date), retrieve_amount
-              recurring, subscription_status = true, 0
+              recurring = true
+              subscription_status = 0
               payment_method = retrieve_payment_method
-              if enable_subscription["status"] == true
-                  create_charge
-                  update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
-                  options = {description: 'Member Renewal', amount: amount}
-                  Accounting::Entry.new(options).card_entry          
-                  render status: 200, json: {
-                    message: "success"
-                }    
-              end
+              create_charge
+              update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
+              options = {description: 'Member Renewal', amount: amount}
+              Accounting::Entry.new(options).card_entry          
+              render status: 200, json: {
+                message: "success"
+              }
           end
       else
           render  status: 400, json: { 
