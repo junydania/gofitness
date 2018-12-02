@@ -40,7 +40,7 @@
                 <!-- Start Page Content -->
                 <!-- ============================================================== -->
                 <!-- Row -->
-                
+
                 <div class="row">
                     <!-- Column -->
                     <div class="col-lg-4 col-xlg-3 col-md-5">
@@ -51,7 +51,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <center class="m-t-30"> 
+                                <center class="m-t-30">
                                     <% if @member.image_data.nil? %>
                                         <td>
                                             <%= image_tag( "users/5.png", alt: "member", size:"150", class:"img-circle" ) %>
@@ -74,15 +74,15 @@
                                     <br/>
                                     <div>
                                          <% if @member.account_detail.member_status == 'deactivated' %>
-                                            <%= link_to "Renew",  renew_member_path(@member), class:"btn btn-success" %> 
+                                            <%= link_to "Renew",  renew_member_path(@member), class:"btn btn-success" %>
                                         <% elsif @member.account_detail.member_status == 'paused' %>
                                             <button class="cancel-pause btn btn-danger" id="cancel-pause" href="javascript:void(0)" value="<%= @member.id %>">Cancel Pause</button>
                                         <% end %>
-                                    </div>    
+                                    </div>
                                 </center>
                             </div>
                             <div>
-                                <hr> 
+                                <hr>
                             </div>
                             <div class="card-body"> <small class="text-muted">Email address </small>
                                 <h6><%= @member.email %></h6> <small class="text-muted p-t-30 db">Phone</small>
@@ -95,7 +95,7 @@
                                 <% end %>
                                 <%= link_to 'Edit Profile', edit_member_path(@member), class:"btn btn-info btn-rounded" %>
                             </div>
-                            
+
                         </div>
                     </div>
                     <!-- Column -->
@@ -134,11 +134,11 @@
                                         <div class="row">
                                             <div class="col-md-3 col-xs-6 b-r"> <strong>Pause Count</strong>
                                                 <br>
-                                                <p class="text-muted"><%= @member.account_detail.pause_permit_count %></p>                                
+                                                <p class="text-muted"><%= @member.account_detail.pause_permit_count %></p>
                                             </div>
-                                            <div class="col-md-3 col-xs-6 b-r"> <strong>Customer Code</strong>
+                                            <div class="col-md-3 col-xs-6 b-r"> <strong>Expiry Date</strong>
                                                 <br>
-                                                <p class="text-muted"><%= @member.customer_code %></p>
+                                                <p class="text-muted"><%= @member.account_detail.expiry_date.strftime('%v') %></p>
                                             </div>
                                             <div class="col-md-3 col-xs-6 b-r"> <strong>Birthday</strong>
                                                 <br>
@@ -152,14 +152,14 @@
                                         <hr>
                                         <h4><span>Visitation Count<span></h4>
                                             <button class="btn btn-info" href="#"><%= @member.account_detail.visitation_count %></button>
-                                        
+
                                         <hr>
 
                                         <h4><span>Fitness Goal<span></h4>
                                             <button class="btn btn-info" href="#"><%= @member.fitness_goal.goal_name %></button>
-                                            
+
                                         <br/>
-                                        
+
 
                                         <h4 class="font-medium m-t-30">Member Activity</h4>
                                         <hr>
@@ -235,7 +235,7 @@
 
                                 <div class="tab-pane" id="historicals" role="tabpanel">
                                     <div class="card-body">
-                                        <div class="row">               
+                                        <div class="row">
                                             <div class="col-md-3 col-xs-6 b-r"> <strong> Subscription</strong>
                                                 <br>
                                                 <%= link_to 'View', member_subscription_history_path(@member), class:"btn btn-info" %>
@@ -252,11 +252,11 @@
                                                 <br>
                                                 <%= link_to 'View', member_attendance_history_path(@member), class:"btn btn-info" %>
                                             </div>
-                                        </div>                                       
+                                        </div>
                                     </div>
                                 </div>
 
-                                
+
                             </div>
                         </div>
                     </div>
@@ -278,7 +278,7 @@
                                     <div class="col-6 p-t-10 p-b-20 text-right">
                                         <div class="spark-count" style="height:65px"></div>
                                     </div>
-                                    
+
                                 </div>
                                 <%= link_to "Fund Wallet", wallet_fund_page_path, class:"btn btn-danger" %>
                                 <%= link_to "View History", root_path, class:"btn btn-danger" %>
