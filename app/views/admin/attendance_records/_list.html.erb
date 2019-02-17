@@ -25,11 +25,11 @@
                             <td><%= member.customer_code %></td>
                             <% if member.image_data.nil? %>
                                 <td>
-                                    <%= image_tag( "users/5.png", alt: "member", size:"40", class:"img-circle" ) %><%= link_to "#{member.first_name}" %>
+                                    <%= image_tag( "users/5.png", alt: "member", size:"40", class:"img-circle" ) %><%= link_to "#{member.first_name}", member_profile_path(member) %>
                                 </td>
                             <% else %>
                                 <td>
-                                    <%= image_tag( "#{member.image_url}", alt: "member", size:'40', class:"img-circle" ) %><%= link_to "#{member.first_name}" %>
+                                    <%= image_tag( "#{member.image_url}", alt: "member", size:'40', class:"img-circle" ) %><%= link_to "#{member.first_name}", member_profile_path(member) %>
                                 </td>
                             <% end %>
                             <td><%= member.last_name %></td>
