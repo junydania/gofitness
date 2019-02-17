@@ -66,7 +66,7 @@
                                             <%= render 'postransaction_fields', f: transaction %>
                                         <% end %>
                                     <% end %>
-                                <% elsif @member.payment_method.payment_system.titleize == "Cash"  %>
+                                <% elsif @member.payment_method.payment_system.titleize == "Cash" || @member.payment_method.payment_system.titleize == "Mobile Transfer"  %>
                                     <div><h5>Amount to Collect: </h5><button class="btn btn-success" href="#">₦<%= @member.subscription_plan.cost %></button></div>
                                     <%= form_for([:admin, @member], url: wizard_path, method: :put) do |f| %>
                                         <%= f.fields_for :cash_transactions, CashTransaction.new do |transaction| %>
@@ -75,6 +75,7 @@
                                         <% end %>
                                     <% end %>
                                 <% end %>
+
                             </div>
                         </div>
                         <div class="card remove-back-button">

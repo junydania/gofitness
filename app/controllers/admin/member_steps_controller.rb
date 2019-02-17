@@ -24,22 +24,23 @@ class Admin::MemberStepsController < ApplicationController
     def update
         case step
         when :payment
-            if @member.payment_method.payment_system.upcase == "CASH" && @member.account_detail.member_status != 'active'
-                amount_received = member_params[:cash_transactions_attributes]["0"][:amount_received].to_i
-                expected_amount = retrieve_amount
-                if  amount_received ==  expected_amount 
-                    @member.cash_transactions.build({cash_received_by: current_user.fullname, 
-                                                    service_paid_for: "Gym Membership",
-                                                    amount_received: amount_received })
-                    if @member.save
-                        cash_subscribe
+            if @member.payment_method.payment_system.upcase == "CASH" ||  @member.payment_method.payment_system.upcase == "MOBILE TRANSFER"  
+                if  @member.account_detail.member_status != 'active'
+                    amount_received = member_params[:cash_transactions_attributes]["0"][:amount_received].to_i
+                    expected_amount = retrieve_amount
+                    if  amount_received ==  expected_amount 
+                        @member.cash_transactions.build({cash_received_by: current_user.fullname, 
+                                                        service_paid_for: "Gym Membership",
+                                                        amount_received: amount_received })
+                        if @member.save
+                            cash_subscribe
+                        end
+                        render_wizard(@member)
+                    else
+                        flash[:notice] = "Check to ensure cash received is same as cash expected"
+                        redirect_back(fallback_location:  admin_member_step_path)
                     end
-                    render_wizard(@member)
-                else
-                    flash[:notice] = "Check to ensure cash received is same as cash expected"
-                    redirect_back(fallback_location:  admin_member_step_path)
                 end
-                
             elsif @member.payment_method.payment_system.upcase == "POS TERMINAL" && @member.account_detail.member_status != 'active'
                 pos_transaction_status = member_params[:pos_transactions_attributes]["0"]["transaction_success"].to_sym
                 if  pos_transaction_status === :true
