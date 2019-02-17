@@ -53,6 +53,7 @@ gem 'groupdate'
 gem 'authtrail'
 gem 'syslogger', '~> 1.6.0'
 gem 'lograge', '~> 0.3.1'
+gem 'will_paginate-bootstrap4'
 
 
 # Use Capistrano for deployment
