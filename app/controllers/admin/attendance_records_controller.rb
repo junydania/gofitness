@@ -17,7 +17,7 @@ class Admin::AttendanceRecordsController < ApplicationController
             persistence_id: 'shared_key',
             default_filter_params: {},
         ) or return
-        @members = @filterrific.find.page(params[:page])
+        @members = @filterrific.find.page(params[:page]).per_page(15)
             
         respond_to do |format|
           format.html

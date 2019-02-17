@@ -32,10 +32,17 @@
                             <div class="col-12">
                                 <div class="card">
                                     <div class="card-body">
-                                        <div class="alert alert-success">
-                                            <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                            <%= flash[:notice] %>
-                                        </div>
+                                        <% if flash[:error] %>
+                                            <div class="alert alert-danger">
+                                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                                <%= flash[:notice] %>
+                                            </div>
+                                        <% elsif flash[:notice] %>
+                                            <div class="alert alert-success">
+                                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                                <%= flash[:notice] %>
+                                            </div>
+                                        <% end %>                                        
                                         <h4 class="card-title">Search Members</h4>
                                         <div id="education_fields"></div>
                                         <%= form_for_filterrific @filterrific, html: {class: 'form-group m-t-40' } do |f| %>
