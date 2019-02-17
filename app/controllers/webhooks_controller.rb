@@ -20,15 +20,17 @@ class WebhooksController < ApplicationController
       unless hash != request_headers["x-paystack-signature"]
         if payload['data']['status'] == 'success'
           member = get_member(payload)
-          if member && member.paystack_charges.last.created_at.today? == false
-            amount = payload["data"]["amount"]
-            options = process_payload(payload, member)
-            ProcessWebhookJob.perform_now(options)
-            head :ok
-          else
-            render status: 404, json: {
-              message: "record not found or member's account record already updated!"
-            }
+          if member
+            if member.paystack_charges.empty? || member.paystack_charges.last.created_at.today? == false
+              amount = payload["data"]["amount"]
+              options = process_payload(payload, member)
+              ProcessWebhookJob.perform_now(options)
+              head :ok
+            else
+              render status: 404, json: {
+                message: "Member not found or member's account record already updated!"
+              }
+            end
           end
         end 
       end

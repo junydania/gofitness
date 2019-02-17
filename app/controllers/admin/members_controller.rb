@@ -14,7 +14,8 @@ class Admin::MembersController < ApplicationController
                                        :wallet_renewal,
                                        :update,
                                        :complete_activation,
-                                       :change_plan ]
+                                       :change_plan,
+                                       :send_paystack_invoice ]
                                        
     before_action :get_paystack_object, only: [:check_paystack_subscription, 
                                                :paystack_renewal,
@@ -22,7 +23,8 @@ class Admin::MembersController < ApplicationController
                                                :unsubscribe_membership,
                                                :pause_subscription,
                                                :cancel_pause,
-                                               :change_plan_update]
+                                               :change_plan_update,
+                                               :send_paystack_invoice ]
 
     require 'securerandom'
 
@@ -39,7 +41,7 @@ class Admin::MembersController < ApplicationController
           persistence_id: 'shared_key',
           default_filter_params: {},
       ) or return
-      @members = @filterrific.find.page(params[:page])
+      @members = @filterrific.find.page(params[:page]).per_page(15)
       
       respond_to do |format|
         format.html
@@ -150,6 +152,43 @@ class Admin::MembersController < ApplicationController
         redirect_to admin_member_steps_path
       end
     end
+
+    def send_paystack_invoice
+      due_date = 7.days.from_now.strftime('%F')
+      payload = {
+        :description => @member.subscription_plan.description,
+        :line_items => [
+          {:name => @member.subscription_plan.plan_name, :amount => @member.subscription_plan.cost * 100}
+        ],
+        :customer => @member.paystack_cust_code,
+        :due_date => 7.days.from_now.strftime('%F'),
+        :send_notification => true
+      }
+      send_invoice = nil  
+      begin
+        uri = URI('https://api.paystack.co/paymentrequest')
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        req = Net::HTTP::Post.new(uri.path, {'Content-Type' =>'application/json',  
+          'Authorization' => "Bearer #{ENV["PAYSTACK_PRIVATE_KEY"]}"})
+        req.body = payload.to_json
+        res = http.request(req)
+        send_invoice = JSON.parse(res.body)
+      rescue => e
+          puts "failed #{e}"
+      end
+      if send_invoice["status"] == true
+        render status: 200, json: {
+          message: "success"
+        }
+      else
+        render status: 500, json: {
+          message: "failed"
+        }
+      end
+    end
+
 
     def change_plan
       @subscription_plans = SubscriptionPlan.all  

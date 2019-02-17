@@ -40,9 +40,12 @@
                                 <td><span class="label label-danger"><%= member.account_detail.member_status.titleize %></span> </td>
                             <% end %>
                             <td>
-                                <button id="" class="check_in_button btn btn-info" href="#" data-id="<%= member.id %>" data-value="<%= member.id%>">Check In</button>
-                            </td>
-                            
+                                <% if member.account_detail.gym_attendance_status == 'checkedin' %>
+                                    <button id="" class="check_in_button btn btn-danger" href="#" data-id="<%= member.id %>" data-value="<%= member.id%>">Checked In</button>
+                                <% else %>
+                                    <button id="" class="check_in_button btn btn-info" href="#" data-id="<%= member.id %>" data-value="<%= member.id%>">Check In</button>
+                                <% end %>
+                            </td>                    
                         </tr>
                     <% end %>
                     </tbody>

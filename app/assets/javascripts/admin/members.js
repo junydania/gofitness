@@ -28,7 +28,40 @@ $(document).on("turbolinks:load", function() {
 
 $(document).on("turbolinks:load", function() {
 
-    
+    // SendInvoice
+    $("#sendInvoice").click(function(event) {
+
+        $('.loader').modal('show');
+
+        var click_value = $("#sendInvoice").val();
+
+        var data = { id: click_value };
+        $.ajax({
+            url: '/send_paystack_invoice',
+            type: 'POST',
+            data: data,
+            success: function(data, xhr) {
+
+                $('.loader').modal('hide');
+                
+                if ( data.message == "success" ) {
+                    content = `<p>Invoice has been mailed to customer!</p>`;
+                    $('#pause-message').append(content);
+
+                } else if(data.message == "failed" ) {
+                    content = `<p>Sorry, Tried sending invoice but failed. Retry!</p>`;
+                    $('#pause-message').append(content);
+
+                }  
+            },
+            error: function() {
+                $('.loader').modal('hide');
+                content = `<p>Error processing Invoice! </p>`;
+                $('#pause-message').append(content);
+            }
+        });
+    });
+
     // Check if subscription plan is recurring
     $("#member_subscription_plan_id").change(function() {
         sub_plan = $("#member_subscription_plan_id").val();
@@ -152,7 +185,7 @@ $(document).on("turbolinks:load", function() {
         });
 
         handler.openIframe();
-  }
+    }
 
     $("#pause-subscriber").click(function(event) {
 
@@ -262,6 +295,8 @@ function image_snapshot(){
         document.getElementById('image_result').innerHTML = '<img src="' + data_uri + '"/>';
     });
 }
+
+
 $(document).ready(function() {
     if ($("#member_edit_camera").length) {
         Webcam.set({
