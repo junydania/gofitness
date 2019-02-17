@@ -177,6 +177,11 @@
                                              <%= link_to 'Renew Membership', renew_member_path(@member), class:"btn btn-success" %>
                                         <% end %>
 
+                                        <% if !@member.paystack_cust_code.nil? && @member.account_detail.member_status == 'active' %>
+                                            <button class="btn btn-info" id="sendInvoice" href="#" value="<%= @member.id %>">Send Invoice</button>
+                                        <% end %>
+ 
+
                                         <% if @member.account_detail.member_status != 'paused' %>
                                             <button class="btn btn-warning" id="pause-subscriber" href="#" value="<%= @member.id %>">Pause Membership</button>
                                         <% end %>

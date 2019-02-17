@@ -50,6 +50,7 @@ Rails.application.routes.draw do
   get    'members/activate_account/:id' => 'admin/members#activate_account', as: :activate_account
   patch  'members/activate_account/:id' => 'admin/members#complete_activation'
   get    'members/change_plan/:id' => 'admin/members#change_plan', as: :change_plan
+  post   'send_paystack_invoice' => 'admin/members#send_paystack_invoice', as: :send_paystack_invoice
   patch  'members/change_plan/:id' => 'admin/members#change_plan_update'
 
   

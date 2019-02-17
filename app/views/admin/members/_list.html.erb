@@ -57,7 +57,7 @@
                             </div>
                             <td colspan="7">
                                 <div class="text-right">
-                                    <%= will_paginate members %>
+                                    <%= will_paginate members, renderer: WillPaginate::ActionView::BootstrapLinkRenderer %>
                                 </div>
                             </td>
                         </tr>
