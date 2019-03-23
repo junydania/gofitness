@@ -80,7 +80,7 @@ class Admin::AttendanceRecordsController < ApplicationController
     def check_in_process
         create_attendance_record
         @member.account_detail.gym_attendance_status = 1
-        @member.visitation_count +=1
+        @member.account_detail.visitation_count +=1
         @member.save
         render status: 201, json: {
             message: "success"
