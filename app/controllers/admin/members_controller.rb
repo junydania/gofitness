@@ -111,7 +111,6 @@ class Admin::MembersController < ApplicationController
 
 
     def create
-      binding.pry
         member_exists = Member.find_by(email: member_params[:email])
         if member_params["start_date"].empty?
           start_date = DateTime.now
@@ -134,7 +133,7 @@ class Admin::MembersController < ApplicationController
             member = Member.find(new_member.id)
             account_update = member.build_account_detail(
               subscribe_date: start_date,
-              expiry_date: DateTime.now,
+              expiry_date: start_date,
               member_status: 1,
               gym_attendance_status: 0,
               audit_comment: "New account created for member")

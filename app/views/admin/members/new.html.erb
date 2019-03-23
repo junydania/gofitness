@@ -63,9 +63,9 @@
                                     <% if current_user.role == 'manager' %>
                                         <div class="form-group">
                                             <%= f.label :start_date, 'Manual Registration Date' %>
-                                            <%= f.text_field :start_date, class:"form-control datepicker", "data-provide" => 'datepicker', placeholder:"Select Manual Start Date" %>
+                                            <%= f.text_field :start_date, class:"form-control datepicker", "data-provide" => 'datepicker', "data-behaviour" => 'datepicker', placeholder:"Select Manual Start Date" %>
                                         </div>                                
-                                    <% end %>
+                                    <% end %>                                                       
                                     <div>
                                         <%= f.submit 'Next', class: 'btn btn-danger m-r-10' %>
                                     </div>
@@ -77,3 +77,17 @@
                 </div>
             </div>
         </div>
+
+<% content_for :date do %>
+  <script type="text/javascript">
+    $(".datepicker").datetimepicker({
+     format: "mm/dd/yyyy",
+     autoclose: true,
+    });
+
+    $('.datepicker').on('changeDate', function(ev){
+        $(this).datepicker('hide');
+    });
+
+  </script>
+<% end %>

@@ -68,8 +68,14 @@ class Admin::MemberStepsController < ApplicationController
             if check_code.nil? == true && @member.customer_code.nil?
                 updated_member_params = member_params
                 updated_member_params["date_of_birth"] = updated_member_params["date_of_birth"].empty? ? nil: Date.strptime(updated_member_params["date_of_birth"], '%m/%d/%Y').to_datetime
-                @member.update_attributes(updated_member_params)
-                render_wizard @member
+                begin
+                    @member.update_attributes(updated_member_params)
+                    render_wizard @member
+                rescue ActiveRecord::RecordNotUnique => e
+                    flash[:notice] = "Ensure phone number is unique"
+                    render_wizard    
+                end
+
             elsif !@member.customer_code.nil?
                 flash[:notice] = "Member already has a registered code! Update other records"
                 skip_step
@@ -77,9 +83,7 @@ class Admin::MemberStepsController < ApplicationController
             else 
                 flash[:notice] = "Customer Code already exists in the system"
                 render_wizard
-
             end
-
 
         when :next_of_kin
             @member.update_attributes(member_params)
@@ -147,7 +151,6 @@ class Admin::MemberStepsController < ApplicationController
 
     
     def paystack_subscribe
-        binding.pry
         reference = params[:reference_code]
         transactions = PaystackTransactions.new(@paystackObj)
         result = transactions.verify(reference)
@@ -170,7 +173,7 @@ class Admin::MemberStepsController < ApplicationController
                 http.verify_mode = OpenSSL::SSL::VERIFY_NONE
                 req = Net::HTTP::Post.new(uri.path, {'Content-Type' =>'application/json',  
                   'Authorization' => "Bearer #{ENV["PAYSTACK_PRIVATE_KEY"]}"})
-                req.body = payload.to_json
+                req.body = JSON.generate(payload)
                 res = http.request(req)
                 subscribe = JSON.parse(res.body)
             rescue => e
@@ -185,7 +188,7 @@ class Admin::MemberStepsController < ApplicationController
                                paystack_auth_code: auth_code,
                                paystack_cust_code: paystack_customer_code)
                 paystack_created_date = subscribe["data"]["createdAt"]
-                subscribe_date = Time.iso8601(paystack_created_date).strftime('%d-%m-%Y %H:%M:%S')
+                subscribe_date = set_subscribe_date
                 expiry_date, amount = set_expiry_date(subscribe_date), retrieve_amount
                 payment_method = retrieve_payment_method
                 subscription_status = 0
@@ -312,7 +315,6 @@ class Admin::MemberStepsController < ApplicationController
     end
 
 
-
     def retrieve_amount
         amount = @member.subscription_plan.cost
     end
@@ -324,11 +326,10 @@ class Admin::MemberStepsController < ApplicationController
 
 
     def set_subscribe_date
-        date = @member.account_detail.subscribe_date.strftime('%d-%m-%Y %H:%M:%S')
+        @member.account_detail.subscribe_date.strftime('%d-%m-%Y %H:%M:%S')
     end
 
     def set_expiry_date(subscribe_date)
-        expiry_date = DateTime.new
         subscribe_date = @member.account_detail.subscribe_date
         if @member.subscription_plan.duration == "daily"
             expiry_date =  (subscribe_date + 1.day).strftime('%d-%m-%Y %H:%M:%S')
