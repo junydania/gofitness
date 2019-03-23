@@ -147,6 +147,7 @@ class Admin::MemberStepsController < ApplicationController
 
     
     def paystack_subscribe
+        binding.pry
         reference = params[:reference_code]
         transactions = PaystackTransactions.new(@paystackObj)
         result = transactions.verify(reference)
@@ -323,33 +324,34 @@ class Admin::MemberStepsController < ApplicationController
 
 
     def set_subscribe_date
-        date = DateTime.now.strftime('%d-%m-%Y %H:%M:%S')
+        date = @member.account_detail.subscribe_date.strftime('%d-%m-%Y %H:%M:%S')
     end
 
     def set_expiry_date(subscribe_date)
         expiry_date = DateTime.new
+        subscribe_date = @member.account_detail.subscribe_date
         if @member.subscription_plan.duration == "daily"
-            expiry_date =  (DateTime.parse(subscribe_date) + 1).strftime('%d-%m-%Y %H:%M:%S')
+            expiry_date =  (subscribe_date + 1.day).strftime('%d-%m-%Y %H:%M:%S')
         elsif @member.subscription_plan.duration == "weekly"
-            expiry_date =  (DateTime.parse(subscribe_date) + 7).strftime('%d-%m-%Y %H:%M:%S')
+            expiry_date =  (subscribe_date + 7.days).strftime('%d-%m-%Y %H:%M:%S')
         elsif @member.subscription_plan.duration == "monthly"
-            expiry_date =  (DateTime.parse(subscribe_date) + 30).strftime('%d-%m-%Y %H:%M:%S')
+            expiry_date =  (subscribe_date + 30.days).strftime('%d-%m-%Y %H:%M:%S')
         elsif @member.subscription_plan.duration == "quarterly"
-            expiry_date =  (DateTime.parse(subscribe_date) + 90).strftime('%d-%m-%Y %H:%M:%S')
+            expiry_date =  (subscribe_date + 90.days).strftime('%d-%m-%Y %H:%M:%S')
         elsif @member.subscription_plan.duration == "annually"
-            expiry_date = (DateTime.parse(subscribe_date).next_year).strftime('%d-%m-%Y %H:%M:%S')
+            expiry_date =  (subscribe_date.next_year).strftime('%d-%m-%Y %H:%M:%S')
         end
         expiry_date
     end
 
     def set_paystack_start_date
-        start_date = ""
+        date = @member.account_detail.subscribe_date
         if @member.subscription_plan.duration == "monthly"
-            start_date = DateTime.now.next_month.to_s
+            start_date = date.next_month.strftime('%FT%T%:z').to_s
         elsif @member.subscription_plan.duration == "quarterly"
-            start_date = (DateTime.now + 90).to_s
+            start_date = (date + 90.days).strftime('%FT%T%:z').to_s
         elsif @member.subscription_plan.duration == "annually"
-            start_date = DateTime.now.next_year.to_s
+            start_date = date.next_year.strftime('%FT%T%:z').to_s
         end
         return start_date
     end

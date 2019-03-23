@@ -111,7 +111,13 @@ class Admin::MembersController < ApplicationController
 
 
     def create
+      binding.pry
         member_exists = Member.find_by(email: member_params[:email])
+        if member_params["start_date"].empty?
+          start_date = DateTime.now
+        else
+          start_date = Date.strptime(member_params["start_date"], '%m/%d/%Y').to_datetime
+        end
         if !member_exists.nil?
           flash[:error] = "Customer Already Exists!"
           redirect_to admin_member_steps_path
@@ -127,7 +133,7 @@ class Admin::MembersController < ApplicationController
             session[:member_id] = new_member.id
             member = Member.find(new_member.id)
             account_update = member.build_account_detail(
-              subscribe_date: DateTime.now,
+              subscribe_date: start_date,
               expiry_date: DateTime.now,
               member_status: 1,
               gym_attendance_status: 0,
@@ -749,6 +755,7 @@ class Admin::MembersController < ApplicationController
         params.require(:member)
             .permit( :id,
                     :email,
+                    :start_date,
                     :password,
                     :password_confirmation,
                     :first_name,
