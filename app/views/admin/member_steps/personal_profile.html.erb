@@ -143,3 +143,17 @@
                 });
             </script>
         <% end %>
+        
+<% content_for :date do %>
+  <script type="text/javascript">
+    $(".datepicker").datetimepicker({
+     format: "mm/dd/yyyy",
+     autoclose: true,
+    });
+
+    $('.datepicker').on('changeDate', function(ev){
+        $(this).datepicker('hide');
+    });
+
+  </script>
+<% end %>

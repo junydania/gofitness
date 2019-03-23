@@ -68,8 +68,14 @@ class Admin::MemberStepsController < ApplicationController
             if check_code.nil? == true && @member.customer_code.nil?
                 updated_member_params = member_params
                 updated_member_params["date_of_birth"] = updated_member_params["date_of_birth"].empty? ? nil: Date.strptime(updated_member_params["date_of_birth"], '%m/%d/%Y').to_datetime
-                @member.update_attributes(updated_member_params)
-                render_wizard @member
+                begin
+                    @member.update_attributes(updated_member_params)
+                    render_wizard @member
+                rescue ActiveRecord::RecordNotUnique => e
+                    flash[:notice] = "Ensure phone number is unique"
+                    render_wizard    
+                end
+
             elsif !@member.customer_code.nil?
                 flash[:notice] = "Member already has a registered code! Update other records"
                 skip_step
@@ -77,9 +83,7 @@ class Admin::MemberStepsController < ApplicationController
             else 
                 flash[:notice] = "Customer Code already exists in the system"
                 render_wizard
-
             end
-
 
         when :next_of_kin
             @member.update_attributes(member_params)
@@ -169,7 +173,7 @@ class Admin::MemberStepsController < ApplicationController
                 http.verify_mode = OpenSSL::SSL::VERIFY_NONE
                 req = Net::HTTP::Post.new(uri.path, {'Content-Type' =>'application/json',  
                   'Authorization' => "Bearer #{ENV["PAYSTACK_PRIVATE_KEY"]}"})
-                req.body = payload.to_json
+                req.body = JSON.generate(payload)
                 res = http.request(req)
                 subscribe = JSON.parse(res.body)
             rescue => e
@@ -184,7 +188,7 @@ class Admin::MemberStepsController < ApplicationController
                                paystack_auth_code: auth_code,
                                paystack_cust_code: paystack_customer_code)
                 paystack_created_date = subscribe["data"]["createdAt"]
-                subscribe_date = Time.iso8601(paystack_created_date).strftime('%d-%m-%Y %H:%M:%S')
+                subscribe_date = set_subscribe_date
                 expiry_date, amount = set_expiry_date(subscribe_date), retrieve_amount
                 payment_method = retrieve_payment_method
                 subscription_status = 0
@@ -311,7 +315,6 @@ class Admin::MemberStepsController < ApplicationController
     end
 
 
-
     def retrieve_amount
         amount = @member.subscription_plan.cost
     end
@@ -323,33 +326,33 @@ class Admin::MemberStepsController < ApplicationController
 
 
     def set_subscribe_date
-        date = DateTime.now.strftime('%d-%m-%Y %H:%M:%S')
+        @member.account_detail.subscribe_date.strftime('%d-%m-%Y %H:%M:%S')
     end
 
     def set_expiry_date(subscribe_date)
-        expiry_date = DateTime.new
+        subscribe_date = @member.account_detail.subscribe_date
         if @member.subscription_plan.duration == "daily"
-            expiry_date =  (DateTime.parse(subscribe_date) + 1).strftime('%d-%m-%Y %H:%M:%S')
+            expiry_date =  (subscribe_date + 1.day).strftime('%d-%m-%Y %H:%M:%S')
         elsif @member.subscription_plan.duration == "weekly"
-            expiry_date =  (DateTime.parse(subscribe_date) + 7).strftime('%d-%m-%Y %H:%M:%S')
+            expiry_date =  (subscribe_date + 7.days).strftime('%d-%m-%Y %H:%M:%S')
         elsif @member.subscription_plan.duration == "monthly"
-            expiry_date =  (DateTime.parse(subscribe_date) + 30).strftime('%d-%m-%Y %H:%M:%S')
+            expiry_date =  (subscribe_date + 30.days).strftime('%d-%m-%Y %H:%M:%S')
         elsif @member.subscription_plan.duration == "quarterly"
-            expiry_date =  (DateTime.parse(subscribe_date) + 90).strftime('%d-%m-%Y %H:%M:%S')
+            expiry_date =  (subscribe_date + 90.days).strftime('%d-%m-%Y %H:%M:%S')
         elsif @member.subscription_plan.duration == "annually"
-            expiry_date = (DateTime.parse(subscribe_date).next_year).strftime('%d-%m-%Y %H:%M:%S')
+            expiry_date =  (subscribe_date.next_year).strftime('%d-%m-%Y %H:%M:%S')
         end
         expiry_date
     end
 
     def set_paystack_start_date
-        start_date = ""
+        date = @member.account_detail.subscribe_date
         if @member.subscription_plan.duration == "monthly"
-            start_date = DateTime.now.next_month.to_s
+            start_date = date.next_month.strftime('%FT%T%:z').to_s
         elsif @member.subscription_plan.duration == "quarterly"
-            start_date = (DateTime.now + 90).to_s
+            start_date = (date + 90.days).strftime('%FT%T%:z').to_s
         elsif @member.subscription_plan.duration == "annually"
-            start_date = DateTime.now.next_year.to_s
+            start_date = date.next_year.strftime('%FT%T%:z').to_s
         end
         return start_date
     end
