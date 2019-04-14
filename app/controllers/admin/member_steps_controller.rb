@@ -5,6 +5,8 @@ class Admin::MemberStepsController < ApplicationController
 
     # load_and_authorize_resource param_method: :member_params
 
+    skip_authorize_resource :only => :paystack_subscribe
+
     include Wicked::Wizard
     include Accounting
 

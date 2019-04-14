@@ -1,6 +1,9 @@
 class Admin::SubscriptionPlansController < ApplicationController
 
     load_and_authorize_resource param_method: :plan_param
+    
+    skip_authorize_resource :only => :check_recurring
+
 
     helper ApplicationHelper
 
