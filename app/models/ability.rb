@@ -16,7 +16,6 @@ class Ability
                                         HealthCondition,
                                         ImageUploader,
                                         LoyaltyHistory,
-                                        Loyalty,
                                         PauseHistory,
                                         PosTransaction,
                                         SubscriptionHistory,
@@ -28,8 +27,8 @@ class Ability
                               
       can [:update, :read], User, id: user.id
       
-      can [:read], [ SubscriptionPlan ]
-      
+      can [:read], [ SubscriptionPlan, Loyalty]
+
       cannot :destroy, [  FitnessGoal,
                           Feature, 
                           AttendanceRecord, 
