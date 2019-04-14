@@ -1,7 +1,9 @@
 class Admin::MembersController < ApplicationController
 
     load_and_authorize_resource param_method: :member_params
-      
+    
+    skip_authorize_resource :only => :send_paystack_invoice
+
     before_action :authenticate_user!
     
     before_action :find_member, only: [:renew_membership, 
@@ -112,7 +114,7 @@ class Admin::MembersController < ApplicationController
 
     def create
         member_exists = Member.find_by(email: member_params[:email])
-        if member_params["start_date"].empty?
+        if member_params['start_date'].nil?
           start_date = DateTime.now
         else
           start_date = Date.strptime(member_params["start_date"], '%m/%d/%Y').to_datetime

@@ -23,11 +23,13 @@ class Ability
                                         WalletDetail,
                                         WalletHistory,
                                         MemberHealthCondition,
-                                        Member
+                                        Member                                                    
                                       ]
                               
       can [:update, :read], User, id: user.id
-
+      
+      can [:read], [ SubscriptionPlan ]
+      
       cannot :destroy, [  FitnessGoal,
                           Feature, 
                           AttendanceRecord, 

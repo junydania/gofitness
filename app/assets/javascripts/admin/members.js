@@ -82,6 +82,7 @@ $(document).on("turbolinks:load", function() {
                         },
             error: function() {
                          alert('You failed to select a plan');
+                         $('.loader').modal('hide');
                     }
         });
 
