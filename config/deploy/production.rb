@@ -4,14 +4,14 @@ set :rails_env, "production"  # tell cap to run migrations using production env
 # role :web, %w{gofitnessadmin@209.97.186.174}
 # role :db,  %w{gofitnessadmin@209.97.186.174}
 set :host, '209.97.186.174'
-set :key, %w(~/.ssh/gofitness-prod-ci-key)
+set :key, %w(~/.ssh/gofitness_production)
 
 set :migration_role, :app
 set :ssh_options, {
     forward_agent: true,
     port: 7872,
     auth_methods: %w[publickey],
-    keys: %w(~/.ssh/gofitness-prod-ci-key),
+    keys: %w(~/.ssh/gofitness_production),
     user: fetch(:user)
 }
 

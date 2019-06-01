@@ -114,7 +114,7 @@ class Admin::MembersController < ApplicationController
 
     def create
         member_exists = Member.find_by(email: member_params[:email])
-        if member_params['start_date'].nil?
+        if member_params['start_date'].empty?
           start_date = DateTime.now
         else
           start_date = Date.strptime(member_params["start_date"], '%m/%d/%Y').to_datetime
