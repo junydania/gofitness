@@ -328,7 +328,6 @@ class Admin::MemberStepsController < ApplicationController
 
 
     def set_subscribe_date
-        binding.pry
         ## Hack to set start date for renewals
         if @member.account_detail.created_at < DateTime.now - 1.day
             date = DateTime.now
