@@ -151,7 +151,7 @@ class Admin::MemberStepsController < ApplicationController
         end
     end
 
-    
+
     def paystack_subscribe
         reference = params[:reference_code]
         transactions = PaystackTransactions.new(@paystackObj)
