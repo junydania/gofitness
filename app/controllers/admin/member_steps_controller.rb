@@ -160,7 +160,7 @@ class Admin::MemberStepsController < ApplicationController
             auth_code = (result["data"]["authorization"]["authorization_code"]).to_s
             paystack_customer_code = (result["data"]["customer"]["customer_code"]).to_s
             start_date = set_paystack_start_date.to_s
-            plan_code  = get_subscription_plan_code.to_s 
+            plan_code  = get_subscription_plan_code.to_s
             payload = {
                 :customer => paystack_customer_code,
                 :plan => plan_code,
@@ -328,11 +328,16 @@ class Admin::MemberStepsController < ApplicationController
 
 
     def set_subscribe_date
-        @member.account_detail.subscribe_date.strftime('%d-%m-%Y %H:%M:%S')
+        ## Hack to set start date for renewals
+        if @member.account_detail.created_at < DateTime.now
+            date = DateTime.now
+        else
+            date = @member.account_detail.subscribe_date
+        end
+        return date
     end
 
     def set_expiry_date(subscribe_date)
-        subscribe_date = @member.account_detail.subscribe_date
         if @member.subscription_plan.duration == "daily"
             expiry_date =  (subscribe_date + 1.day).strftime('%d-%m-%Y %H:%M:%S')
         elsif @member.subscription_plan.duration == "weekly"
@@ -348,7 +353,12 @@ class Admin::MemberStepsController < ApplicationController
     end
 
     def set_paystack_start_date
-        date = @member.account_detail.subscribe_date
+        if @member.account_detail.created_at < DateTime.now
+            date = DateTime.now
+        else
+            date = @member.account_detail.subscribe_date
+        end
+
         if @member.subscription_plan.duration == "monthly"
             start_date = date.next_month.strftime('%FT%T%:z').to_s
         elsif @member.subscription_plan.duration == "quarterly"
