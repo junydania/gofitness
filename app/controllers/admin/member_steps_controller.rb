@@ -152,7 +152,6 @@ class Admin::MemberStepsController < ApplicationController
     end
 
     def verify_transaction(reference)
-        binding.pry
         begin
             uri = URI("https://api.paystack.co/transaction/verify/#{reference}")
             http = Net::HTTP.new(uri.host, uri.port)
@@ -170,9 +169,7 @@ class Admin::MemberStepsController < ApplicationController
     end
 
     def paystack_subscribe
-        binding.pry
         reference = params[:reference_code]
-        # transactions = PaystackTransactions.new(@paystackObj)
         result = verify_transaction(reference)
         if result["status"] == true
             auth_code = (result["data"]["authorization"]["authorization_code"]).to_s
@@ -180,15 +177,15 @@ class Admin::MemberStepsController < ApplicationController
 
              ## Decided not use paystack start date because of the flexibility
              # of using manual start date at the point of registration
-            start_date = set_paystack_start_date.to_s
-            plan_code  = get_subscription_plan_code.to_s
+            start_date = set_paystack_next_charge_date
+            plan_code  = get_subscription_plan_code
             payload = {
                 :customer => paystack_customer_code,
                 :plan => plan_code,
                 :authorization => auth_code,
                 :start_date => start_date,
             }
-            subscribe = nil
+            subscribe = ''
             begin
                 uri = URI('https://api.paystack.co/subscription')
                 http = Net::HTTP.new(uri.host, uri.port)
@@ -236,12 +233,12 @@ class Admin::MemberStepsController < ApplicationController
             end
         else
             render  status: 400, json: { 
-                success: false 
+                message: "Transaction vertification with Paystack failed"
             }
-        end    
+        end
     end
-    
-    
+
+
     private
 
     def find_member
@@ -313,7 +310,7 @@ class Admin::MemberStepsController < ApplicationController
         end
         
     end
-    
+
     def create_subscription_history(subscribe_date, expiry_date, subscription_status)
         subscription_history = @member.subscription_histories.create(
             subscribe_date: subscribe_date,
@@ -373,27 +370,26 @@ class Admin::MemberStepsController < ApplicationController
         expiry_date
     end
 
-    def set_paystack_start_date
-        binding.pry
-        if @member.account_detail.created_at < DateTime.now - 1.day
+    # method to set the next start date Paystack should charge a customer
+    def set_paystack_next_charge_date
+        if @member.account_detail.created_at.to_date < Date.today - 1.day
             date = DateTime.now
         else
             date = @member.account_detail.subscribe_date
         end
-        start_date = date.strftime('%FT%T%:z').to_s
-
-        # if @member.subscription_plan.duration == "monthly"
-        #     start_date = date.next_month.strftime('%FT%T%:z').to_s
-        # elsif @member.subscription_plan.duration == "quarterly"
-        #     start_date = (date + 90.days).strftime('%FT%T%:z').to_s
-        # elsif @member.subscription_plan.duration == "annually"
-        #     start_date = date.next_year.strftime('%FT%T%:z').to_s
-        # end
+        if @member.subscription_plan.duration == "weekly"
+            start_date = date.next_week.strftime('%FT%T%:z').to_s
+        elsif @member.subscription_plan.duration == "monthly"
+            start_date = date.next_month.strftime('%FT%T%:z').to_s
+        elsif @member.subscription_plan.duration == "quarterly"
+            start_date = (date + 90.days).strftime('%FT%T%:z').to_s
+        elsif @member.subscription_plan.duration == "annually"
+            start_date = date.next_year.strftime('%FT%T%:z').to_s
+        end
         return start_date
     end
- 
+
     def get_subscription_plan_code
-        binding.pry
         @member.subscription_plan.paystack_plan_code
     end
 

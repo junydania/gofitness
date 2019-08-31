@@ -6,10 +6,10 @@ class Admin::MembersController < ApplicationController
 
     before_action :authenticate_user!
     
-    before_action :find_member, only: [:renew_membership, 
-                                       :pos_renewal, 
-                                       :cash_renewal, 
-                                       :check_paystack_subscription, 
+    before_action :find_member, only: [:renew_membership,
+                                       :pos_renewal,
+                                       :cash_renewal,
+                                       :check_paystack_subscription,
                                        :unsubscribe_membership, 
                                        :pause_subscription, 
                                        :cancel_pause,
@@ -19,7 +19,7 @@ class Admin::MembersController < ApplicationController
                                        :change_plan,
                                        :send_paystack_invoice ]
                                        
-    before_action :get_paystack_object, only: [:check_paystack_subscription, 
+    before_action :get_paystack_object, only: [:check_paystack_subscription,
                                                :paystack_renewal,
                                                :initiate_paystack_sub, 
                                                :unsubscribe_membership,
@@ -124,11 +124,13 @@ class Admin::MembersController < ApplicationController
           redirect_to admin_member_steps_path
         elsif member_exists.nil? && !member_params[:subscription_plan_id].empty?
           new_member = Member.new(member_params)
-          plan = SubscriptionPlan.find(new_member.subscription_plan_id) 
+          plan = SubscriptionPlan.find(new_member.subscription_plan_id)
           if plan.recurring == true
             payment = PaymentMethod.find_by(payment_system: 'Debit Card').id
             new_member.payment_method_id = payment
+            start_date = included_in_restricted_date?(start_date) ? start_date.at_beginning_of_month.next_month + 1.day : start_date
           end
+
           if new_member.save
             new_member.audits.last.user
             session[:member_id] = new_member.id
@@ -144,9 +146,17 @@ class Admin::MembersController < ApplicationController
             redirect_to admin_member_steps_path
           end
         else
-          flash[:error] = "Couldn't create member account! Ensure all fields are filled"
+          flash[:error] = "Couldn't create member account! Ensure all fields are filled!"
           render :new
         end
+    end
+
+    # Hack to set adjust subscribe start date it falls above 28th of the month
+    # Paystack does not permit subscription payment after 28th of every month.
+    # customers who walk into the gym after 28th will have their subscription started
+    # on the first day of the following month
+    def included_in_restricted_date?(start_date)
+      ["29", "30", "31"].include? start_date.strftime("%d")
     end
 
     def activate_account
@@ -678,30 +688,54 @@ class Admin::MembersController < ApplicationController
            audit_comment: "checked into the gym" )
     end
 
-
-
     def set_paystack_start_date
       start_date = ""
-      if @member.subscription_plan.duration == "monthly"
-          start_date = DateTime.now.next_month.to_s
+      if @member.subscription_plan.duration == "weekly"
+        start_date = date.next_week.strftime('%FT%T%:z').to_s
+      elsif @member.subscription_plan.duration == "monthly"
+          start_date = date.next_month.strftime('%FT%T%:z').to_s
       elsif @member.subscription_plan.duration == "quarterly"
-          start_date = (DateTime.now + 90).to_s
+          start_date = (date + 90.days).strftime('%FT%T%:z').to_s
       elsif @member.subscription_plan.duration == "annually"
-          start_date = DateTime.now.next_year.to_s
+          start_date = date.next_year.strftime('%FT%T%:z').to_s
       end
       return start_date
+    end
+
+    #Hack to set adjust subscribe start date it falls above 28th of the month
+    # Paystack does not permit subscription payment after 28th of every month.
+    # customers who walk into the gym after 28th will have their subscription started
+    # on the first day of the following month
+    def subscribe_date_consistency(date)
+
+
     end
 
     def get_subscription_plan_code
       @member.subscription_plan.paystack_plan_code
     end
 
+    def verify_transaction(reference)
+      begin
+          uri = URI("https://api.paystack.co/transaction/verify/#{reference}")
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.use_ssl = true
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+          req = Net::HTTP::Get.new(uri.path, {
+              'Authorization' => "Bearer #{ENV["PAYSTACK_PRIVATE_KEY"]}"
+              }
+          )
+          res = http.request(req)
+          subscribe = JSON.parse(res.body)
+      rescue => e
+          puts "failed #{e}"
+      end
+    end
+
     def paystack_subscribe
       reference = params[:reference_code]
-      transactions = PaystackTransactions.new(@paystackObj)
-      result = transactions.verify(reference)
-
-      if result["status"] == true     
+      result = verify_transaction(reference)
+      if result["status"] == true
           auth_code = (result["data"]["authorization"]["authorization_code"]).to_s
           paystack_customer_code = (result["data"]["customer"]["customer_code"]).to_s
           start_date = set_paystack_start_date
