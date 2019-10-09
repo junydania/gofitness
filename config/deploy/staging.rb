@@ -1,9 +1,9 @@
 set :rails_env, "staging"  # tell cap to run migrations using staging env
 
-# role :app, %w{gofitnessadmin@35.196.34.34}
-# role :web, %w{gofitnessadmin@35.196.34.34}
-# role :db,  %w{gofitnessadmin@35.196.34.34}
-set :host, '35.196.34.34'
+# role :app, %w{gofitnessadmin@35.193.80.247}
+# role :web, %w{gofitnessadmin@35.193.80.247}
+# role :db,  %w{gofitnessadmin@35.193.80.247}
+set :host, '35.193.80.247'
 set :key, %w(~/.ssh/gofitness_staging)
 
 set :migration_role, :app
@@ -19,5 +19,5 @@ set :ssh_options, {
 # set :migration_servers, -> { primary(fetch(:migration_role)) }
 
 # Define server(s)
-server '35.196.34.34', user: 'gofitnessadmin', roles: %w{app web db}, port: 7872, primary: true
+server '35.193.80.247', user: 'gofitnessadmin', roles: %w{app web db}, port: 7872, primary: true
 
