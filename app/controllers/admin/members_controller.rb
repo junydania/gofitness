@@ -29,6 +29,9 @@ class Admin::MembersController < ApplicationController
                                                :send_paystack_invoice ]
 
     require 'securerandom'
+    require 'payment_processing'
+    require 'accounting'
+
 
     def index
       @filterrific = initialize_filterrific(
@@ -301,7 +304,6 @@ class Admin::MembersController < ApplicationController
       end
     end
 
-
     def pos_renewal
       transaction_reference = member_params["pos_transactions_attributes"]["0"]["transaction_reference"]
       transaction_success_param = member_params["pos_transactions_attributes"]["0"]["transaction_success"]
@@ -323,6 +325,7 @@ class Admin::MembersController < ApplicationController
     end
 
     def paystack_renewal
+      binding.pry
       if check_paystack_subscription == true
         disable_current_paystack_subscription
         paystack_subscribe
@@ -634,6 +637,7 @@ class Admin::MembersController < ApplicationController
     end
    
     def check_paystack_subscription
+      binding.pry
       @member = Member.find(params[:id].to_i)
       if @member.paystack_subscription_code.nil?
         return false
@@ -733,62 +737,33 @@ class Admin::MembersController < ApplicationController
     end
 
     def paystack_subscribe
-      reference = params[:reference_code]
-      result = verify_transaction(reference)
-      if result["status"] == true
-          auth_code = (result["data"]["authorization"]["authorization_code"]).to_s
-          paystack_customer_code = (result["data"]["customer"]["customer_code"]).to_s
-          start_date = set_paystack_start_date
-          plan_code =  get_subscription_plan_code 
-          payload = {
-              :customer => paystack_customer_code,
-              :plan => plan_code.to_s,
-              :authorization => auth_code,
-              :start_date => start_date,
-          }
-          subscribe = nil            
-          begin
-              uri = URI('https://api.paystack.co/subscription')
-              http = Net::HTTP.new(uri.host, uri.port)
-              http.use_ssl = true
-              http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-              req = Net::HTTP::Post.new(uri.path, {'Content-Type' =>'application/json',  
-                'Authorization' => "Bearer #{ENV["PAYSTACK_PRIVATE_KEY"]}"})
-              req.body = payload.to_json
-              res = http.request(req)
-              subscribe = JSON.parse(res.body)
-          rescue => e
-              puts "failed #{e}"
-          end
-                                                                        
-          if subscribe["status"] == true
-              subscription_code = subscribe["data"]["subscription_code"]
-              email_token = subscribe["data"]["email_token"]
-              @member.update(paystack_subscription_code: subscription_code,
-                             paystack_email_token: email_token,
-                             paystack_auth_code: auth_code,
-                             paystack_cust_code: paystack_customer_code)
+        options = {
+            reference: params[:reference_code],
+            member: @member,
+            paystack_key: ENV["PAYSTACK_PRIVATE_KEY"],
+            staff_name: current_user
+        }
+        subscribe_status = PaymentProcessing::Subscribe.new(options).paystack_subscribe
 
-              paystack_created_date = subscribe["data"]["createdAt"]
-              subscribe_date = Time.iso8601(paystack_created_date).strftime('%d-%m-%Y %H:%M:%S')
-              expiry_date, amount = set_expiry_date(subscribe_date), retrieve_amount
-              recurring = true
-              subscription_status = 0
-              payment_method = retrieve_payment_method
-              create_charge
-              update_all_records(subscribe_date, expiry_date, recurring, amount, payment_method, subscription_status)
-              options = {description: 'Member Renewal', amount: amount}
-              Accounting::Entry.new(options).card_entry          
-              render status: 200, json: {
+        if subscribe_status == 200
+
+            render status: 200, json: {
                 message: "success"
-              }
-          end
-      else
-          render  status: 400, json: { 
-              success: false 
-          }
-      end    
+            }
+        elsif subscribe_status == 400
+
+            render  status: 400, json: {
+                message: "Transaction vertification with Paystack failed"
+            }
+        elsif subscribe_status == 500
+
+            render status: 400, json: {
+                message: "failed to enable subscription"
+            }
+        end
+
     end
+
 
 
     def member_params
