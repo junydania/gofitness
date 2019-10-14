@@ -1,4 +1,4 @@
- 
+
 //Code to display subscription plan with selectize
 $(document).on("turbolinks:load", function() {
 
@@ -122,7 +122,7 @@ $(document).on("turbolinks:load", function() {
         });
     });
 
-   
+
     $("#paystack-renew-button").click(function(event) {
 
         if(($('#renew-cash-box').is(':visible') == true) || ($('#renew-pos-box').is(':visible') == true)) {
@@ -177,7 +177,7 @@ $(document).on("turbolinks:load", function() {
                                        </div>`
                             $("#reference-code").append(content);
                             $("#reference-code").fadeIn('fast');
-                            $("#manual-subscribe").fadeIn('fast');                            
+                            $("#manual-subscribe").fadeIn('fast');
                       }
             });
         },

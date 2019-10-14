@@ -2,6 +2,7 @@ class Admin::MemberStepsController < ApplicationController
 
     require 'accounting'
     require 'securerandom'
+    require 'payment_processing'
 
     # load_and_authorize_resource param_method: :member_params
 
@@ -9,9 +10,9 @@ class Admin::MemberStepsController < ApplicationController
 
     include Wicked::Wizard
     include Accounting
+    include PaymentProcessing
 
     before_action :authenticate_user!
-    before_action :get_paystack_object, only: [:paystack_subscribe]
     before_action :find_member
     steps :payment, :personal_profile, :next_of_kin, :image_capture
 
@@ -47,7 +48,7 @@ class Admin::MemberStepsController < ApplicationController
                 pos_transaction_status = member_params[:pos_transactions_attributes]["0"]["transaction_success"].to_sym
                 if  pos_transaction_status === :true
                     @member.pos_transactions.build({
-                            transaction_success: "success", 
+                            transaction_success: "success",
                             transaction_reference: "Gym Membership",
                             processed_by: current_user.fullname } )
                     if @member.save
@@ -94,7 +95,6 @@ class Admin::MemberStepsController < ApplicationController
         
     end
 
-    
     def finish_wizard_path
         member_profile_path(@member)
         # session.delete(:member_id)
@@ -123,13 +123,17 @@ class Admin::MemberStepsController < ApplicationController
         account_update = update_account_detail(subscribe_date, expiry_date)
         amount, payment_method, subscription_status = retrieve_amount, retrieve_payment_method, 0
         if account_update.save
-            create_subscription_history(subscribe_date, expiry_date, subscription_status)
-            create_loyalty_history(amount)
-            create_general_transaction(subscribe_date, amount, payment_method)
+            subscription_history_options = {
+                subscribe_date: subscribe_date,
+                expiry_date: expiry_date,
+                amount: amount,
+                payment_method: payment_method,
+                member: @member,
+                staff_name: current_user,
+                subscription_status: subscription_status }
+            PaymentProcessing::Subscribe.new(subscription_history_options).update_subscription_histories
             options = {"description": 'New Subscription', "amount": amount}
-            Accounting::Entry.new(options).cash_entry  
-            intiate_wallet_account
-            create_attendance_record
+            Accounting::Entry.new(options).cash_entry
         end
     end
 
@@ -141,108 +145,50 @@ class Admin::MemberStepsController < ApplicationController
         amount, payment_method = retrieve_amount, retrieve_payment_method
         subscription_status = 0
         if account_update.save
-            create_subscription_history(subscribe_date, expiry_date, subscription_status)
-            create_loyalty_history(amount)
-            create_general_transaction(subscribe_date, amount, payment_method)
+            subscription_history_options = {
+                subscribe_date: subscribe_date,
+                expiry_date: expiry_date,
+                amount: amount,
+                payment_method: payment_method,
+                member: @member,
+                staff_name: current_user,
+                subscription_status: subscription_status }
             options = {"description": 'New Subscription', "amount": amount}
-            Accounting::Entry.new(options).card_entry  
-            intiate_wallet_account
-            create_attendance_record
+            Accounting::Entry.new(options).card_entry
         end
     end
 
-    def verify_transaction(reference)
-        begin
-            uri = URI("https://api.paystack.co/transaction/verify/#{reference}")
-            http = Net::HTTP.new(uri.host, uri.port)
-            http.use_ssl = true
-            http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-            req = Net::HTTP::Get.new(uri.path, {
-                'Authorization' => "Bearer #{ENV["PAYSTACK_PRIVATE_KEY"]}"
-                }
-            )
-            res = http.request(req)
-            subscribe = JSON.parse(res.body)
-        rescue => e
-            puts "failed #{e}"
-        end
-    end
 
     def paystack_subscribe
-        reference = params[:reference_code]
-        result = verify_transaction(reference)
-        if result["status"] == true
-            auth_code = (result["data"]["authorization"]["authorization_code"]).to_s
-            paystack_customer_code = (result["data"]["customer"]["customer_code"]).to_s
-
-             ## Decided not use paystack start date because of the flexibility
-             # of using manual start date at the point of registration
-            start_date = set_paystack_next_charge_date
-            plan_code  = get_subscription_plan_code
-            payload = {
-                :customer => paystack_customer_code,
-                :plan => plan_code,
-                :authorization => auth_code,
-                :start_date => start_date,
+        options = {
+            reference: params[:reference_code],
+            member: @member,
+            paystack_key: ENV["PAYSTACK_PRIVATE_KEY"],
+            staff_name: current_user
+        }
+        subscribe_status = PaymentProcessing::Subscribe.new(options).paystack_subscribe
+        if subscribe_status == 200
+            render status: 200, json: {
+                message: "success"
             }
-            subscribe = ''
-            begin
-                uri = URI('https://api.paystack.co/subscription')
-                http = Net::HTTP.new(uri.host, uri.port)
-                http.use_ssl = true
-                http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-                req = Net::HTTP::Post.new(uri.path, {'Content-Type' =>'application/json',
-                  'Authorization' => "Bearer #{ENV["PAYSTACK_PRIVATE_KEY"]}"})
-                req.body = JSON.generate(payload)
-                res = http.request(req)
-                subscribe = JSON.parse(res.body)
-            rescue => e
-                puts "failed #{e}"
-            end
-
-            if subscribe["status"] == true
-                subscription_code = subscribe["data"]["subscription_code"].to_s
-                email_token = subscribe["data"]["email_token"].to_s
-                @member.update(paystack_subscription_code: subscription_code,
-                               paystack_email_token: email_token,
-                               paystack_auth_code: auth_code,
-                               paystack_cust_code: paystack_customer_code)
-                paystack_created_date = subscribe["data"]["createdAt"]
-                subscribe_date = set_subscribe_date
-                expiry_date, amount = set_expiry_date(subscribe_date), retrieve_amount
-                payment_method = retrieve_payment_method
-                subscription_status = 0
-                create_charge
-                account_update = update_account_detail(subscribe_date, expiry_date)
-                if account_update.save
-                    create_subscription_history(subscribe_date, expiry_date, subscription_status)
-                    create_loyalty_history(amount)
-                    create_general_transaction(subscribe_date, amount, payment_method)
-                    options = {"description": 'New Subscription', "amount": amount}
-                    Accounting::Entry.new(options).card_entry  
-                    intiate_wallet_account
-                    create_attendance_record
-                end
-                render status: 200, json: {
-                    message: "success"
-                }
-            else
-                render status: 400, json: {
-                    message: "failed to enable subscription"
-                }
-            end
-        else
-            render  status: 400, json: { 
+        elsif subscribe_status == 400
+            render  status: 400, json: {
                 message: "Transaction vertification with Paystack failed"
             }
+        elsif subscribe_status == 500
+            render status: 400, json: {
+                message: "failed to enable subscription"
+            }
         end
+
     end
+
 
 
     private
 
     def find_member
-        @member = Member.find(session[:member_id]) 
+        @member = Member.find(session[:member_id])
     end
 
     def update_account_detail(subscribe_date, expiry_date)
@@ -260,30 +206,6 @@ class Admin::MemberStepsController < ApplicationController
                                     audit_comment: "paid for new membership plan" )
     end
 
-    def intiate_wallet_account
-        if @member.wallet_detail.nil?
-            wallet_update  = @member.build_wallet_detail(
-                current_balance: 0,
-                total_amount_funded: 0,
-                amount_last_funded: 0, 
-                total_amount_used: 0,
-                wallet_status: 1,
-                wallet_expiry_date: DateTime.now,
-                audit_comment: "New wallet account created"
-            )
-            wallet_update.save
-        end
-    end
-
-    def create_loyalty_history(amount)
-        points = get_loyalty_points(amount)
-        loyalty_history = @member.loyalty_histories.create(
-            points_earned: points,
-            points_redeemed: 0,
-            loyalty_transaction_type: 0,
-            loyalty_balance: points,
-            )
-    end
 
     def get_loyalty_points(amount)
         point = Loyalty.find_by(loyalty_type: "register").loyalty_points_percentage ||= 15
@@ -297,48 +219,23 @@ class Admin::MemberStepsController < ApplicationController
     def retrieve_payment_method
         @member.payment_method.payment_system
     end
-    
+
     def create_charge
         charge = @member.charges.new(service_plan: retrieve_gym_plan,
                                     amount: retrieve_amount,
                                     payment_method: retrieve_payment_method,
                                     duration: @member.subscription_plan.duration,
-                                    gofit_transaction_id: SecureRandom.hex(4) 
+                                    gofit_transaction_id: SecureRandom.hex(4)
                                     )
         if charge.save
             MemberMailer.new_subscription(@member).deliver_later
         end
-        
-    end
 
-    def create_subscription_history(subscribe_date, expiry_date, subscription_status)
-        subscription_history = @member.subscription_histories.create(
-            subscribe_date: subscribe_date,
-            expiry_date: expiry_date,
-            subscription_type: 0,
-            subscription_plan: retrieve_gym_plan,
-            amount: retrieve_amount,
-            payment_method: retrieve_payment_method,
-            member_status: 0,
-            subscription_status: subscription_status
-        )
     end
-
-    def create_attendance_record
-        @member.attendance_records.create(
-            checkin_date: DateTime.now,
-            checkout_date: nil,
-            membership_status: @member.account_detail.member_status,
-            membership_plan: @member.subscription_plan.plan_name,
-            staff_on_duty: current_user.fullname,
-            audit_comment: "checked into the gym" )
-    end
-
 
     def retrieve_amount
         amount = @member.subscription_plan.cost
     end
-
 
     def retrieve_gym_plan
         plan = @member.subscription_plan.plan_name
@@ -370,52 +267,6 @@ class Admin::MemberStepsController < ApplicationController
         expiry_date
     end
 
-    # method to set the next start date Paystack should charge a customer
-    def set_paystack_next_charge_date
-        if @member.account_detail.created_at.to_date < Date.today - 1.day
-            date = DateTime.now
-        else
-            date = @member.account_detail.subscribe_date
-        end
-        if @member.subscription_plan.duration == "weekly"
-            start_date = date.next_week.strftime('%FT%T%:z').to_s
-        elsif @member.subscription_plan.duration == "monthly"
-            start_date = date.next_month.strftime('%FT%T%:z').to_s
-        elsif @member.subscription_plan.duration == "quarterly"
-            start_date = (date + 90.days).strftime('%FT%T%:z').to_s
-        elsif @member.subscription_plan.duration == "annually"
-            start_date = date.next_year.strftime('%FT%T%:z').to_s
-        end
-        return start_date
-    end
-
-    def get_subscription_plan_code
-        @member.subscription_plan.paystack_plan_code
-    end
-
-
-    def get_paystack_object
-        @paystackObj = Paystack.new
-    end
-
-
-    def create_general_transaction(subscribe_date, amount, payment_method)
-        GeneralTransaction.create(
-            member_fullname: @member.fullname,
-            transaction_type: 0,
-            subscribe_date: subscribe_date,
-            expiry_date: set_expiry_date(subscribe_date),
-            staff_responsible: current_user.fullname,
-            payment_method: payment_method,
-            loyalty_earned: get_loyalty_points(amount),
-            loyalty_redeemed: 0,
-            membership_plan: retrieve_gym_plan,
-            membership_status: 0,
-            customer_code: @member.customer_code,
-            member_email: @member.email,
-            loyalty_type: 0,
-            amount: amount )
-    end
 
     def member_params
         params.require(:member)
