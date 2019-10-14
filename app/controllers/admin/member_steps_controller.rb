@@ -48,7 +48,7 @@ class Admin::MemberStepsController < ApplicationController
                 pos_transaction_status = member_params[:pos_transactions_attributes]["0"]["transaction_success"].to_sym
                 if  pos_transaction_status === :true
                     @member.pos_transactions.build({
-                            transaction_success: "success", 
+                            transaction_success: "success",
                             transaction_reference: "Gym Membership",
                             processed_by: current_user.fullname } )
                     if @member.save
@@ -167,25 +167,22 @@ class Admin::MemberStepsController < ApplicationController
             staff_name: current_user
         }
         subscribe_status = PaymentProcessing::Subscribe.new(options).paystack_subscribe
-
         if subscribe_status == 200
-
             render status: 200, json: {
                 message: "success"
             }
         elsif subscribe_status == 400
-
             render  status: 400, json: {
                 message: "Transaction vertification with Paystack failed"
             }
         elsif subscribe_status == 500
-
             render status: 400, json: {
                 message: "failed to enable subscription"
             }
         end
 
     end
+
 
 
     private
