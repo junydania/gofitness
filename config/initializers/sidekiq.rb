@@ -4,6 +4,9 @@ Sidekiq.configure_server do |config|
     if File.exists?(schedule_file)
         Sidekiq::Cron::Job.load_from_hash YAML.load_file(schedule_file)
     end
+    config.server_middleware do |chain|
+        chain.add Sidekiq::Middleware::Server::SentryErrorLogger
+    end
 end
 
 Sidekiq.configure_client do |config|

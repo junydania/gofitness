@@ -22,12 +22,12 @@ module PaymentProcessing
                 http.verify_mode = OpenSSL::SSL::VERIFY_NONE
                 req = Net::HTTP::Get.new(uri.path, {
                     'Authorization' => "Bearer #{@paystack_key}"
-                }
-                )
+                })
                 res = http.request(req)
                 subscribe = JSON.parse(res.body)
             rescue => e
                 puts "failed #{e}"
+                Raven.capture_exception(e)
             end
         end
 
@@ -60,6 +60,7 @@ module PaymentProcessing
                     subscribe = JSON.parse(res.body)
                 rescue => e
                     puts "failed #{e}"
+                    Raven.capture_exception(e)
                 end
 
                 if subscribe["status"] == true

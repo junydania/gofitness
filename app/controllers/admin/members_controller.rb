@@ -145,7 +145,7 @@ class Admin::MembersController < ApplicationController
               gym_attendance_status: 0,
               audit_comment: "New account created for member")
             account_update.save
-            flash[:notice] = "Receive Payment & Complete the Registration Process"
+            flash[:notice] = "Collect Payment & Complete the Registration Process"
             redirect_to admin_member_steps_path
           end
         else
@@ -157,7 +157,7 @@ class Admin::MembersController < ApplicationController
     # Hack to set adjust subscribe start date it falls above 28th of the month
     # Paystack does not permit subscription payment after 28th of every month.
     # customers who walk into the gym after 28th will have their subscription started
-    # on the first day of the following month
+    # on the second day of the following month
     def included_in_restricted_date?(start_date)
       ["29", "30", "31"].include? start_date.strftime("%d")
     end
@@ -190,7 +190,7 @@ class Admin::MembersController < ApplicationController
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = true
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-        req = Net::HTTP::Post.new(uri.path, {'Content-Type' =>'application/json',  
+        req = Net::HTTP::Post.new(uri.path, {'Content-Type' =>'application/json',
           'Authorization' => "Bearer #{ENV["PAYSTACK_PRIVATE_KEY"]}"})
         req.body = payload.to_json
         res = http.request(req)

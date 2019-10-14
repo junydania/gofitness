@@ -13,7 +13,6 @@ class Admin::MemberStepsController < ApplicationController
     include PaymentProcessing
 
     before_action :authenticate_user!
-    before_action :get_paystack_object, only: [:paystack_subscribe]
     before_action :find_member
     steps :payment, :personal_profile, :next_of_kin, :image_capture
 

@@ -37,27 +37,27 @@
                                 <h4 class="card-title">Create New Member</h4>
                                 <%= form_for(@member, html: {class: 'form-group m-t-40' }) do |f| %>
                                     <div class="form-group">
-                                        <%= f.label :first_name, 'First Name' %>
+                                        <%= f.label :first_name, 'First Name*' %>
                                         <%= f.text_field :first_name, class: 'form-control form-control-line' %>
                                     </div>
                                      <div class="form-group">
-                                        <%= f.label :last_name, 'Last Name' %>
+                                        <%= f.label :last_name, 'Last Name*' %>
                                         <%= f.text_field :last_name, class: 'form-control form-control-line' %>
                                     </div>
                                     <div class="form-group">
-                                        <%= f.label :email, 'Email' %>
+                                        <%= f.label :email, 'Email*' %>
                                         <%= f.email_field :email, autofocus: true, class: 'form-control' %>
                                     </div>
                                     <div class="form-group">
-                                         <%= f.label :subscription_plan_id, 'Subscription Plan' %>
+                                         <%= f.label :subscription_plan_id, 'Subscription Plan*' %>
                                          <%= f.select(:subscription_plan_id, SubscriptionPlan.all.pluck(:plan_name, :id), { include_blank: "Select a Subscription Plan" }, {class: "form-control" }) %>
                                     </div>
                                     <div class="form-group hide payment_method_field">
-                                         <%= f.label :payment_method_id, 'Payment Method' %>
+                                         <%= f.label :payment_method_id, 'Payment Method*' %>
                                          <%= f.select(:payment_method_id, PaymentMethod.all.pluck(:payment_system, :id), { include_blank: "Select a Payment Method" }, {class: "form-control" }) %>
                                     </div>
                                     <div class="form-group">
-                                         <%= f.label :fitness_goal_id, 'Fitness Goal' %>
+                                         <%= f.label :fitness_goal_id, 'Fitness Goal*' %>
                                         <%= f.select(:fitness_goal_id, FitnessGoal.all.pluck(:goal_name, :id), { include_blank: "Select a Fitness Goal" }, {class: "form-control" }) %>
                                     </div>
                                     <% if current_user.role == 'manager' %>
