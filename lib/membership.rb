@@ -15,7 +15,7 @@ module Membership
             @expiry_date = set_expiry_date
         end
 
-        def call         
+        def call
             update_account_detail
             create_loyalty_history
             create_subscription_history

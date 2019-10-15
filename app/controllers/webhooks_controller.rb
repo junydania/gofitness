@@ -18,19 +18,17 @@ class WebhooksController < ApplicationController
       digest = OpenSSL::Digest.new('sha512')
       hash = OpenSSL::HMAC.hexdigest(digest, SECRET_KEY, data)
       unless hash != request_headers["x-paystack-signature"]
-        if payload['data']['status'] == 'success'
+        if payload['event'] == 'charge.success' && payload['data']['status'] == 'success'
           member = get_member(payload)
           event_charge_date = Date.strptime(payload['data']['paid_at']).to_date
           if member && event_charge_date != member.account_detail.subscribe_date.to_date
             if member.paystack_charges.empty? || member.paystack_charges.last.created_at.today? == false
               amount = payload["data"]["amount"]
               options = process_payload(payload, member)
-              ProcessWebhookJob.perform_now(options)
+              ProcessWebhookJob.perform_later options
               head :ok
             else
-              render status: 404, json: {
-                message: "Member not found or member's account record already updated!"
-              }
+              head :unprocessable_entity
             end
           end
         end 
