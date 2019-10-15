@@ -31,7 +31,7 @@ class WebhooksController < ApplicationController
               head :unprocessable_entity
             end
           end
-        end 
+        end
       end
     else
       render status: 401, json: {
