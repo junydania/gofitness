@@ -325,7 +325,6 @@ class Admin::MembersController < ApplicationController
     end
 
     def paystack_renewal
-      binding.pry
       if check_paystack_subscription == true
         disable_current_paystack_subscription
         paystack_subscribe
@@ -637,7 +636,6 @@ class Admin::MembersController < ApplicationController
     end
    
     def check_paystack_subscription
-      binding.pry
       @member = Member.find(params[:id].to_i)
       if @member.paystack_subscription_code.nil?
         return false
