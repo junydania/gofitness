@@ -40,6 +40,8 @@ class WebhooksController < ApplicationController
     end
   end
 
+
+
   def process_payload(payload, member)
     amount = payload["data"]["amount"]
     description = "Membership Renewal Paystack"
