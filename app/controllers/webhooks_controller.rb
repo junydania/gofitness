@@ -20,7 +20,8 @@ class WebhooksController < ApplicationController
       unless hash != request_headers["x-paystack-signature"]
         if payload['data']['status'] == 'success'
           member = get_member(payload)
-          if member
+          event_charge_date = Date.strptime(payload['data']['paid_at']).to_date
+          if member && event_charge_date != member.account_detail.subscribe_date.to_date
             if member.paystack_charges.empty? || member.paystack_charges.last.created_at.today? == false
               amount = payload["data"]["amount"]
               options = process_payload(payload, member)

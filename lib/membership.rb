@@ -6,13 +6,13 @@ module Membership
             @member = Member.find(options['member_id'])
             @paid_date = options['data']['paid_at']
             @subscribe_date = @paid_date
-            @charge_plan =  options['data']['plan']['plan_code']
+            @charge_plan = retrieve_gym_plan
             @channel = options['data']['authorization']['channel']
-            @expiry_date = set_expiry_date
             @amount = options['data']['amount'].to_i / 100
             @auth_code = options['data']['authorization']['authorization_code']
             @transaction_reference = options['data']['reference']
             @subscription_status = 0
+            @expiry_date = set_expiry_date
         end
 
         def call         
@@ -24,6 +24,7 @@ module Membership
             update_member_paystack_auths
             process_charge_success
         end
+
 
         def process_charge_success
             @member.paystack_charges.create(
@@ -119,19 +120,17 @@ module Membership
     
 
         def retrieve_gym_plan
-            plan = @member.subscription_plan.plan_name
-            return plan
+            @member.subscription_plan.plan_name
         end
-    
-    
+
+        
         def set_subscribe_date
             date = DateTime.now.strftime('%d-%m-%Y %H:%M:%S')
         end
     
 
         def set_expiry_date
-            expiry_date = DateTime.new
-            plan_duration = SubscriptionPlan.find_by(paystack_plan_code: @charge_plan).duration
+            plan_duration = @member.subscription_plan.duration
             if plan_duration == "daily"
                 expiry_date =  (DateTime.parse(@subscribe_date) + 1).strftime('%d-%m-%Y %H:%M:%S')
             elsif plan_duration == "weekly"
@@ -151,7 +150,6 @@ module Membership
             @member.subscription_plan.paystack_plan_code
         end
 
-        
         def create_general_transaction
             GeneralTransaction.create(
                 member_fullname: @member.fullname,
@@ -171,3 +169,4 @@ module Membership
         end 
     end
 end
+
