@@ -117,10 +117,10 @@ class Admin::MembersController < ApplicationController
 
     def create
         member_exists = Member.find_by(email: member_params[:email])
-        if member_params['start_date'].empty?
+        if !member_params.key?("start_date")
           start_date = DateTime.now
         else
-          start_date = Date.strptime(member_params["start_date"], '%m/%d/%Y').to_datetime
+          start_date = !member_params["start_date"].empty? ? Date.strptime(member_params["start_date"], '%m/%d/%Y').to_datetime : DateTime.now
         end
         if !member_exists.nil?
           flash[:error] = "Customer Already Exists!"
