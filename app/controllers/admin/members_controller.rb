@@ -21,7 +21,7 @@ class Admin::MembersController < ApplicationController
                                        
     before_action :get_paystack_object, only: [:check_paystack_subscription,
                                                :paystack_renewal,
-                                               :initiate_paystack_sub, 
+                                               :initiate_paystack_sub,
                                                :unsubscribe_membership,
                                                :pause_subscription,
                                                :cancel_pause,
@@ -624,7 +624,7 @@ class Admin::MembersController < ApplicationController
   end
 
     def find_member
-      @member = Member.find(params[:id]) 
+      @member = Member.find(params[:id])
     end
 
     def get_paystack_object
@@ -655,10 +655,25 @@ class Admin::MembersController < ApplicationController
     def disable_current_paystack_subscription
       paystack_subscription_code = @member.paystack_subscription_code
       email_token = @member.paystack_email_token
-      subscription = initiate_paystack_sub
-      result = subscription.disable(
-				:code => paystack_subscription_code,
-				:token => email_token )
+      payload = {
+        :code => paystack_subscription_code,
+        :token => email_token,
+      }
+      begin
+        uri = URI('https://api.paystack.co/subscription/disable')
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        req = Net::HTTP::Post.new(uri.path, {'Content-Type' =>'application/json',
+                                              'Authorization' => "Bearer #{ENV["PAYSTACK_PRIVATE_KEY"]}" })
+        req.body = JSON.generate(payload)
+        res = http.request(req)
+        result = JSON.parse(res.body)
+      rescue => e
+          puts "failed #{e}"
+          Raven.capture_exception(e)
+      end
+      return result
     end
 
 
