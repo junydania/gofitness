@@ -8,7 +8,7 @@ class Member < ApplicationRecord
   has_associated_audits
 
   include ImageUploader[:image]
-  
+
   
     has_one  :account_detail, :dependent => :destroy
     accepts_nested_attributes_for :account_detail, update_only: true

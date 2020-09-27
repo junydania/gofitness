@@ -50,7 +50,7 @@
                                     </div>
                                     <div class="form-group">
                                          <%= f.label :subscription_plan_id, 'Subscription Plan*' %>
-                                         <%= f.select(:subscription_plan_id, SubscriptionPlan.all.pluck(:plan_name, :id), { include_blank: "Select a Subscription Plan" }, {class: "form-control" }) %>
+                                         <%= f.select(:subscription_plan_id, SubscriptionPlan.active_plans.pluck(:plan_name, :id), { include_blank: "Select a Subscription Plan" }, {class: "form-control" }) %>
                                     </div>
                                     <div class="form-group hide payment_method_field">
                                          <%= f.label :payment_method_id, 'Payment Method*' %>

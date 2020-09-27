@@ -116,7 +116,6 @@ class Admin::MembersController < ApplicationController
 
 
     def create
-      binding.pry
         member_exists = Member.find_by(email: member_params[:email])
         if !member_params.key?("start_date")
           start_date = DateTime.now

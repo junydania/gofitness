@@ -54,13 +54,14 @@ class Admin::SubscriptionPlansController < ApplicationController
 
 
     def update
+        binding.pry
         if @plan.paystack_plan_code.nil?
-            if @plan.update(plan_param) 
+            if @plan.update(plan_param)
                 redirect_to admin_subscription_plan_path(@plan) 
             else
                 flash[:error] = "#{@plan.errors.full_messages.first}"
                 redirect_to edit_admin_subscription_plan_path
-            end         
+            end
         else
             plan_id = @plan.paystack_plan_code
             paystackObj = instantiate_paystack
@@ -91,7 +92,7 @@ class Admin::SubscriptionPlansController < ApplicationController
         return paystackObj
     end  
 
-    def fetch_paystack_plan(plan_id, paystackObj)        
+    def fetch_paystack_plan(plan_id, paystackObj)
         plans = PaystackPlans.new(paystackObj)
         result = plans.get(plan_id)
     end
@@ -109,6 +110,7 @@ class Admin::SubscriptionPlansController < ApplicationController
 			)
     end
 
+
     def update_plan_record
         if @plan.update(plan_param)
             flash[:notice] = "Plan Updated"
@@ -118,7 +120,7 @@ class Admin::SubscriptionPlansController < ApplicationController
             redirect_to edit_admin_subscription_plan_path
         end
     end
-    
+
     def failed_plan_fetch
         flash[:notice] = "Couldn't retrieve plan from Paystack"
         redirect_to edit_admin_subscription_plan_path
@@ -153,6 +155,7 @@ class Admin::SubscriptionPlansController < ApplicationController
             .permit(:plan_name,
                     :cost,
                     :description,
+                    :status,
                     :duration,
                     :group_plan,
                     :recurring,
