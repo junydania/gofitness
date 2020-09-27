@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181111144949) do
+ActiveRecord::Schema.define(version: 20200927104011) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -218,6 +218,13 @@ ActiveRecord::Schema.define(version: 20181111144949) do
     t.index ["phone_number"], name: "index_members_on_phone_number", unique: true
     t.index ["referring_customer_id"], name: "index_members_on_referring_customer_id"
     t.index ["subscription_plan_id"], name: "index_members_on_subscription_plan_id"
+  end
+
+  create_table "one_off_revenues", force: :cascade do |t|
+    t.integer "cost_type"
+    t.integer "amount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "pause_histories", force: :cascade do |t|

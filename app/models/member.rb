@@ -2,9 +2,9 @@ class Member < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   attr_accessor :start_date
-  
+
   audited
-  
+
   has_associated_audits
 
   include ImageUploader[:image]

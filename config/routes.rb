@@ -70,10 +70,11 @@ Rails.application.routes.draw do
     post  'check_recurring' => 'subscription_plans#check_recurring', as: :check_recurring
     post  'check_selected_plan' => 'subscription_plans#check_selected_plan', as: :check_selected_plan
     resources :loyalties
+    resources :one_off_revenues
   end
 
   post '/:paystack_webhook' => 'webhooks#receive', as: :receive_webhooks
-  
+
   root 'welcome#index'
 
   get 'welcome/index'

@@ -1,0 +1,25 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button id="close-oneoff-modal" type="button" class="close" data-toggle="modal" data-target="#one-off-modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="oneOffModalLabel">Edit </h4> </div>
+        <div class="modal-body">
+            <%= form_for([:admin, one_off], remote: true, html: {class: 'form-material m-t-40' }) do |f| %>
+                <h4>Edit One Off Cost </h4>
+                <br/>
+                <div class="form-group">
+                    <%= f.label :cost_type, 'Cost Type' %>
+                    <%= f.text_field :cost_type, readonly: true, placeholder: "#{one_off.cost_type}", class:'form-control form-control-line' %>
+                </div>
+                <div class="form-group">
+                    <%= f.label :amount, 'Amount' %>
+                    <%= f.number_field :amount, class: 'form-control form-control-line' %>
+                </div>
+                
+                <div>
+                    <%= f.submit 'Update', class: 'btn btn-danger m-r-10' %>
+                </div>
+            <% end %>
+        </div>
+    </div>
+</div>
