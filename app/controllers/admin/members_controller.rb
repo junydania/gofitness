@@ -66,7 +66,7 @@ class Admin::MembersController < ApplicationController
     end
 
     def edit
-      @subscription_plans = SubscriptionPlan.all  
+      @subscription_plans = SubscriptionPlan.all
       @payment_methods = PaymentMethod.all
       @fitness_goals = FitnessGoal.all
       @member = Member.find(params[:id])
@@ -122,32 +122,13 @@ class Admin::MembersController < ApplicationController
         else
           start_date = !member_params["start_date"].empty? ? Date.strptime(member_params["start_date"], '%m/%d/%Y').to_datetime : DateTime.now
         end
-        if !member_exists.nil?
-          flash[:error] = "Customer Already Exists!"
+        if !member_exists.nil? && member_exists.subscription_histories.count > 0
+          flash[:error] = "Email Exists with subscription records! Provide unique emai address"
+          render :new
+        elsif !member_exists.nil? && member_exists.subscription_histories.count <= 0
           redirect_to admin_member_steps_path
         elsif member_exists.nil? && !member_params[:subscription_plan_id].empty?
-          new_member = Member.new(member_params)
-          plan = SubscriptionPlan.find(new_member.subscription_plan_id)
-          if plan.recurring == true
-            payment = PaymentMethod.find_by(payment_system: 'Debit Card').id
-            new_member.payment_method_id = payment
-            start_date = included_in_restricted_date?(start_date) ? start_date.at_beginning_of_month.next_month + 1.day : start_date
-          end
-
-          if new_member.save
-            new_member.audits.last.user
-            session[:member_id] = new_member.id
-            member = Member.find(new_member.id)
-            account_update = member.build_account_detail(
-              subscribe_date: start_date,
-              expiry_date: start_date,
-              member_status: 1,
-              gym_attendance_status: 0,
-              audit_comment: "New account created for member")
-            account_update.save
-            flash[:notice] = "Collect Payment & Complete the Registration Process"
-            redirect_to admin_member_steps_path
-          end
+          add_new_member(member_params, start_date)
         else
           flash[:error] = "Couldn't create member account! Ensure all fields are filled!"
           render :new
@@ -435,6 +416,32 @@ class Admin::MembersController < ApplicationController
 
     def true?(obj)
       obj.to_s == "true"
+    end
+
+
+    def add_new_member(member_params, start_date)
+      new_member = Member.new(member_params)
+      plan = SubscriptionPlan.find(new_member.subscription_plan_id)
+      if plan.recurring == true
+        payment = PaymentMethod.find_by(payment_system: 'Debit Card').id
+        new_member.payment_method_id = payment
+        start_date = included_in_restricted_date?(start_date) ? start_date.at_beginning_of_month.next_month + 1.day : start_date
+      end
+      if new_member.save
+        new_member.audits.last.user
+        session[:member_id] = new_member.id
+        member = Member.find(new_member.id)
+        account_update = member.build_account_detail(
+          subscribe_date: start_date,
+          expiry_date: start_date,
+          member_status: 1,
+          gym_attendance_status: 0,
+          audit_comment: "New account created for member")
+        account_update.save
+        flash[:notice] = "Collect Payment & Complete the Registration Process"
+        redirect_to admin_member_steps_path
+      end
+
     end
 
     def update_wallet_detail(member, amount, wallet_balance, new_balance)
@@ -791,7 +798,7 @@ class Admin::MembersController < ApplicationController
                     :image,
                     :phone_number, 
                     :address, 
-                    :date_of_birth, 
+                    :date_of_birth,
                     :health_condition_ids, 
                     :next_of_kin_name, 
                     :next_of_kin_phone, 

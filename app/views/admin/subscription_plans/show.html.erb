@@ -38,7 +38,7 @@
                                         <h1 class="text-white"><i class="ti-light-bulb"></i></h1></div>
                                     <div>
                                         <h3 class="card-title"><%= @subscription_plan.plan_name %></h3>
-                                        <h6 class="card-subtitle">Recurring: <%= @subscription_plan.recurring %></h6> </div>
+                                        <h6 class="card-subtitle">Status: <%= @subscription_plan.status %></h6> </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-6 align-self-center">
@@ -79,11 +79,15 @@
                                                 <br>
                                                 <p class="text-muted"><%= @subscription_plan.recurring %></p>
                                             </div>
+                                            <div class="col-md-3 col-xs-6 b-r"> <strong>Status</strong>
+                                                <br>
+                                                <p class="text-muted"><%= @subscription_plan.status %></p>
+                                            </div>
                                         </div>
                                         <hr>
                                         <h4><span>Plan Features <span></h4>
                                             <% @subscription_plan.features.each do |feature| %>
-                                                <button class="btn btn-info" href="#"><%= feature.name %></button>   
+                                                <button class="btn btn-info" href="#"><%= feature.name %></button>
                                             <% end %>
                                         <br/>
                                     </div>

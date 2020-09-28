@@ -31,6 +31,11 @@ module PaymentProcessing
             end
         end
 
+        def one_time_charge()
+
+
+        end
+
         def paystack_subscribe
             result = verify_transaction
             if result["status"] == true
@@ -202,7 +207,6 @@ module PaymentProcessing
                                         gym_attendance_status: 1,
                                         audit_comment: "paid for membership plan" )
         end
-
 
         def create_subscription_history
             subscription_history = @member.subscription_histories.create(

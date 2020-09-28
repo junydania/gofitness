@@ -1,0 +1,8 @@
+<% @one_off_revenues.each do |one_off| %>
+    <tr>
+        <td><%= one_off.id %></td>
+        <td><%= one_off.cost_type.titleize %></td>
+        <td><%= one_off.amount %></td>
+        <td><%= link_to "Edit", edit_admin_one_off_revenue_path(id: one_off.id), remote: true, class: 'btn btn-success m-r-10'  %></td>
+    </tr>
+<% end %>

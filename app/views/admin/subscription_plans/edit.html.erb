@@ -56,6 +56,10 @@
                                         <%= f.number_field :cost, class: 'form-control form-control-line' %>
                                     </div>
                                     <div class="form-group">
+                                        <%= f.label :status, 'Status' %>
+                                        <%= f.select(:status, options_for_select(SubscriptionPlan.statuses.keys.map { |status| [status.titleize, status]}), {include_blank: true}, { :class =>  "form-control" } ) %>
+                                    </div>
+                                    <div class="form-group">
                                         <%= f.label :description, 'Description' %>
                                         <%= f.text_field :description, class: 'form-control form-control-line' %>
                                     </div>
@@ -67,7 +71,7 @@
                                     <div>
                                         <%= f.submit 'Update Plan', class: 'btn btn-danger m-r-10' %>
                                     </div>
-                                    
+
                                 <% end %>
                             </div>
                         </div>

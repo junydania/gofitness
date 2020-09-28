@@ -3,7 +3,7 @@ class Admin::LoyaltiesController < ApplicationController
     load_and_authorize_resource param_method: :loyalty_param
 
     before_action :authenticate_user!
-    before_action :find_loyalty_plan, only: [:show, :edit, :update, :destroy] 
+    before_action :find_loyalty_plan, only: [:show, :edit, :update, :destroy]
 
     def index
         @loyalties = Loyalty.all
@@ -21,7 +21,7 @@ class Admin::LoyaltiesController < ApplicationController
     end
 
     def edit
-      @loyalty  
+      @loyalty
       respond_to do |format|
         format.js
       end

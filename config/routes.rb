@@ -53,7 +53,7 @@ Rails.application.routes.draw do
   post   'send_paystack_invoice' => 'admin/members#send_paystack_invoice', as: :send_paystack_invoice
   patch  'members/change_plan/:id' => 'admin/members#change_plan_update'
 
-  
+
   namespace :admin do
     resources :attendance_records, only: [:index]
     resources :subscription_plans
@@ -70,10 +70,11 @@ Rails.application.routes.draw do
     post  'check_recurring' => 'subscription_plans#check_recurring', as: :check_recurring
     post  'check_selected_plan' => 'subscription_plans#check_selected_plan', as: :check_selected_plan
     resources :loyalties
+    resources :one_off_revenues
   end
 
   post '/:paystack_webhook' => 'webhooks#receive', as: :receive_webhooks
-  
+
   root 'welcome#index'
 
   get 'welcome/index'

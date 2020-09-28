@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181111144949) do
+ActiveRecord::Schema.define(version: 20200927104944) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -220,6 +220,13 @@ ActiveRecord::Schema.define(version: 20181111144949) do
     t.index ["subscription_plan_id"], name: "index_members_on_subscription_plan_id"
   end
 
+  create_table "one_off_revenues", force: :cascade do |t|
+    t.integer "cost_type"
+    t.integer "amount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "pause_histories", force: :cascade do |t|
     t.datetime "pause_start_date"
     t.datetime "pause_cancel_date"
@@ -328,6 +335,7 @@ ActiveRecord::Schema.define(version: 20181111144949) do
     t.string "paystack_plan_code"
     t.string "allowed_visitation_count", default: "unlimited"
     t.integer "organization_package", default: 0
+    t.integer "status", default: 0
     t.index ["paystack_plan_code"], name: "index_subscription_plans_on_paystack_plan_code"
   end
 
