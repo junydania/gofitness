@@ -54,7 +54,6 @@ class Admin::SubscriptionPlansController < ApplicationController
 
 
     def update
-        binding.pry
         if @plan.paystack_plan_code.nil?
             if @plan.update(plan_param)
                 redirect_to admin_subscription_plan_path(@plan) 

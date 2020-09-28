@@ -66,7 +66,7 @@ class Admin::MembersController < ApplicationController
     end
 
     def edit
-      @subscription_plans = SubscriptionPlan.all  
+      @subscription_plans = SubscriptionPlan.all
       @payment_methods = PaymentMethod.all
       @fitness_goals = FitnessGoal.all
       @member = Member.find(params[:id])
@@ -798,7 +798,7 @@ class Admin::MembersController < ApplicationController
                     :image,
                     :phone_number, 
                     :address, 
-                    :date_of_birth, 
+                    :date_of_birth,
                     :health_condition_ids, 
                     :next_of_kin_name, 
                     :next_of_kin_phone, 

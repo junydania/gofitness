@@ -53,7 +53,7 @@ Rails.application.routes.draw do
   post   'send_paystack_invoice' => 'admin/members#send_paystack_invoice', as: :send_paystack_invoice
   patch  'members/change_plan/:id' => 'admin/members#change_plan_update'
 
-  
+
   namespace :admin do
     resources :attendance_records, only: [:index]
     resources :subscription_plans
