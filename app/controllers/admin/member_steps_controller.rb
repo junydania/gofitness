@@ -18,7 +18,8 @@ class Admin::MemberStepsController < ApplicationController
 
 
     def show
-        gon.amount, gon.email, gon.firstName = @member.subscription_plan.cost * 100, @member.email, @member.first_name
+        one_off_cost = @member.subscription_histories.count < 1 ? get_one_off : 0
+        gon.amount, gon.email, gon.firstName = (@member.subscription_plan.cost + one_off_cost) * 100, @member.email, @member.first_name
         gon.lastName, gon.displayValue = @member.last_name, @member.phone_number
         gon.publicKey = ENV["PAYSTACK_PUBLIC_KEY"]
         render_wizard
@@ -76,7 +77,7 @@ class Admin::MemberStepsController < ApplicationController
                     render_wizard @member
                 rescue ActiveRecord::RecordNotUnique => e
                     flash[:notice] = "Ensure phone number is unique"
-                    render_wizard    
+                    render_wizard
                 end
 
             elsif !@member.customer_code.nil?
@@ -206,6 +207,15 @@ class Admin::MemberStepsController < ApplicationController
                                     audit_comment: "paid for new membership plan" )
     end
 
+    def get_one_off
+        ## one off cost for the registration of a new customer
+        cost = OneOffRevenue.find_by(cost_type: 0)
+        cost.nil? ? 0 : cost.amount
+    end
+
+    def is_first_time?
+
+    end
 
     def get_loyalty_points(amount)
         point = Loyalty.find_by(loyalty_type: "register").loyalty_points_percentage ||= 15
