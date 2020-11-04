@@ -7,10 +7,10 @@ class Ability
     if user.manager?
       can :manage, :all
     elsif user.supervisor?
-      can [:update, :create, :read, :destroy ], [  FitnessGoal, 
+      can [:update, :create, :read, :destroy ], [  FitnessGoal,
                                         Feature,
-                                        AttendanceRecord, 
-                                        GeneralTransaction, 
+                                        AttendanceRecord,
+                                        GeneralTransaction,
                                         AccountDetail,
                                         CashTransaction,
                                         HealthCondition,
@@ -23,6 +23,8 @@ class Ability
                                         WalletHistory,
                                         MemberHealthCondition,
                                         Member,
+                                        PaystackCharge,
+                                        Charge
                                       ]
 
       can [:update, :read], User, id: user.id
@@ -39,31 +41,21 @@ class Ability
                           SubscriptionPlan,
                           MemberHealthCondition,
                           SubscriptionPlanFeature,
-                          PaymentMethod,
+                          PaymentMethod
                         ]
 
     elsif user.officer?
-      can :read, [SubscriptionPlan, FitnessGoal, Feature, SubscriptionPlanFeature ]
-      can [:update, :create, :read], [  
-                                        AttendanceRecord, 
-                                        GeneralTransaction, 
-                                        AccountDetail,
-                                        CashTransaction,
-                                        HealthCondition,
-                                        ImageUploader,
-                                        LoyaltyHistory,
-                                        PauseHistory,
-                                        PosTransaction,
-                                        SubscriptionHistory,
-                                        WalletDetail,
-                                        WalletHistory,
-                                        MemberHealthCondition,
-                                        Member,
-                                      ]
-
+      can :manage, :all
+      cannot [:update, :create, :read], User
+      cannot [:update, :create], [
+        SubscriptionPlan,
+        OneOffRevenue,
+        PaymentMethod,
+        Loyalty,
+      ]
       can [:update, :read], User, id: user.id
-      cannot [:destroy],          [ 
-                                    AttendanceRecord, 
+      cannot [:destroy],          [
+                                    AttendanceRecord,
                                     GeneralTransaction, 
                                     AccountDetail,
                                     CashTransaction,
@@ -100,7 +92,6 @@ class Ability
                     SubscriptionPlanFeature,
                     PaymentMethod,
                     FitnessGoal ]
-
     end
 
   end
